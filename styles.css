@@ -1046,8 +1046,12 @@ a {
 }
 
 @media (max-width: 768px) {
+    .other-projects-accordion {
+        padding-inline: 4px;
+    }
+
     .accordion-trigger {
-        padding: 18px 0;
+        padding: 18px 16px;
     }
 
     .accordion-title {
@@ -1060,7 +1064,7 @@ a {
 
     /* ── Mobile list: two rows — name+year / studio ── */
     .project-list-item {
-        padding: 13px 0;
+        padding: 13px 16px;
         gap: 4px 8px;
         flex-wrap: wrap;
         align-items: baseline;
