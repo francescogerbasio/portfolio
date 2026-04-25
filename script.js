@@ -279,6 +279,27 @@ document.addEventListener('DOMContentLoaded', function() {
             openNdaModal();
         });
     });
+
+    document.querySelectorAll('.project-card.nda-protected').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('.nda-modal')) return;
+            if (e.target.closest('.project-image-link')) return;
+            const link = this.querySelector('.project-image-link.nda-link');
+            if (link && link.classList.contains('unlocked')) {
+                const href = link.getAttribute('href');
+                if (href) window.open(href, link.target || '_self');
+                return;
+            }
+            currentNdaProject = this;
+            openNdaModal();
+        });
+
+        card.addEventListener('keydown', function(e) {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            this.click();
+        });
+    });
     
     function openNdaModal() {
         ndaModal.classList.add('active');

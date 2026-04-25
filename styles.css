@@ -1110,12 +1110,13 @@ a {
 }
 
 .section-title {
-    font-size: clamp(13px, 1vw, 15px);
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 2.4vw, 40px);
     font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-text-light);
-    margin-bottom: 22px;
+    letter-spacing: -0.04em;
+    text-transform: none;
+    color: var(--color-text);
+    margin-bottom: 24px;
 }
 
 .projects-grid {
@@ -1171,6 +1172,11 @@ a {
 .project-card-link {
     text-decoration: none;
     color: inherit;
+}
+
+.clickable-card:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 4px;
 }
 
 .featured-release-card {
@@ -1230,6 +1236,14 @@ a {
 .featured-release-card .project-meta {
     color: var(--color-text);
     opacity: 0.82;
+}
+
+.cs-card {
+    cursor: pointer;
+}
+
+.cs-card .project-image {
+    border-radius: 22px;
 }
 
 .project-card.nda-protected .project-image {
