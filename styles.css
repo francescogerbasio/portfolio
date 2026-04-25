@@ -129,7 +129,7 @@
         width: 280px;
         height: 280px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(138, 182, 255, 0.14) 0%, rgba(138, 182, 255, 0.08) 26%, rgba(138, 182, 255, 0.02) 52%, rgba(138, 182, 255, 0) 72%);
+        background: radial-gradient(circle, rgba(255, 158, 196, 0.16) 0%, rgba(255, 158, 196, 0.09) 26%, rgba(255, 158, 196, 0.025) 52%, rgba(255, 158, 196, 0) 72%);
         filter: blur(18px);
         pointer-events: none;
         z-index: 0;
@@ -1517,7 +1517,7 @@ a {
     [data-theme="dark"] .featured-release-card.clickable-card::after {
         padding: 1px;
         background:
-            radial-gradient(240px circle at var(--glow-x) var(--glow-y), rgba(132, 179, 255, 0.55), rgba(132, 179, 255, 0.18) 22%, rgba(132, 179, 255, 0.06) 42%, rgba(132, 179, 255, 0) 62%);
+            radial-gradient(240px circle at var(--glow-x) var(--glow-y), rgba(255, 164, 201, 0.58), rgba(255, 164, 201, 0.2) 22%, rgba(255, 164, 201, 0.07) 42%, rgba(255, 164, 201, 0) 62%);
         -webkit-mask:
             linear-gradient(#fff 0 0) content-box,
             linear-gradient(#fff 0 0);
@@ -1531,12 +1531,12 @@ a {
     [data-theme="dark"] .accordion-trigger::after {
         border: 1px solid transparent;
         background:
-            radial-gradient(220px circle at var(--glow-x) var(--glow-y), rgba(132, 179, 255, 0.22), rgba(132, 179, 255, 0.06) 38%, rgba(132, 179, 255, 0) 62%);
+            radial-gradient(220px circle at var(--glow-x) var(--glow-y), rgba(255, 164, 201, 0.24), rgba(255, 164, 201, 0.07) 38%, rgba(255, 164, 201, 0) 62%);
     }
 
     [data-theme="dark"] .project-list-item.clickable::before {
         background:
-            radial-gradient(180px circle at var(--glow-x) var(--glow-y), rgba(132, 179, 255, 0.12), rgba(132, 179, 255, 0.04) 34%, rgba(132, 179, 255, 0) 64%);
+            radial-gradient(180px circle at var(--glow-x) var(--glow-y), rgba(255, 164, 201, 0.14), rgba(255, 164, 201, 0.045) 34%, rgba(255, 164, 201, 0) 64%);
     }
 
     [data-theme="dark"] .featured-release-card.clickable-card:hover::after,
