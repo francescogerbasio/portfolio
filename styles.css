@@ -37,6 +37,8 @@
 :root {
     --font-heading: 'Qurova', sans-serif;
     --font-body: 'BrittiSans', sans-serif;
+    --cursor-x: 50vw;
+    --cursor-y: 50vh;
     
     /* OKLCH Colors - Better perceptual uniformity */
     --color-bg: oklch(98% 0.01 15 / 1); /* #fdf5f6 */
@@ -116,6 +118,24 @@
 }
 [data-theme="dark"] .project-list-item.clickable:hover {
     background: rgba(255,255,255,0.04);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    [data-theme="dark"] body::before {
+        content: '';
+        position: fixed;
+        left: calc(var(--cursor-x) - 140px);
+        top: calc(var(--cursor-y) - 140px);
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(138, 182, 255, 0.14) 0%, rgba(138, 182, 255, 0.08) 26%, rgba(138, 182, 255, 0.02) 52%, rgba(138, 182, 255, 0) 72%);
+        filter: blur(18px);
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.9;
+        transition: left 70ms linear, top 70ms linear, opacity 180ms ease;
+    }
 }
 
 [data-theme="dark"] .nda-overlay {
@@ -797,6 +817,7 @@ a {
     display: flex;
     align-items: center;
     gap: 12px;
+    position: relative;
     padding: 18px 20px;
     background: linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.44) 100%);
     border: 1px solid rgba(0,0,0,0.08);
@@ -899,6 +920,7 @@ a {
     display: flex;
     align-items: center;
     gap: 12px;
+    position: relative;
     padding: 18px 22px;
     background: transparent;
     border: none;
@@ -1181,6 +1203,13 @@ a {
 .clickable-card:focus-visible {
     outline: 2px solid var(--color-text);
     outline-offset: 4px;
+}
+
+.clickable-card,
+.accordion-trigger,
+.project-list-item.clickable {
+    --glow-x: 50%;
+    --glow-y: 50%;
 }
 
 .featured-release-card {
@@ -1470,6 +1499,51 @@ a {
     box-shadow:
         0 1px 0 rgba(255,255,255,0.04) inset,
         0 24px 48px rgba(0, 0, 0, 0.26);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    [data-theme="dark"] .featured-release-card.clickable-card::after,
+    [data-theme="dark"] .accordion-trigger::after,
+    [data-theme="dark"] .project-list-item.clickable::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 220ms ease;
+    }
+
+    [data-theme="dark"] .featured-release-card.clickable-card::after {
+        padding: 1px;
+        background:
+            radial-gradient(240px circle at var(--glow-x) var(--glow-y), rgba(132, 179, 255, 0.55), rgba(132, 179, 255, 0.18) 22%, rgba(132, 179, 255, 0.06) 42%, rgba(132, 179, 255, 0) 62%);
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+    }
+
+    [data-theme="dark"] .accordion-trigger::after {
+        border: 1px solid transparent;
+        background:
+            radial-gradient(220px circle at var(--glow-x) var(--glow-y), rgba(132, 179, 255, 0.22), rgba(132, 179, 255, 0.06) 38%, rgba(132, 179, 255, 0) 62%);
+    }
+
+    [data-theme="dark"] .project-list-item.clickable::before {
+        background:
+            radial-gradient(180px circle at var(--glow-x) var(--glow-y), rgba(132, 179, 255, 0.12), rgba(132, 179, 255, 0.04) 34%, rgba(132, 179, 255, 0) 64%);
+    }
+
+    [data-theme="dark"] .featured-release-card.clickable-card:hover::after,
+    [data-theme="dark"] .accordion-trigger:hover::after,
+    [data-theme="dark"] .project-list-item.clickable:hover::before {
+        opacity: 1;
+    }
 }
 
 [data-theme="dark"] .featured-release-card.clickable-card:hover {

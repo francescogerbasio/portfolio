@@ -300,6 +300,36 @@ document.addEventListener('DOMContentLoaded', function() {
             this.click();
         });
     });
+
+    // ===================================
+    // DARK MODE CURSOR GLOW
+    // ===================================
+
+    const supportsPointerGlow =
+        window.matchMedia('(hover: hover)').matches &&
+        window.matchMedia('(pointer: fine)').matches;
+
+    if (supportsPointerGlow) {
+        const glowTargets = document.querySelectorAll('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
+
+        document.addEventListener('mousemove', function(e) {
+            document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
+            document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
+        }, { passive: true });
+
+        glowTargets.forEach(target => {
+            target.addEventListener('pointermove', function(e) {
+                const rect = this.getBoundingClientRect();
+                this.style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
+                this.style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
+            });
+
+            target.addEventListener('pointerleave', function() {
+                this.style.removeProperty('--glow-x');
+                this.style.removeProperty('--glow-y');
+            });
+        });
+    }
     
     function openNdaModal() {
         ndaModal.classList.add('active');
