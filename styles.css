@@ -3167,7 +3167,9 @@ html {
 
 .cv-picker-sub {
     font-size: 11px;
-    font-weight: 400;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     color: var(--color-text-light);
 }
 
