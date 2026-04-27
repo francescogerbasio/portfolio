@@ -1134,6 +1134,9 @@ a {
     .project-header .project-badge {
         font-size: 11px;
         padding: 4px 9px;
+        white-space: nowrap;
+        width: fit-content;
+        align-self: flex-start;
     }
 }
 
