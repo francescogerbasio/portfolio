@@ -37,8 +37,8 @@
 :root {
     --font-heading: 'Qurova', sans-serif;
     --font-body: 'BrittiSans', sans-serif;
-    --cursor-x: 50vw;
-    --cursor-y: 50vh;
+    --cursor-x: 50;
+    --cursor-y: 50;
     
     /* OKLCH Colors - Better perceptual uniformity */
     --color-bg: oklch(98% 0.01 15 / 1); /* #fdf5f6 */
@@ -124,17 +124,19 @@
     [data-theme="dark"] body::before {
         content: '';
         position: fixed;
-        left: calc(var(--cursor-x) - 140px);
-        top: calc(var(--cursor-y) - 140px);
+        left: 0;
+        top: 0;
         width: 280px;
         height: 280px;
         border-radius: 50%;
         background: radial-gradient(circle, rgba(255, 158, 196, 0.16) 0%, rgba(255, 158, 196, 0.09) 26%, rgba(255, 158, 196, 0.025) 52%, rgba(255, 158, 196, 0) 72%);
         filter: blur(18px);
+        transform: translate3d(calc(var(--cursor-x) * 1px - 140px), calc(var(--cursor-y) * 1px - 140px), 0);
+        will-change: transform, opacity;
         pointer-events: none;
         z-index: 0;
         opacity: 0.9;
-        transition: left 70ms linear, top 70ms linear, opacity 180ms ease;
+        transition: opacity 180ms ease;
     }
 }
 
@@ -1117,6 +1119,21 @@ a {
     .project-list-item.clickable .project-year::after,
     .project-list-item.nda-protected-item .project-year::after {
         display: none;
+    }
+
+    .project-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 10px 12px;
+    }
+
+    .project-header .project-title {
+        flex: 1 1 100%;
+    }
+
+    .project-header .project-badge {
+        font-size: 11px;
+        padding: 4px 9px;
     }
 }
 

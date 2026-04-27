@@ -311,10 +311,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (supportsPointerGlow) {
         const glowTargets = document.querySelectorAll('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
+        let cursorGlowFrame = 0;
+        let cursorGlowX = window.innerWidth / 2;
+        let cursorGlowY = window.innerHeight / 2;
+
+        function flushCursorGlow() {
+            document.documentElement.style.setProperty('--cursor-x', `${cursorGlowX}`);
+            document.documentElement.style.setProperty('--cursor-y', `${cursorGlowY}`);
+            cursorGlowFrame = 0;
+        }
 
         document.addEventListener('mousemove', function(e) {
-            document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
-            document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
+            cursorGlowX = e.clientX;
+            cursorGlowY = e.clientY;
+            if (!cursorGlowFrame) {
+                cursorGlowFrame = requestAnimationFrame(flushCursorGlow);
+            }
         }, { passive: true });
 
         glowTargets.forEach(target => {
