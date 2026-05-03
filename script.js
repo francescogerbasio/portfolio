@@ -5,46 +5,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     const navLinks = document.querySelectorAll('.nav-link');
-    const navigation = document.querySelector('.navigation');
     let navigatingAway = false; // set true when navigating to another page
-    
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
     const mobileNavLinks = document.querySelectorAll('.mobile-menu .nav-link');
-    
-    if (hamburgerBtn) {
-        hamburgerBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const isOpen = mobileMenu.classList.contains('active');
-            this.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            this.setAttribute('aria-expanded', String(!isOpen));
-            this.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
-            mobileMenu.setAttribute('aria-hidden', String(isOpen));
-        });
-    }
-    
-    document.addEventListener('click', function(e) {
-        if (mobileMenu && mobileMenu.classList.contains('active')) {
-            if (!mobileMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
-                hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
-                mobileMenu.setAttribute('aria-hidden', 'true');
-            }
-        }
-    });
-    
-    mobileNavLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            hamburgerBtn.classList.remove('active');
-            mobileMenu.classList.remove('active');
-            hamburgerBtn.setAttribute('aria-expanded', 'false');
-            hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
-            mobileMenu.setAttribute('aria-hidden', 'true');
-        });
-    });
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -63,27 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ===================================
-    // FROSTED GLASS NAV ON SCROLL
-    // (single rAF-throttled listener — no layout reads)
-    // ===================================
-
-    let scrollScheduled = false;
-    function onScroll() {
-        if (scrollScheduled) return;
-        scrollScheduled = true;
-        requestAnimationFrame(() => {
-            navigation.classList.toggle('scrolled', window.scrollY > 20);
-            scrollScheduled = false;
-        });
-    }
     // nav-ready added on first user scroll — gates the dot animation so it never fires on load
-    window.addEventListener('scroll', function onFirstScroll() {
-        navigation.classList.add('nav-ready');
-    }, { passive: true, once: true });
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    const navigation = document.querySelector('.navigation');
+    if (navigation) {
+        window.addEventListener('scroll', function onFirstScroll() {
+            navigation.classList.add('nav-ready');
+        }, { passive: true, once: true });
+    }
 
 
     // ===================================

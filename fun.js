@@ -58,20 +58,14 @@ document.querySelectorAll('.category-btn').forEach(btn => {
 
 let currentCountry = 'all';
 let travelData = [];
-let travelConfig = null;
+let travelConfig = typeof window.travelConfig !== 'undefined' ? window.travelConfig : null;
 
 async function loadTravelPhotos(country = 'all') {
     const grid = document.getElementById('travelGrid');
     grid.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading travel moments...</p></div>';
     try {
-        if (!travelConfig) {
-            const response = await fetch('data-travel.js');
-            const scriptText = await response.text();
-            const tempFunc = new Function(scriptText + '; return travelConfig;');
-            travelConfig = tempFunc();
-            if (!travelConfig || !travelConfig.destinations) throw new Error('Invalid travel config');
-            generateFlagButtons();
-        }
+        if (!travelConfig || !travelConfig.destinations) throw new Error('Missing travelConfig from data-travel.js');
+        generateFlagButtons();
         const allPhotos = [];
         for (const destination of travelConfig.destinations) {
             const folderPath = `Assets/Images/Travel/${destination.folder}`;
@@ -357,11 +351,7 @@ window.addEventListener('resize', () => {
 async function loadMySong() {
     const container = document.getElementById('myMusicContainer');
     try {
-        const response   = await fetch('data-music.js');
-        const scriptText = await response.text();
-        const tempFunc   = new Function(scriptText + '; return musicData;');
-        const musicData  = tempFunc();
-        const song = musicData?.mySong;
+        const song = window.musicData?.mySong;
         if (!song) throw new Error('No song data');
 
         const videoId    = song.youtubeEmbedId;
@@ -503,11 +493,7 @@ async function loadFavoriteArtists() {
     grid.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading artists...</p></div>';
 
     try {
-        const response   = await fetch('data-music.js');
-        const scriptText = await response.text();
-        const tempFunc   = new Function(scriptText + '; return musicData;');
-        const musicData  = tempFunc();
-        const artists    = musicData?.artists || [];
+        const artists = window.musicData?.artists || [];
         if (artists.length === 0) throw new Error('No artists data');
 
         // Set src directly in template — simple and reliable
@@ -551,10 +537,8 @@ async function loadFavoriteArtists() {
 async function loadGames() {
     const section = document.getElementById('gaming-section');
     try {
-        const response  = await fetch('data-games.js');
-        const scriptText = await response.text();
-        const tempFunc  = new Function(scriptText + '; return gamesData;');
-        const gamesData = tempFunc();
+        const gamesData = window.gamesData;
+        if (!gamesData) throw new Error('Missing gamesData from data-games.js');
 
         section.innerHTML = `
             <!-- Featured Hero -->
@@ -703,49 +687,6 @@ function buildGrid(container, games) {
 // ===================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    const hamburgerBtn   = document.getElementById('hamburgerBtn');
-    const mobileMenu     = document.getElementById('mobileMenu');
-    const mobileNavLinks = document.querySelectorAll('.mobile-menu .nav-link');
-
-    if (hamburgerBtn) {
-        hamburgerBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const isOpen = mobileMenu.classList.contains('active');
-            this.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            this.setAttribute('aria-expanded', String(!isOpen));
-            this.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
-            mobileMenu.setAttribute('aria-hidden', String(isOpen));
-        });
-    }
-    document.addEventListener('click', function(e) {
-        if (mobileMenu?.classList.contains('active')) {
-            if (!mobileMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
-                hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
-                mobileMenu.setAttribute('aria-hidden', 'true');
-            }
-        }
-    });
-    mobileNavLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            hamburgerBtn.classList.remove('active');
-            mobileMenu.classList.remove('active');
-            hamburgerBtn.setAttribute('aria-expanded', 'false');
-            hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
-            mobileMenu.setAttribute('aria-hidden', 'true');
-        });
-    });
-
-    const navigation = document.querySelector('.navigation');
-    function handleScroll() {
-        navigation.classList.toggle('scrolled', window.scrollY > 20);
-    }
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-
     loadTravelPhotos('all');
     travelDataLoaded = true;    document.getElementById('categorySubtitle').textContent = CATEGORY_SUBTITLES.travel;
 });
