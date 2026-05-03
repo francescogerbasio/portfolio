@@ -58,12 +58,12 @@ document.querySelectorAll('.category-btn').forEach(btn => {
 
 let currentCountry = 'all';
 let travelData = [];
-let travelConfig = typeof window.travelConfig !== 'undefined' ? window.travelConfig : null;
 
 async function loadTravelPhotos(country = 'all') {
     const grid = document.getElementById('travelGrid');
     grid.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading travel moments...</p></div>';
     try {
+        const travelConfig = window.travelConfig;
         if (!travelConfig || !travelConfig.destinations) throw new Error('Missing travelConfig from data-travel.js');
         generateFlagButtons();
         const allPhotos = [];
@@ -92,6 +92,8 @@ function generateFlagButtons() {
     const flagNav = document.getElementById('flagNavigation');
     const isWindows = navigator.platform.toLowerCase().includes('win');
     const countries = {};
+    const travelConfig = window.travelConfig;
+    if (!travelConfig || !travelConfig.destinations) return;
     travelConfig.destinations.forEach(dest => {
         if (!countries[dest.country]) {
             countries[dest.country] = {

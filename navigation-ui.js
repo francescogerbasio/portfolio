@@ -54,5 +54,29 @@
             window.addEventListener('scroll', onScroll, { passive: true });
             onScroll();
         }
+
+        const supportsPointerGlow =
+            window.matchMedia('(hover: hover)').matches &&
+            window.matchMedia('(pointer: fine)').matches;
+
+        if (supportsPointerGlow) {
+            let cursorGlowFrame = 0;
+            let cursorGlowX = window.innerWidth / 2;
+            let cursorGlowY = window.innerHeight / 2;
+
+            function flushCursorGlow() {
+                document.documentElement.style.setProperty('--cursor-x', `${cursorGlowX}`);
+                document.documentElement.style.setProperty('--cursor-y', `${cursorGlowY}`);
+                cursorGlowFrame = 0;
+            }
+
+            document.addEventListener('mousemove', function (e) {
+                cursorGlowX = e.clientX;
+                cursorGlowY = e.clientY;
+                if (!cursorGlowFrame) {
+                    cursorGlowFrame = requestAnimationFrame(flushCursorGlow);
+                }
+            }, { passive: true });
+        }
     });
 })();

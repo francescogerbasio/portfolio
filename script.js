@@ -250,46 +250,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ===================================
-    // DARK MODE CURSOR GLOW
+    // CARD-LOCAL GLOW HOTSPOT
     // ===================================
 
-    const supportsPointerGlow =
-        window.matchMedia('(hover: hover)').matches &&
-        window.matchMedia('(pointer: fine)').matches;
-
-    if (supportsPointerGlow) {
-        const glowTargets = document.querySelectorAll('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
-        let cursorGlowFrame = 0;
-        let cursorGlowX = window.innerWidth / 2;
-        let cursorGlowY = window.innerHeight / 2;
-
-        function flushCursorGlow() {
-            document.documentElement.style.setProperty('--cursor-x', `${cursorGlowX}`);
-            document.documentElement.style.setProperty('--cursor-y', `${cursorGlowY}`);
-            cursorGlowFrame = 0;
-        }
-
-        document.addEventListener('mousemove', function(e) {
-            cursorGlowX = e.clientX;
-            cursorGlowY = e.clientY;
-            if (!cursorGlowFrame) {
-                cursorGlowFrame = requestAnimationFrame(flushCursorGlow);
-            }
-        }, { passive: true });
-
-        glowTargets.forEach(target => {
-            target.addEventListener('pointermove', function(e) {
-                const rect = this.getBoundingClientRect();
-                this.style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
-                this.style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
-            });
-
-            target.addEventListener('pointerleave', function() {
-                this.style.removeProperty('--glow-x');
-                this.style.removeProperty('--glow-y');
-            });
+    const glowTargets = document.querySelectorAll('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
+    glowTargets.forEach(target => {
+        target.addEventListener('pointermove', function(e) {
+            const rect = this.getBoundingClientRect();
+            this.style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
+            this.style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
         });
-    }
+
+        target.addEventListener('pointerleave', function() {
+            this.style.removeProperty('--glow-x');
+            this.style.removeProperty('--glow-y');
+        });
+    });
     
     function openNdaModal() {
         ndaModal.classList.add('active');
