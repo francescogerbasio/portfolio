@@ -70,6 +70,8 @@
                 cursorGlowFrame = 0;
             }
 
+            flushCursorGlow();
+
             document.addEventListener('mousemove', function (e) {
                 cursorGlowX = e.clientX;
                 cursorGlowY = e.clientY;

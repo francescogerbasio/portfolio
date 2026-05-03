@@ -152,6 +152,8 @@ const musicData = {
     ]
 };
 
+window.musicData = musicData;
+
 // Export for use in fun.js
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = musicData;
