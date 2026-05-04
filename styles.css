@@ -1239,15 +1239,16 @@ a {
 }
 
 .featured-release-card {
-    padding: clamp(16px, 2vw, 22px);
-    border-radius: 30px;
-    border: 1px solid rgba(18, 22, 28, 0.1);
+    padding: clamp(14px, 1.7vw, 20px);
+    border-radius: 28px;
+    border: 1px solid rgba(18, 22, 28, 0.11);
     background:
-        linear-gradient(180deg, rgba(255,255,255,0.87) 0%, rgba(255,255,255,0.72) 100%),
-        linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(244,239,236,0.66) 100%);
+        linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.76) 100%),
+        linear-gradient(130deg, rgba(255,255,255,0.8) 0%, rgba(245,240,236,0.67) 100%);
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.8) inset,
-        0 14px 30px rgba(12, 16, 24, 0.07);
+        0 1px 0 rgba(255,255,255,0.84) inset,
+        0 12px 24px rgba(11, 16, 24, 0.08),
+        0 24px 44px rgba(11, 16, 24, 0.06);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
@@ -1260,27 +1261,33 @@ a {
 }
 
 .featured-release-card.clickable-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.86) inset,
-        0 20px 40px rgba(12, 16, 24, 0.1);
-    border-color: rgba(18, 22, 28, 0.16);
+        0 1px 0 rgba(255,255,255,0.92) inset,
+        0 18px 34px rgba(11, 16, 24, 0.1),
+        0 32px 58px rgba(11, 16, 24, 0.08);
+    border-color: rgba(18, 22, 28, 0.18);
 }
 
 .featured-release-card .project-image {
-    border-radius: 20px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0));
-    border: 1px solid rgba(255,255,255,0.46);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.52);
     position: relative;
 }
 
 .featured-release-card .project-info {
-    gap: 10px;
-    padding: 0 2px 2px;
+    gap: 12px;
+    padding: 14px 14px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.58);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.44) 0%, rgba(255,255,255,0.24) 100%),
+        linear-gradient(120deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.08) 100%);
 }
 
 .featured-release-card .project-title {
-    letter-spacing: -0.03em;
+    letter-spacing: -0.032em;
 }
 
 .featured-release-card .project-badge {
@@ -1334,7 +1341,7 @@ a {
     transform: translateY(6px);
     transition: opacity 220ms ease, transform 220ms ease;
     pointer-events: none;
-    background: linear-gradient(to top, rgba(10, 12, 16, 0.66) 0%, rgba(10, 12, 16, 0.13) 44%, rgba(10, 12, 16, 0) 62%);
+    background: linear-gradient(to top, rgba(9, 11, 15, 0.72) 0%, rgba(9, 11, 15, 0.2) 46%, rgba(9, 11, 15, 0) 66%);
 }
 
 .cs-card:hover .cs-card-overlay,
@@ -1361,7 +1368,7 @@ a {
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.62);
+    color: rgba(255,255,255,0.68);
     margin-bottom: 6px;
 }
 
@@ -1526,21 +1533,30 @@ a {
 [data-theme="dark"] .featured-release-card {
     border-color: rgba(255,255,255,0.08);
     background:
-        linear-gradient(180deg, rgba(44,44,44,0.92) 0%, rgba(31,31,31,0.88) 100%),
-        linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+        linear-gradient(180deg, rgba(43,43,45,0.93) 0%, rgba(29,29,32,0.9) 100%),
+        linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.05) inset,
-        0 16px 30px rgba(0, 0, 0, 0.24);
+        0 1px 0 rgba(255,255,255,0.06) inset,
+        0 14px 28px rgba(0, 0, 0, 0.26),
+        0 28px 52px rgba(0, 0, 0, 0.24);
 }
 
 [data-theme="dark"] .featured-release-card.clickable-card {
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.05) inset,
-        0 20px 40px rgba(0, 0, 0, 0.27);
+        0 1px 0 rgba(255,255,255,0.06) inset,
+        0 20px 38px rgba(0, 0, 0, 0.28),
+        0 32px 58px rgba(0, 0, 0, 0.26);
 }
 
 [data-theme="dark"] .featured-release-card .project-image {
     border-color: rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] .featured-release-card .project-info {
+    border-color: rgba(255,255,255,0.1);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.025) 100%),
+        linear-gradient(120deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%);
 }
 
 [data-theme="dark"] .cs-card-overlay,
@@ -1596,8 +1612,9 @@ a {
 [data-theme="dark"] .featured-release-card.clickable-card:hover {
     border-color: rgba(255,255,255,0.12);
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.05) inset,
-        0 30px 56px rgba(0, 0, 0, 0.34);
+        0 1px 0 rgba(255,255,255,0.06) inset,
+        0 22px 40px rgba(0, 0, 0, 0.3),
+        0 34px 60px rgba(0, 0, 0, 0.28);
 }
 
 [data-theme="dark"] .featured-release-card .project-badge {
@@ -1629,19 +1646,24 @@ a {
 }
 
 .project-title {
-    font-size: clamp(24px, 2vw, 32px);
-    font-weight: 600;
+    font-size: clamp(22px, 1.95vw, 30px);
+    font-weight: 650;
+    line-height: 1.08;
 }
 
 .project-badge {
-    font-size: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--color-text-light);
-    border: 1px solid var(--color-border);
-    padding: 3px 10px;
-    border-radius: 5px;
+    border: 1px solid rgba(15, 15, 15, 0.14);
+    padding: 5px 11px;
+    border-radius: 999px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    background: rgba(255,255,255,0.76);
 }
 
 .project-badge::after {
@@ -1656,15 +1678,19 @@ a {
 }
 
 .project-description {
-    font-size: clamp(16px, 1.3vw, 20px);
-    line-height: 1.5;
+    font-size: clamp(15px, 1.14vw, 18px);
+    line-height: 1.58;
     color: var(--color-text-light);
+    max-width: 50ch;
 }
 
 .project-meta {
-    font-size: clamp(16px, 1.3vw, 20px);
+    font-size: clamp(13px, 0.98vw, 15px);
     font-weight: 600;
-    margin-top: 6px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+    opacity: 0.78;
 }
 
 /* ===================================
@@ -1999,7 +2025,7 @@ a {
     }
     
     .project-title {
-        font-size: 24px;
+        font-size: 22px;
     }
 
     .cs-card-overlay,
@@ -2016,9 +2042,16 @@ a {
         font-size: 13px;
     }
     
-    .project-description,
+    .featured-release-card .project-info {
+        padding: 12px 12px 10px;
+    }
+
+    .project-description {
+        font-size: 15px;
+    }
+
     .project-meta {
-        font-size: 16px;
+        font-size: 12px;
     }
     
     .projects-grid {
