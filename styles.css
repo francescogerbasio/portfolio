@@ -1241,11 +1241,13 @@ a {
 .featured-release-card {
     padding: clamp(16px, 2vw, 22px);
     border-radius: 30px;
-    border: 1px solid rgba(15, 15, 15, 0.08);
+    border: 1px solid rgba(18, 22, 28, 0.1);
     background:
-        linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.68) 100%),
-        linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(245,239,236,0.6) 100%);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset;
+        linear-gradient(180deg, rgba(255,255,255,0.87) 0%, rgba(255,255,255,0.72) 100%),
+        linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(244,239,236,0.66) 100%);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.8) inset,
+        0 14px 30px rgba(12, 16, 24, 0.07);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
@@ -1258,16 +1260,18 @@ a {
 }
 
 .featured-release-card.clickable-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.72) inset,
-        0 30px 56px rgba(15, 15, 15, 0.11);
-    border-color: rgba(15, 15, 15, 0.12);
+        0 1px 0 rgba(255,255,255,0.86) inset,
+        0 20px 40px rgba(12, 16, 24, 0.1);
+    border-color: rgba(18, 22, 28, 0.16);
 }
 
 .featured-release-card .project-image {
-    border-radius: 22px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0));
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0));
+    border: 1px solid rgba(255,255,255,0.46);
+    position: relative;
 }
 
 .featured-release-card .project-info {
@@ -1301,8 +1305,81 @@ a {
     cursor: pointer;
 }
 
-.cs-card .project-image {
-    border-radius: 22px;
+.cs-card-thumb,
+.lqa-card-thumb {
+    position: relative;
+    overflow: hidden;
+}
+
+.cs-card-thumb img,
+.lqa-card-thumb img {
+    transition: filter 0.6s ease;
+}
+
+.cs-card:hover .cs-card-thumb img,
+.project-card-link:hover .lqa-card-thumb img,
+.project-card-link:focus-visible .lqa-card-thumb img {
+    filter: brightness(0.9);
+}
+
+.cs-card-overlay,
+.lqa-card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 220ms ease, transform 220ms ease;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(10, 12, 16, 0.66) 0%, rgba(10, 12, 16, 0.13) 44%, rgba(10, 12, 16, 0) 62%);
+}
+
+.cs-card:hover .cs-card-overlay,
+.cs-card:focus-visible .cs-card-overlay,
+.project-card-link:hover .lqa-card-overlay,
+.project-card-link:focus-visible .lqa-card-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.red-dead-lqa-overlay {
+    opacity: 0;
+    transform: translateY(6px);
+}
+
+.project-card.nda-protected.unlocked:hover .red-dead-lqa-overlay,
+.project-card.nda-protected.unlocked:focus-visible .red-dead-lqa-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cs-card-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.62);
+    margin-bottom: 6px;
+}
+
+.cs-card-open {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+.project-badge.cs-badge {
+    font-size: 11px !important;
+    padding: 3px 10px !important;
+    background: transparent !important;
+}
+
+.project-badge.cs-badge::after {
+    display: none !important;
 }
 
 .project-card.nda-protected .project-image {
@@ -1451,13 +1528,24 @@ a {
     background:
         linear-gradient(180deg, rgba(44,44,44,0.92) 0%, rgba(31,31,31,0.88) 100%),
         linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.05) inset,
+        0 16px 30px rgba(0, 0, 0, 0.24);
 }
 
 [data-theme="dark"] .featured-release-card.clickable-card {
     box-shadow:
-        0 1px 0 rgba(255,255,255,0.04) inset,
-        0 24px 48px rgba(0, 0, 0, 0.26);
+        0 1px 0 rgba(255,255,255,0.05) inset,
+        0 20px 40px rgba(0, 0, 0, 0.27);
+}
+
+[data-theme="dark"] .featured-release-card .project-image {
+    border-color: rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] .cs-card-overlay,
+[data-theme="dark"] .lqa-card-overlay {
+    background: linear-gradient(to top, rgba(7, 8, 10, 0.78) 0%, rgba(7, 8, 10, 0.2) 44%, rgba(7, 8, 10, 0) 62%);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1912,6 +2000,20 @@ a {
     
     .project-title {
         font-size: 24px;
+    }
+
+    .cs-card-overlay,
+    .lqa-card-overlay {
+        padding: 14px;
+    }
+
+    .cs-card-tag {
+        font-size: 9px;
+        margin-bottom: 4px;
+    }
+
+    .cs-card-open {
+        font-size: 13px;
     }
     
     .project-description,
