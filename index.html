@@ -206,8 +206,12 @@
 
                 <!-- Dead Take -->
                 <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Dead Take project page">
-                        <div class="project-image">
+                        <div class="project-image lqa-card-thumb">
                             <img src="Assets/Images/DeadTake.webp" alt="Dead Take" width="744" height="418" loading="lazy" decoding="async">
+                            <div class="lqa-card-overlay">
+                                <span class="cs-card-tag">LQA · Italian · 2025</span>
+                                <span class="cs-card-open">View Project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
                         </div>
                     <div class="project-info">
                         <div class="project-header">
@@ -221,8 +225,12 @@
 
                 <!-- Kiln -->
                 <a href="https://www.doublefine.com/games/kiln" target="_blank" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Kiln project page">
-                        <div class="project-image">
+                        <div class="project-image lqa-card-thumb">
                             <img src="Assets/Images/Kiln.webp" alt="Kiln" width="744" height="418" loading="lazy" decoding="async">
+                            <div class="lqa-card-overlay">
+                                <span class="cs-card-tag">LQA · Italian · 2026</span>
+                                <span class="cs-card-open">View Project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
                         </div>
                     <div class="project-info">
                         <div class="project-header">
@@ -466,8 +474,8 @@
     .cs-card { cursor: pointer; }
     .cs-card:focus-visible { outline: 2px solid var(--color-text); outline-offset: 4px; border-radius: 14px; }
     .cs-card-thumb { position: relative; overflow: hidden; }
-    .cs-card-thumb img { transition: transform .55s cubic-bezier(.25,.46,.45,.94), filter .4s ease; }
-    .cs-card:hover .cs-card-thumb img { transform: scale(1.06); filter: brightness(.85); }
+    .cs-card-thumb img { transition: transform 0.6s ease, filter 0.6s ease; }
+    .cs-card:hover .cs-card-thumb img { transform: none; filter: brightness(.88); }
     .cs-card-overlay {
         position: absolute; inset: 0;
         background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 50%);
@@ -479,6 +487,17 @@
     .cs-card:hover .cs-card-overlay { opacity: 1; transform: translateY(0); }
     .cs-card-tag { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 6px; }
     .cs-card-open { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -.01em; }
+    .lqa-card-thumb { position: relative; overflow: hidden; }
+    .lqa-card-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 52%);
+        display: flex; flex-direction: column; justify-content: flex-end; padding: 20px;
+        opacity: 0; transform: translateY(6px);
+        transition: opacity 220ms ease, transform 220ms ease;
+        pointer-events: none;
+    }
+    .project-card-link:hover .lqa-card-overlay,
+    .project-card-link:focus-visible .lqa-card-overlay { opacity: 1; transform: translateY(0); }
     .project-badge.cs-badge { font-size: 11px !important; padding: 3px 10px !important; background: transparent !important; }
     .project-badge.cs-badge::after { display: none !important; }
     </style>
