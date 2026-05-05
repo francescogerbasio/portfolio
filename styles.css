@@ -1641,14 +1641,18 @@ a {
 
 .project-header {
     display: flex;
-    align-items: center;
-    gap: 16px;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px 14px;
 }
 
 .project-title {
     font-size: clamp(22px, 1.95vw, 30px);
     font-weight: 650;
     line-height: 1.08;
+    flex: 1 1 auto;
+    min-width: 0;
+    text-wrap: balance;
 }
 
 .project-badge {
@@ -1664,6 +1668,9 @@ a {
     align-items: center;
     gap: 4px;
     background: rgba(255,255,255,0.76);
+    flex: 0 0 auto;
+    white-space: nowrap;
+    align-self: flex-start;
 }
 
 .project-badge::after {
