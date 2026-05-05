@@ -2116,45 +2116,57 @@ html {
 
 .category-nav-top {
     display: flex;
-    gap: 24px;
-    justify-content: flex-end;
-    margin-bottom: 40px;
-    padding-top: 40px;
-    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 48px;
+    padding-top: 48px;
 }
 
 .category-btn {
-    padding: 8px 0;
+    position: relative;
+    padding: 10px 22px;
     background: transparent;
     border: none;
-    border-bottom: 2px solid transparent;
-    font-size: 16px;
+    border-radius: 999px;
+    font-size: 15px;
     font-weight: 500;
     font-family: var(--font-body);
     color: var(--color-text-light);
     cursor: pointer;
-    transition: color 0.3s ease, border-bottom-color 0.3s ease;
+    transition:
+        color      0.25s ease,
+        background 0.25s ease,
+        transform  0.2s  cubic-bezier(0.34, 1.30, 0.64, 1);
 }
 
 .category-btn:hover {
     color: var(--color-text);
-    border-bottom-color: var(--color-text);
+    background: rgba(0,0,0,0.05);
 }
 
 .category-btn.active {
     color: var(--color-text);
     font-weight: 600;
-    border-bottom-color: var(--color-text);
+    background: rgba(0,0,0,0.08);
+}
+
+[data-theme="dark"] .category-btn:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+[data-theme="dark"] .category-btn.active {
+    background: rgba(255,255,255,0.12);
 }
 
 .category-subtitle {
     font-size: clamp(16px, 1.5vw, 18px);
-    line-height: 1.6;
+    line-height: 1.65;
     color: var(--color-text);
     font-weight: 400;
-    text-align: left;
-    max-width: 800px;
-    margin: 0 0 60px 0;
+    text-align: justify;
+    text-justify: inter-word;
+    max-width: 680px;
+    margin: 0 auto 64px;
     transition: opacity 0.3s ease;
 }
 
@@ -2297,12 +2309,13 @@ html {
 
 .editorial-card-all {
     position: absolute;
-    border-radius: 14px;
+    border-radius: 16px;
     overflow: hidden;
     cursor: pointer;
     opacity: 0;
     transform: scale(0.93) translateY(14px);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.4s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
 .editorial-card-all.reveal {
@@ -2316,82 +2329,71 @@ html {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 0.6s ease;
 }
 
 .editorial-card-all:hover {
     box-shadow:
-        0 8px  20px rgba(0,0,0,0.10),
-        0 20px 48px rgba(0,0,0,0.12);
+        0 12px 32px rgba(0,0,0,0.12),
+        0 24px 48px rgba(0,0,0,0.08);
     z-index: 5;
 }
 
 .editorial-card-all:hover img {
-    transform: scale(1.05);
+    filter: brightness(1.06);
 }
 
 .editorial-card-all-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        to bottom,
-        transparent 55%,
-        rgba(0,0,0,0.62) 100%
-    );
+    background: linear-gradient(to top, rgba(8, 10, 14, 0.72), transparent 55%);
     opacity: 0;
-    transition: opacity 0.28s ease;
+    transition: opacity 0.3s ease;
     display: flex;
     align-items: flex-end;
-    gap: 6px;
-    padding: 14px;
+    gap: 8px;
+    padding: 16px;
     pointer-events: none;
 }
 
 .editorial-card-all:hover .editorial-card-all-overlay { opacity: 1; }
 
 .editorial-card-all-flag {
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1;
 }
 
 .editorial-card-all-loc {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: white;
-    line-height: 1;
+    letter-spacing: -0.01em;
 }
 
 .travel-card {
     position: absolute;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
     cursor: pointer;
     opacity: 0;
     transform: scale(0.92) translateY(12px);
     transition:
-        transform  0.3s ease,
-        box-shadow 0.3s ease;
+        transform  0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        box-shadow 0.4s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
 .travel-card[data-anim-done] {
     opacity: 1;
     transform: none;
-}
-
-@keyframes card-reveal {
-    0%   { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-.travel-card.revealed {
-    will-change: transform, opacity;
-    animation: card-reveal 0.5s cubic-bezier(0.34, 1.20, 0.64, 1) forwards;
-    animation-delay: calc(var(--card-i, 0) * 0.045s);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
 }
 
 .travel-card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow:
+        0 12px 32px rgba(0,0,0,0.12),
+        0 24px 48px rgba(0,0,0,0.08);
     z-index: 10;
 }
 
@@ -2400,11 +2402,11 @@ html {
     height: auto;
     display: block;
     vertical-align: bottom;
-    transition: transform 0.3s ease;
+    transition: transform 0.6s ease;
 }
 
 .travel-card:hover img {
-    transform: scale(1.05);
+    filter: brightness(1.06);
 }
 
 .travel-card-location {
@@ -2412,17 +2414,17 @@ html {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 20px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 18px 16px;
+    background: linear-gradient(to top, rgba(8, 10, 14, 0.78), transparent 95%);
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 16px;
+    gap: 8px;
+    font-size: 14px;
     font-weight: 600;
     color: white;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(10px);
+    transform: translateY(8px);
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
     pointer-events: none;
 }
@@ -2435,12 +2437,13 @@ html {
 }
 
 .travel-card-location .flag {
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .travel-card-location .location-name {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
+    letter-spacing: -0.01em;
 }
 
 /* ===================================
@@ -2448,26 +2451,27 @@ html {
    =================================== */
 
 .music-category {
-    margin-bottom: 60px;
+    margin-bottom: 64px;
 }
 
 .music-category-title {
-    font-size: clamp(24px, 3vw, 32px);
+    font-size: clamp(22px, 2.6vw, 30px);
     font-weight: 600;
-    margin: 0 0 24px 0;
+    letter-spacing: -0.02em;
+    margin: 0 0 28px 0;
     color: var(--color-text);
 }
 
 .my-music-container {
     display: flex;
-    gap: 24px;
+    gap: 20px;
     flex-wrap: wrap;
 }
 
 .song-card {
     position: relative;
-    width: 300px;
-    height: 300px;
+    width: 280px;
+    height: 280px;
     perspective: 1200px;
     cursor: pointer;
     flex-shrink: 0;
@@ -2477,8 +2481,8 @@ html {
 }
 
 .song-card.flipped {
-    width: 480px;
-    height: 270px;
+    width: 440px;
+    height: 260px;
 }
 
 .song-card-inner {
@@ -2497,19 +2501,19 @@ html {
 .song-card-back {
     position: absolute;
     inset: 0;
-    border-radius: 18px;
+    border-radius: 20px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    clip-path: inset(0 round 18px);
+    clip-path: inset(0 round 20px);
 }
 
 .song-card-front {
-    background: #000;
+    background: #111;
     box-shadow:
-        0 1px 2px  rgba(0,0,0,0.10),
-        0 8px 24px rgba(0,0,0,0.14),
-        0 24px 48px rgba(0,0,0,0.10);
-    border: 0.5px solid rgba(255,255,255,0.12);
+        0 2px 6px  rgba(0,0,0,0.08),
+        0 12px 28px rgba(0,0,0,0.12),
+        0 24px 48px rgba(0,0,0,0.08);
+    border: 0.5px solid rgba(255,255,255,0.1);
     display: flex;
     flex-direction: column;
 }
@@ -2652,12 +2656,12 @@ html {
 
 .song-card-back {
     transform: rotateY(180deg);
-    background: #000;
+    background: #111;
     box-shadow:
-        0 1px 2px  rgba(0,0,0,0.10),
-        0 8px 24px rgba(0,0,0,0.14),
-        0 24px 48px rgba(0,0,0,0.10);
-    border: 0.5px solid rgba(255,255,255,0.12);
+        0 2px 6px  rgba(0,0,0,0.08),
+        0 12px 28px rgba(0,0,0,0.12),
+        0 24px 48px rgba(0,0,0,0.08);
+    border: 0.5px solid rgba(255,255,255,0.1);
 }
 
 #youtubePreview {
@@ -2675,7 +2679,7 @@ html {
     left: 0;
     right: 0;
     padding: 20px 16px 14px;
-    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+    background: linear-gradient(to top, rgba(8, 10, 14, 0.80) 0%, transparent 100%);
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -2750,18 +2754,18 @@ html {
     grid-template-columns: 1fr;
 
     box-shadow:
-        0 2px 4px  rgba(0,0,0,0.12),
-        0 8px 20px rgba(0,0,0,0.14);
+        0 4px 12px rgba(0,0,0,0.08),
+        0 8px 20px rgba(0,0,0,0.06);
 
     transition: transform 0.45s cubic-bezier(0.34, 1.30, 0.64, 1);
     animation: artistReveal 0.55s cubic-bezier(0.34, 1.20, 0.64, 1) both;
 }
 
 .artist-card:hover {
-    transform: translateY(-8px) scale(1.03);
+    transform: translateY(-8px);
     box-shadow:
-        0 8px 16px  rgba(0,0,0,0.16),
-        0 24px 48px rgba(0,0,0,0.18);
+        0 12px 32px rgba(0,0,0,0.12),
+        0 24px 48px rgba(0,0,0,0.08);
 }
 
 .artist-image,
@@ -2786,11 +2790,11 @@ html {
     object-fit: cover;
     object-position: top center;
     display: block;
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: filter 0.4s ease;
 }
 
 .artist-card:hover .artist-image img {
-    transform: scale(1.08);
+    filter: brightness(1.06);
 }
 
 .artist-overlay {
@@ -3128,21 +3132,21 @@ html {
     position: relative;
     width: 100%;
     aspect-ratio: 3/4;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
     background: #1a1a1a;
     box-shadow:
-        0 2px 4px  rgba(0,0,0,0.10),
-        0 8px 20px rgba(0,0,0,0.12);
+        0 4px 12px rgba(0,0,0,0.08),
+        0 8px 20px rgba(0,0,0,0.06);
     transition: transform 0.4s cubic-bezier(0.34, 1.20, 0.64, 1),
                 box-shadow 0.4s ease;
 }
 
 .game-card:hover .game-cover {
-    transform: translateY(-5px) scale(1.02);
+    transform: translateY(-5px);
     box-shadow:
-        0 8px 16px  rgba(0,0,0,0.16),
-        0 20px 40px rgba(0,0,0,0.16);
+        0 12px 32px rgba(0,0,0,0.12),
+        0 24px 48px rgba(0,0,0,0.08);
 }
 
 .game-cover img {
@@ -3150,20 +3154,20 @@ html {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: filter 0.4s ease;
 }
 
 .game-card:hover .game-cover img {
-    transform: scale(1.06);
+    filter: brightness(1.06);
 }
 
 .game-cover-overlay {
     position: absolute;
     inset: 0;
     background: linear-gradient(
-        to bottom,
-        transparent 50%,
-        rgba(0,0,0,0.35) 100%
+        to top,
+        rgba(8, 10, 14, 0.48) 0%,
+        transparent 50%
     );
     pointer-events: none;
 }
@@ -3203,11 +3207,11 @@ html {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.9);
+    background: rgba(8, 10, 14, 0.60);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 0.5px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.92);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -3232,9 +3236,9 @@ html {
 
 .saga-card.open .game-cover {
     box-shadow:
-        0 0 0 2px var(--color-text),
-        0 8px 16px rgba(0,0,0,0.16),
-        0 20px 40px rgba(0,0,0,0.16);
+        0 0 0 1.5px var(--color-text),
+        0 12px 32px rgba(0,0,0,0.12),
+        0 24px 48px rgba(0,0,0,0.08);
 }
 
 .saga-drawer {
@@ -3295,17 +3299,17 @@ html {
 
 .loading-state {
     text-align: center;
-    padding: 60px 20px;
+    padding: 80px 20px;
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     margin: 0 auto 16px;
-    border: 4px solid var(--color-border);
+    border: 3px solid var(--color-border);
     border-top-color: var(--color-text);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -3313,9 +3317,10 @@ html {
 }
 
 .loading-state p {
-    font-size: 16px;
+    font-size: 14px;
     color: var(--color-text-light);
     margin: 0;
+    font-weight: 400;
 }
 
 /* ===================================
