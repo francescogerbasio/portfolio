@@ -9,6 +9,14 @@ const gamesData = {
         { id: 'destiny2',       title: 'Destiny II',                    cover: 'Assets/Images/Games/destiny2.webp',       genre: 'FPS / MMO',   year: '2017' },
     ],
 
+    hero: {
+        image: 'Assets/Images/Games/ac-black-flag.webp',
+        title: "Assassin's Creed Black Flag",
+        subtitle: 'Action RPG',
+        actionLabel: 'Learn more',
+        actionLink: '#' // update as needed
+    },
+
     currentlyPlaying: [
         { id: 'stray',      title: 'Stray',               cover: 'Assets/Images/Games/stray.webp',      genre: 'Adventure' },
         { id: 'pokemon-za', title: 'Pokémon Legends: Z-A', cover: 'Assets/Images/Games/pokemon-za.webp', genre: 'RPG'       },

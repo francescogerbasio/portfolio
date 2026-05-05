@@ -58,6 +58,46 @@ document.querySelectorAll('.category-btn').forEach(btn => {
 
 let currentCountry = 'all';
 let travelData = [];
+
+// --- NEW: HERO RENDERERS (Plan A) ---
+function loadTravelHero(){
+    const travelHero = (window.travelConfig && window.travelConfig.hero) || null;
+    if(!travelHero) return;
+    const bg = document.getElementById('travelHeroBg');
+    const title = document.getElementById('travelHeroTitle');
+    const subtitle = document.getElementById('travelHeroSubtitle');
+    const flag = document.getElementById('travelHeroFlag');
+    const CTA = document.getElementById('travelHeroCTA');
+    if(bg) bg.innerHTML = `<img src="Assets/Images/Travel/${travelHero.folder}/${travelHero.heroImage || 1}.webp" alt="${travelHero.location}">`;
+    if(title) title.textContent = travelHero.location;
+    if(subtitle) subtitle.textContent = travelHero.subtitle || travelHero.description || travelHero.location;
+    if(flag) flag.textContent = travelHero.flag || '';
+    if(CTA){ CTA.textContent = travelHero.actionLabel || 'Explore'; CTA.onclick = () => { window.location.hash = travelHero.actionLink || '#travel-section'; }; }
+}
+
+function loadMusicHero(){
+    const hero = (window.musicData && window.musicData.hero) || null;
+    if(!hero) return;
+    const bg = document.getElementById('musicHeroBg');
+    const title = document.getElementById('musicHeroTitle');
+    const subtitle = document.getElementById('musicHeroSubtitle');
+    const CTA = document.getElementById('musicHeroCTA');
+    if(bg) bg.innerHTML = `<img src="${hero.image}" alt="${hero.title}">`;
+    if(title) title.textContent = hero.title;
+    if(subtitle) subtitle.textContent = hero.subtitle || '';
+    if(CTA){ CTA.textContent = hero.actionLabel || 'Listen'; CTA.href = hero.actionLink || '#'; CTA.style.display = 'inline-flex'; }
+}
+
+function loadGamingHero(){
+    const hero = (window.gamesData && window.gamesData.hero) || null;
+    if(!hero) return;
+    const bg = document.getElementById('gamingHeroBg');
+    const title = document.getElementById('gamingHeroTitle');
+    const subtitle = document.getElementById('gamingHeroSubtitle');
+    if(bg) bg.innerHTML = `<img src="${hero.image}" alt="${hero.title}">`;
+    if(title) title.textContent = hero.title;
+    if(subtitle) subtitle.textContent = hero.subtitle || '';
+}
 let travelHeroLoaded = false;
 
 function loadTravelHero() {
@@ -784,4 +824,8 @@ function buildGrid(container, games) {
 document.addEventListener('DOMContentLoaded', function() {
     loadTravelPhotos('all');
     travelDataLoaded = true;    document.getElementById('categorySubtitle').textContent = CATEGORY_SUBTITLES.travel;
+    // Load heroes (Plan A)
+    loadTravelHero();
+    loadMusicHero();
+    loadGamingHero();
 });

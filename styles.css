@@ -2201,6 +2201,20 @@ html {
     margin-bottom: 0;
     cursor: default;
 }
+/* Hero blocks for desktop redesign (Editorial Glass) */
+.fun-hero {
+    height: 58vh;
+}
+.fun-hero-bg img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center 60%;
+}
+.fun-hero-content {
+    padding: 40px; max-width: 720px;
+}
+.fun-hero-title { font-size: clamp(38px, 5vw, 72px); }
+.fun-hero-subtitle { font-size: clamp(16px, 1.8vw, 20px); }
+.fun-hero-flag { font-size: 28px; }
+.fun-hero-explore { background: rgba(255,255,255,0.15); color:#fff; }
 
 @media (max-width: 768px) {
     .fun-hero {
