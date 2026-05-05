@@ -59,86 +59,6 @@ document.querySelectorAll('.category-btn').forEach(btn => {
 let currentCountry = 'all';
 let travelData = [];
 
-// --- HERO RENDERERS (Plan A) ---
-function loadTravelHero(){
-    const travelHero = (window.travelConfig && window.travelConfig.hero) || null;
-    if(!travelHero) return;
-    
-    const heroEl = document.getElementById('travelHero');
-    const bgEl = document.getElementById('travelHeroBg');
-    const titleEl = document.getElementById('travelHeroTitle');
-    const subtitleEl = document.getElementById('travelHeroSubtitle');
-    const flagEl = document.getElementById('travelHeroFlag');
-    const ctaEl = document.getElementById('travelHeroCTA');
-
-    if(!heroEl || !bgEl) return;
-
-    if(bgEl) bgEl.innerHTML = `<img src="Assets/Images/Travel/${travelHero.folder}/${travelHero.heroImage || 1}.webp" alt="${travelHero.location}">`;
-    if(titleEl) titleEl.textContent = travelHero.location;
-    if(subtitleEl) subtitleEl.textContent = travelHero.subtitle || `${travelHero.photoCount} photos`;
-    if(flagEl) flagEl.textContent = travelHero.flag || '';
-    
-    if(ctaEl) {
-        ctaEl.textContent = travelHero.actionLabel || 'Explore';
-        ctaEl.addEventListener('click', () => {
-            document.getElementById('travelGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    }
-
-    heroEl.addEventListener('click', (e) => {
-        if (e.target === heroEl || e.target === bgEl || e.target.classList.contains('fun-hero-overlay')) {
-            activateCountryFilter(travelHero.country);
-            displayTravelPhotos(travelHero.country);
-            document.getElementById('travel-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
-    heroEl.classList.add('loaded');
-}
-
-function loadMusicHero(){
-    const hero = (window.musicData && window.musicData.hero) || null;
-    if(!hero) return;
-    
-    const heroEl = document.getElementById('musicHero');
-    const bgEl = document.getElementById('musicHeroBg');
-    const titleEl = document.getElementById('musicHeroTitle');
-    const subtitleEl = document.getElementById('musicHeroSubtitle');
-    const ctaEl = document.getElementById('musicHeroCTA');
-
-    if(!heroEl || !bgEl) return;
-
-    if(bgEl) bgEl.innerHTML = `<img src="${hero.image}" alt="${hero.title}">`;
-    if(titleEl) titleEl.textContent = hero.title;
-    if(subtitleEl) subtitleEl.textContent = hero.subtitle || '';
-    
-    if(ctaEl){
-        ctaEl.textContent = hero.actionLabel || 'Listen';
-        ctaEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-            window.open(hero.actionLink || '#', '_blank');
-        });
-    }
-    heroEl.classList.add('loaded');
-}
-
-function loadGamingHero(){
-    const hero = (window.gamesData && window.gamesData.hero) || null;
-    if(!hero) return;
-    
-    const heroEl = document.getElementById('gamingHero');
-    const bgEl = document.getElementById('gamingHeroBg');
-    const titleEl = document.getElementById('gamingHeroTitle');
-    const subtitleEl = document.getElementById('gamingHeroSubtitle');
-
-    if(!heroEl || !bgEl) return;
-
-    if(bgEl) bgEl.innerHTML = `<img src="${hero.image}" alt="${hero.title}">`;
-    if(titleEl) titleEl.textContent = hero.title;
-    if(subtitleEl) subtitleEl.textContent = hero.subtitle || '';
-    heroEl.classList.add('loaded');
-}
-
-
 async function loadTravelPhotos(country = 'all') {
     const grid = document.getElementById('travelGrid');
     grid.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading travel moments...</p></div>';
@@ -156,12 +76,11 @@ async function loadTravelPhotos(country = 'all') {
                     location: destination.location,
                     country: destination.country,
                     flag: destination.flag,
-                    ar: 1.3337
+                    ar: 1.3337   // all photos are 800×1067px
                 });
             }
         }
         travelData = allPhotos;
-        loadTravelHero();
         displayTravelPhotos(country);
     } catch (error) {
         console.error('Error loading travel photos:', error);
@@ -431,58 +350,11 @@ window.addEventListener('resize', () => {
 // MUSIC — Apple-grade flipping card
 // ===================================
 
-let musicHeroLoaded = false;
-
-function loadMusicHero() {
-    if (musicHeroLoaded) return;
-    musicHeroLoaded = true;
-
-    const song = window.musicData?.mySong;
-    if (!song) return;
-
-    const heroEl = document.getElementById('musicHero');
-    const bgEl = document.getElementById('musicHeroBg');
-    const titleEl = document.getElementById('musicHeroTitle');
-    const subtitleEl = document.getElementById('musicHeroSubtitle');
-    const producerEl = document.getElementById('musicHeroProducer');
-    const playBtn = document.getElementById('musicHeroPlay');
-    const flipZone = document.getElementById('musicHeroFlipZone');
-
-    if (!heroEl || !bgEl) return;
-
-    const artworkSrc = song.artwork;
-
-    titleEl.textContent = song.title;
-    subtitleEl.textContent = song.artist;
-    producerEl.textContent = song.producer;
-
-    bgEl.innerHTML = `<img src="${artworkSrc}" alt="${song.title}" loading="eager">`;
-    heroEl.classList.add('loaded');
-
-    playBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        window.open(song.youtubeUrl, '_blank');
-    });
-
-    flipZone.addEventListener('click', () => {
-        const card = document.getElementById('songCard');
-        if (card) card.click();
-    });
-
-    heroEl.addEventListener('click', (e) => {
-        if (e.target === heroEl || e.target === bgEl || e.target.classList.contains('fun-hero-overlay')) {
-            document.getElementById('myMusicContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
-}
-
 async function loadMySong() {
     const container = document.getElementById('myMusicContainer');
     try {
         const song = window.musicData?.mySong;
         if (!song) throw new Error('No song data');
-
-        loadMusicHero();
 
         const videoId    = song.youtubeEmbedId;
         const isOnline   = navigator.onLine;
@@ -819,8 +691,4 @@ function buildGrid(container, games) {
 document.addEventListener('DOMContentLoaded', function() {
     loadTravelPhotos('all');
     travelDataLoaded = true;    document.getElementById('categorySubtitle').textContent = CATEGORY_SUBTITLES.travel;
-    // Load heroes (Plan A)
-    loadTravelHero();
-    loadMusicHero();
-    loadGamingHero();
 });

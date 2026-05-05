@@ -3,14 +3,6 @@
 
 const musicData = {
     // Your music production
-    hero: {
-        image: 'Assets/Images/Music/Hero/hero-bronx.webp',
-        title: 'BRONX',
-        subtitle: 'Giovane Soldato feat. Cashmoneynobaby & K3Y',
-        producer: 'Produced by Francesco Gerbasio',
-        actionLabel: 'Listen on YouTube',
-        actionLink: 'https://youtu.be/d2nUN5jcyfE'
-    },
     mySong: {
         title: 'BRONX',
         artist: 'Giovane Soldato feat. Cashmoneynobaby & K3Y',
@@ -159,8 +151,6 @@ const musicData = {
         }
     ]
 };
-
-window.musicData = musicData;
 
 // Export for use in fun.js
 if (typeof module !== 'undefined' && module.exports) {

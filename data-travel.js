@@ -2,14 +2,6 @@
 // Configure your travel destinations - images load automatically from folders!
 
 const travelConfig = {
-    hero: {
-        folder: 'Wrocław',
-        location: 'Wrocław',
-        country: 'poland',
-        flag: '🇵🇱',
-        photoCount: 23,
-        heroImage: 1
-    },
     destinations: [
         // ==========================================
         // ADD YOUR CITIES HERE
@@ -76,8 +68,6 @@ const travelConfig = {
         // Add more cities here...
     ]
 };
-
-window.travelConfig = travelConfig;
 
 // Export for use in fun.js
 if (typeof module !== 'undefined' && module.exports) {
