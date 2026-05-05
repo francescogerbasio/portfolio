@@ -59,90 +59,85 @@ document.querySelectorAll('.category-btn').forEach(btn => {
 let currentCountry = 'all';
 let travelData = [];
 
-// --- NEW: HERO RENDERERS (Plan A) ---
+// --- HERO RENDERERS (Plan A) ---
 function loadTravelHero(){
     const travelHero = (window.travelConfig && window.travelConfig.hero) || null;
     if(!travelHero) return;
-    const bg = document.getElementById('travelHeroBg');
-    const title = document.getElementById('travelHeroTitle');
-    const subtitle = document.getElementById('travelHeroSubtitle');
-    const flag = document.getElementById('travelHeroFlag');
-    const CTA = document.getElementById('travelHeroCTA');
-    if(bg) bg.innerHTML = `<img src="Assets/Images/Travel/${travelHero.folder}/${travelHero.heroImage || 1}.webp" alt="${travelHero.location}">`;
-    if(title) title.textContent = travelHero.location;
-    if(subtitle) subtitle.textContent = travelHero.subtitle || travelHero.description || travelHero.location;
-    if(flag) flag.textContent = travelHero.flag || '';
-    if(CTA){ CTA.textContent = travelHero.actionLabel || 'Explore'; CTA.onclick = () => { window.location.hash = travelHero.actionLink || '#travel-section'; }; }
+    
+    const heroEl = document.getElementById('travelHero');
+    const bgEl = document.getElementById('travelHeroBg');
+    const titleEl = document.getElementById('travelHeroTitle');
+    const subtitleEl = document.getElementById('travelHeroSubtitle');
+    const flagEl = document.getElementById('travelHeroFlag');
+    const ctaEl = document.getElementById('travelHeroCTA');
+
+    if(!heroEl || !bgEl) return;
+
+    if(bgEl) bgEl.innerHTML = `<img src="Assets/Images/Travel/${travelHero.folder}/${travelHero.heroImage || 1}.webp" alt="${travelHero.location}">`;
+    if(titleEl) titleEl.textContent = travelHero.location;
+    if(subtitleEl) subtitleEl.textContent = travelHero.subtitle || `${travelHero.photoCount} photos`;
+    if(flagEl) flagEl.textContent = travelHero.flag || '';
+    
+    if(ctaEl) {
+        ctaEl.textContent = travelHero.actionLabel || 'Explore';
+        ctaEl.addEventListener('click', () => {
+            document.getElementById('travelGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    heroEl.addEventListener('click', (e) => {
+        if (e.target === heroEl || e.target === bgEl || e.target.classList.contains('fun-hero-overlay')) {
+            activateCountryFilter(travelHero.country);
+            displayTravelPhotos(travelHero.country);
+            document.getElementById('travel-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+    heroEl.classList.add('loaded');
 }
 
 function loadMusicHero(){
     const hero = (window.musicData && window.musicData.hero) || null;
     if(!hero) return;
-    const bg = document.getElementById('musicHeroBg');
-    const title = document.getElementById('musicHeroTitle');
-    const subtitle = document.getElementById('musicHeroSubtitle');
-    const CTA = document.getElementById('musicHeroCTA');
-    if(bg) bg.innerHTML = `<img src="${hero.image}" alt="${hero.title}">`;
-    if(title) title.textContent = hero.title;
-    if(subtitle) subtitle.textContent = hero.subtitle || '';
-    if(CTA){ CTA.textContent = hero.actionLabel || 'Listen'; CTA.href = hero.actionLink || '#'; CTA.style.display = 'inline-flex'; }
+    
+    const heroEl = document.getElementById('musicHero');
+    const bgEl = document.getElementById('musicHeroBg');
+    const titleEl = document.getElementById('musicHeroTitle');
+    const subtitleEl = document.getElementById('musicHeroSubtitle');
+    const ctaEl = document.getElementById('musicHeroCTA');
+
+    if(!heroEl || !bgEl) return;
+
+    if(bgEl) bgEl.innerHTML = `<img src="${hero.image}" alt="${hero.title}">`;
+    if(titleEl) titleEl.textContent = hero.title;
+    if(subtitleEl) subtitleEl.textContent = hero.subtitle || '';
+    
+    if(ctaEl){
+        ctaEl.textContent = hero.actionLabel || 'Listen';
+        ctaEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.open(hero.actionLink || '#', '_blank');
+        });
+    }
+    heroEl.classList.add('loaded');
 }
 
 function loadGamingHero(){
     const hero = (window.gamesData && window.gamesData.hero) || null;
     if(!hero) return;
-    const bg = document.getElementById('gamingHeroBg');
-    const title = document.getElementById('gamingHeroTitle');
-    const subtitle = document.getElementById('gamingHeroSubtitle');
-    if(bg) bg.innerHTML = `<img src="${hero.image}" alt="${hero.title}">`;
-    if(title) title.textContent = hero.title;
-    if(subtitle) subtitle.textContent = hero.subtitle || '';
-}
-let travelHeroLoaded = false;
+    
+    const heroEl = document.getElementById('gamingHero');
+    const bgEl = document.getElementById('gamingHeroBg');
+    const titleEl = document.getElementById('gamingHeroTitle');
+    const subtitleEl = document.getElementById('gamingHeroSubtitle');
 
-function loadTravelHero() {
-    if (travelHeroLoaded) return;
-    travelHeroLoaded = true;
+    if(!heroEl || !bgEl) return;
 
-    const hero = window.travelConfig?.hero;
-    if (!hero) return;
-
-    const heroEl = document.getElementById('travelHero');
-    const bgEl = document.getElementById('travelHeroBg');
-    const flagEl = document.getElementById('travelHeroFlag');
-    const titleEl = document.getElementById('travelHeroTitle');
-    const subtitleEl = document.getElementById('travelHeroSubtitle');
-    const exploreBtn = document.getElementById('travelHeroExplore');
-
-    if (!heroEl || !bgEl) return;
-
-    const imgSrc = `Assets/Images/Travel/${hero.folder}/${hero.heroImage}.webp`;
-
-    flagEl.textContent = hero.flag;
-    titleEl.textContent = hero.location;
-
-    const countryPhotos = travelData.filter(p => p.country === hero.country);
-    const totalPhotos = travelData.length;
-    subtitleEl.textContent = `${countryPhotos.length} photos from ${hero.location}`;
-
-    bgEl.innerHTML = `<img src="${imgSrc}" alt="${hero.location}" loading="eager">`;
+    if(bgEl) bgEl.innerHTML = `<img src="${hero.image}" alt="${hero.title}">`;
+    if(titleEl) titleEl.textContent = hero.title;
+    if(subtitleEl) subtitleEl.textContent = hero.subtitle || '';
     heroEl.classList.add('loaded');
-
-    exploreBtn.addEventListener('click', () => {
-        heroEl.scrollIntoView({ behavior: 'smooth' });
-        setTimeout(() => {
-            document.getElementById('travelGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 400);
-    });
-
-    heroEl.addEventListener('click', (e) => {
-        if (e.target === heroEl || e.target === bgEl || e.target.classList.contains('fun-hero-overlay')) {
-            activateCountryFilter(hero.country);
-            displayTravelPhotos(hero.country);
-            document.getElementById('travel-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
 }
+
 
 async function loadTravelPhotos(country = 'all') {
     const grid = document.getElementById('travelGrid');
