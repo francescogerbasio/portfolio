@@ -2186,6 +2186,305 @@ html {
     display: block;
 }
 
+/* ===================================
+   HERO SECTIONS
+   =================================== */
+
+.fun-hero {
+    position: relative;
+    width: 100%;
+    height: 65vh;
+    min-height: 420px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 0;
+    cursor: default;
+}
+
+@media (max-width: 768px) {
+    .fun-hero {
+        height: 50vh;
+        min-height: 320px;
+    }
+}
+
+.fun-hero.loaded {
+    animation: heroFadeIn 0.8s ease forwards;
+}
+
+@keyframes heroFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.fun-hero-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.fun-hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transform: scale(1.04);
+    transition: transform 8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fun-hero.loaded .fun-hero-bg img {
+    transform: scale(1);
+}
+
+.fun-hero-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.fun-hero-travel .fun-hero-overlay {
+    background:
+        linear-gradient(to top, rgba(8, 10, 14, 0.85) 0%, rgba(8, 10, 14, 0.4) 40%, transparent 60%),
+        linear-gradient(to right, rgba(8, 10, 14, 0.3) 0%, transparent 50%);
+}
+
+.fun-hero-music .fun-hero-overlay {
+    background:
+        linear-gradient(to top, rgba(8, 10, 14, 0.88) 0%, rgba(8, 10, 14, 0.35) 45%, transparent 65%),
+        linear-gradient(to left, rgba(8, 10, 14, 0.45) 0%, transparent 55%);
+}
+
+[data-theme="dark"] .fun-hero-travel .fun-hero-overlay {
+    background:
+        linear-gradient(to top, rgba(8, 10, 14, 0.92) 0%, rgba(8, 10, 14, 0.5) 40%, transparent 60%),
+        linear-gradient(to right, rgba(8, 10, 14, 0.4) 0%, transparent 50%);
+}
+
+[data-theme="dark"] .fun-hero-music .fun-hero-overlay {
+    background:
+        linear-gradient(to top, rgba(8, 10, 14, 0.94) 0%, rgba(8, 10, 14, 0.45) 45%, transparent 65%),
+        linear-gradient(to left, rgba(8, 10, 14, 0.5) 0%, transparent 55%);
+}
+
+.fun-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: clamp(24px, 5vw, 56px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 640px;
+}
+
+.fun-hero-content-split {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    max-width: 100%;
+    gap: 40px;
+}
+
+@media (max-width: 768px) {
+    .fun-hero-content-split {
+        flex-direction: column;
+        gap: 24px;
+    }
+}
+
+.fun-hero-text {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fun-hero-flag {
+    font-size: 32px;
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+}
+
+.fun-hero.loaded .fun-hero-flag {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fun-hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease 0.15s, transform 0.6s ease 0.15s;
+}
+
+.fun-hero.loaded .fun-hero-eyebrow {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fun-hero-title {
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 0;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease 0.25s, transform 0.6s ease 0.25s;
+}
+
+.fun-hero.loaded .fun-hero-title {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fun-hero-subtitle {
+    font-size: clamp(14px, 1.4vw, 17px);
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+    line-height: 1.5;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease 0.35s, transform 0.6s ease 0.35s;
+}
+
+.fun-hero.loaded .fun-hero-subtitle {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fun-hero-producer {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.35);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease 0.45s, transform 0.6s ease 0.45s;
+}
+
+.fun-hero.loaded .fun-hero-producer {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fun-hero-explore {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.2s ease;
+    opacity: 0;
+    transform: translateY(12px);
+    align-self: flex-start;
+}
+
+.fun-hero.loaded .fun-hero-explore {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s ease 0.55s, transform 0.6s ease 0.55s;
+}
+
+.fun-hero-explore:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(0) scale(1.03);
+}
+
+.fun-hero-explore:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.fun-hero-explore svg {
+    transition: transform 0.2s ease;
+}
+
+.fun-hero-explore:hover svg {
+    transform: translateY(2px);
+}
+
+.fun-hero-action {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.fun-hero-play {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.2s ease;
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+.fun-hero.loaded .fun-hero-play {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s;
+}
+
+.fun-hero-play:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(0) scale(1.03);
+}
+
+.fun-hero-play:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.fun-hero-play svg {
+    width: 18px;
+    height: 18px;
+}
+
+.fun-hero-flip-zone {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .fun-hero-flip-zone {
+        display: none;
+    }
+}
+
+/* ===================================
+   SECTION SPACING
+   =================================== */
+
 .fun-section {
     margin-bottom: 120px;
 }
@@ -2204,7 +2503,7 @@ html {
 .flag-navigation {
     display: flex;
     gap: 0;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
     overflow-x: auto;
     overflow-y: hidden;
     padding-bottom: 4px;
@@ -2452,6 +2751,10 @@ html {
 
 .music-category {
     margin-bottom: 64px;
+}
+
+.music-category:first-of-type {
+    margin-top: 40px;
 }
 
 .music-category-title {
@@ -2961,14 +3264,13 @@ html {
 .games-featured {
     position: relative;
     width: 100%;
-    aspect-ratio: 21/9;
-    border-radius: 20px;
+    min-height: 65vh;
     overflow: hidden;
     background: #0a0a0a;
 }
 
 @media (max-width: 768px) {
-    .games-featured { aspect-ratio: 4/3; border-radius: 14px; }
+    .games-featured { min-height: 50vh; }
 }
 
 .gf-slide {

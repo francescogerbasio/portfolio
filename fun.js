@@ -58,6 +58,51 @@ document.querySelectorAll('.category-btn').forEach(btn => {
 
 let currentCountry = 'all';
 let travelData = [];
+let travelHeroLoaded = false;
+
+function loadTravelHero() {
+    if (travelHeroLoaded) return;
+    travelHeroLoaded = true;
+
+    const hero = window.travelConfig?.hero;
+    if (!hero) return;
+
+    const heroEl = document.getElementById('travelHero');
+    const bgEl = document.getElementById('travelHeroBg');
+    const flagEl = document.getElementById('travelHeroFlag');
+    const titleEl = document.getElementById('travelHeroTitle');
+    const subtitleEl = document.getElementById('travelHeroSubtitle');
+    const exploreBtn = document.getElementById('travelHeroExplore');
+
+    if (!heroEl || !bgEl) return;
+
+    const imgSrc = `Assets/Images/Travel/${hero.folder}/${hero.heroImage}.webp`;
+
+    flagEl.textContent = hero.flag;
+    titleEl.textContent = hero.location;
+
+    const countryPhotos = travelData.filter(p => p.country === hero.country);
+    const totalPhotos = travelData.length;
+    subtitleEl.textContent = `${countryPhotos.length} photos from ${hero.location}`;
+
+    bgEl.innerHTML = `<img src="${imgSrc}" alt="${hero.location}" loading="eager">`;
+    heroEl.classList.add('loaded');
+
+    exploreBtn.addEventListener('click', () => {
+        heroEl.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+            document.getElementById('travelGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 400);
+    });
+
+    heroEl.addEventListener('click', (e) => {
+        if (e.target === heroEl || e.target === bgEl || e.target.classList.contains('fun-hero-overlay')) {
+            activateCountryFilter(hero.country);
+            displayTravelPhotos(hero.country);
+            document.getElementById('travel-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+}
 
 async function loadTravelPhotos(country = 'all') {
     const grid = document.getElementById('travelGrid');
@@ -76,11 +121,12 @@ async function loadTravelPhotos(country = 'all') {
                     location: destination.location,
                     country: destination.country,
                     flag: destination.flag,
-                    ar: 1.3337   // all photos are 800×1067px
+                    ar: 1.3337
                 });
             }
         }
         travelData = allPhotos;
+        loadTravelHero();
         displayTravelPhotos(country);
     } catch (error) {
         console.error('Error loading travel photos:', error);
@@ -350,11 +396,58 @@ window.addEventListener('resize', () => {
 // MUSIC — Apple-grade flipping card
 // ===================================
 
+let musicHeroLoaded = false;
+
+function loadMusicHero() {
+    if (musicHeroLoaded) return;
+    musicHeroLoaded = true;
+
+    const song = window.musicData?.mySong;
+    if (!song) return;
+
+    const heroEl = document.getElementById('musicHero');
+    const bgEl = document.getElementById('musicHeroBg');
+    const titleEl = document.getElementById('musicHeroTitle');
+    const subtitleEl = document.getElementById('musicHeroSubtitle');
+    const producerEl = document.getElementById('musicHeroProducer');
+    const playBtn = document.getElementById('musicHeroPlay');
+    const flipZone = document.getElementById('musicHeroFlipZone');
+
+    if (!heroEl || !bgEl) return;
+
+    const artworkSrc = song.artwork;
+
+    titleEl.textContent = song.title;
+    subtitleEl.textContent = song.artist;
+    producerEl.textContent = song.producer;
+
+    bgEl.innerHTML = `<img src="${artworkSrc}" alt="${song.title}" loading="eager">`;
+    heroEl.classList.add('loaded');
+
+    playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.open(song.youtubeUrl, '_blank');
+    });
+
+    flipZone.addEventListener('click', () => {
+        const card = document.getElementById('songCard');
+        if (card) card.click();
+    });
+
+    heroEl.addEventListener('click', (e) => {
+        if (e.target === heroEl || e.target === bgEl || e.target.classList.contains('fun-hero-overlay')) {
+            document.getElementById('myMusicContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+}
+
 async function loadMySong() {
     const container = document.getElementById('myMusicContainer');
     try {
         const song = window.musicData?.mySong;
         if (!song) throw new Error('No song data');
+
+        loadMusicHero();
 
         const videoId    = song.youtubeEmbedId;
         const isOnline   = navigator.onLine;
