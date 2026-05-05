@@ -1146,7 +1146,7 @@ a {
 
 
 @media (max-width: 768px) {
-    .timeline-desc, .sidebar-bio, .project-description, .cs-body, .about-text {
+    .timeline-desc, .sidebar-bio, .project-description, .cs-body, .about-text, .category-subtitle, .nda-modal-description, .loading-state p {
         text-align: justify;
         text-justify: inter-word;
     }
@@ -1167,6 +1167,15 @@ a {
     text-transform: none;
     color: var(--color-text);
     margin-bottom: 24px;
+}
+
+.sidebar-bio,
+.project-description,
+.category-subtitle,
+.nda-modal-description,
+.loading-state p {
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 .projects-grid {
