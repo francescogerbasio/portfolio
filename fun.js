@@ -186,7 +186,7 @@ function displayEditorial(grid) {
 
     grid.innerHTML = photos.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" loading="lazy" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" decoding="async">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -246,7 +246,7 @@ function displayMasonry(grid, country) {
 
     grid.innerHTML = filtered.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" loading="lazy" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" decoding="async">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -315,8 +315,10 @@ function layoutMasonry() {
         if (card.dataset.animDone) return;
         card.dataset.animDone = '1';
         if (instant) {
+            card.style.transition = 'none';
             card.style.opacity = '1';
             card.style.transform = 'none';
+            requestAnimationFrame(() => { card.style.transition = ''; });
         } else {
             card.classList.add('revealed');
         }
@@ -341,7 +343,7 @@ function layoutMasonry() {
                 doReveal();
             }
         });
-    }, { threshold: 0, rootMargin: '0px 0px 400px 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px 2000px 0px' });
 
     cards.forEach(card => { if (!card.dataset.animDone) observer.observe(card); });
 }
