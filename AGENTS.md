@@ -43,3 +43,11 @@
 - `_headers` contains Netlify cache/header rules.
 - `htaccess` contains Apache caching/compression rules.
 - If changing asset naming/caching strategy, update both files consistently.
+
+## Model Routing — task-type to preferred model
+| Task Type | Preferred Models | When to pick |
+|---|---|---|
+| **Plan** (architecture, design decisions) | GLM-5.1 / Kimi K2.6 | High-level strategy, component design, data flow |
+| **Build** (code generation, implementation) | Kimi K2.6 / DeepSeek V4 Pro | Generating new features, writing production code |
+| **Refactor / Debug** (routine edits) | DeepSeek V4 Flash | Small fixes, CSS tweaks, routine changes |
+| **Complex Debug** (deep investigation) | GLM-5.1 | Tracing runtime errors, concurrency, performance issues |

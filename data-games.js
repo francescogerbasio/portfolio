@@ -102,6 +102,8 @@ const gamesData = {
     ]
 };
 
+window.gamesData = gamesData;
+
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = gamesData;
 }
