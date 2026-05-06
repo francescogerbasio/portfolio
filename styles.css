@@ -1615,17 +1615,7 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-}
-
-.project-badge::after {
-    content: '';
-    width: 9px;
-    height: 9px;
-    background-image: url('Assets/Images/Arrow.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: inline-block;
+    align-self: flex-start;
 }
 
 .project-description {
@@ -3599,9 +3589,7 @@ html {
     background: oklch(18% 0.0000 0);
 }
 
-[data-theme="dark"] .project-badge::after {
-    filter: invert(1);
-}
+
 
 [data-theme="dark"] .social-links img {
     filter: invert(1);

@@ -73,7 +73,3 @@
     padding: 3px 10px !important;
     background: transparent !important;
 }
-
-.project-badge.cs-badge::after {
-    display: none !important;
-}
