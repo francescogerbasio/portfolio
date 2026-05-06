@@ -186,7 +186,7 @@ function displayEditorial(grid) {
 
     grid.innerHTML = photos.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" loading="lazy" decoding="async">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -246,7 +246,7 @@ function displayMasonry(grid, country) {
 
     grid.innerHTML = filtered.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" loading="lazy" decoding="async">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -321,6 +321,9 @@ function layoutMasonry() {
             requestAnimationFrame(() => { card.style.transition = ''; });
         } else {
             card.classList.add('revealed');
+            card.addEventListener('animationend', () => {
+                card.classList.add('anim-complete');
+            }, { once: true });
         }
     }
 
