@@ -645,7 +645,7 @@ function buildFeatured(games) {
 
 // ── Game grid ──────────────────────────────────────────────
 function buildGrid(container, games) {
-    container.innerHTML = games.map(g => {
+    container.innerHTML = games.map((g, i) => {
         if (g.isSaga) {
             return `
                 <div class="game-card saga-card" data-id="${g.id}" style="--i: ${i}">
