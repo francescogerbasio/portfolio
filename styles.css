@@ -2226,8 +2226,13 @@ html {
 
 .editorial-card-all.reveal {
     will-change: transform, opacity;
-    animation: card-reveal 0.38s cubic-bezier(0.34, 1.20, 0.64, 1) forwards;
+    animation: editorial-reveal 0.38s cubic-bezier(0.34, 1.20, 0.64, 1) forwards;
     animation-delay: calc(var(--i, 0) * 0.025s);
+}
+
+@keyframes editorial-reveal {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 .editorial-card-all img {
@@ -2288,23 +2293,18 @@ html {
     opacity: 0;
     transform: scale(0.92) translateY(12px);
 }
-.travel-card.revealed {
-    will-change: transform, opacity;
-    animation: card-reveal 0.5s cubic-bezier(0.34, 1.20, 0.64, 1) forwards;
-    animation-delay: calc(var(--card-i, 0) * 0.045s);
-}
-
-@keyframes card-reveal {
-    0%   { opacity: 0; transform: scale(0.92) translateY(12px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.travel-card.revealed.anim-complete {
-    animation: none;
+.travel-card[data-anim-done] {
     opacity: 1;
     transform: none;
 }
 
+@media (hover: hover) {
+    .travel-card:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: var(--card-shadow-hover);
+        z-index: 10;
+    }
+}
 
 
 @media (hover: hover) {
@@ -3683,8 +3683,6 @@ main.pt-leave,
     .category-section.active,
     .category-section.exiting,
     .travel-card,
-    .travel-card.revealed,
-    .travel-card.revealed.anim-complete,
     .artist-card,
     .artists-grid.revealed .artist-card,
     .game-card,

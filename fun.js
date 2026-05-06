@@ -313,17 +313,10 @@ function layoutMasonry() {
 
     function revealCard(card, instant) {
         if (card.dataset.animDone) return;
-        card.dataset.animDone = '1';
         if (instant) {
-            card.style.transition = 'none';
-            card.style.opacity = '1';
-            card.style.transform = 'none';
-            requestAnimationFrame(() => { card.style.transition = ''; });
+            card.dataset.animDone = '1';
         } else {
-            card.classList.add('revealed');
-            card.addEventListener('animationend', () => {
-                card.classList.add('anim-complete');
-            }, { once: true });
+            card.dataset.animDone = '1';
         }
     }
 
