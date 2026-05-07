@@ -1596,13 +1596,15 @@ a {
 
 .project-header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 16px;
 }
 
 .project-title {
     font-size: clamp(24px, 2vw, 32px);
     font-weight: 600;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .project-badge {
@@ -1614,6 +1616,8 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .project-description {
@@ -1625,7 +1629,6 @@ a {
 .project-meta {
     font-size: clamp(16px, 1.3vw, 20px);
     font-weight: 600;
-    margin-top: 6px;
 }
 
 /* ===================================
