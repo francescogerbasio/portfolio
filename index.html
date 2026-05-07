@@ -3,7 +3,13 @@
 <head>
     <script src="theme.js"></script>
     <script src="transitions.js" defer></script>
+    <script src="navigation-ui.js" defer></script>
     <meta charset="UTF-8">
+    <!-- Favicons -->
+    <link rel="icon" href="Assets/Images/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="Assets/Images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="Assets/Images/apple-touch-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="Assets/Images/apple-touch-icon-precomposed.png">
     <meta name="theme-color" id="themeColorMeta" content="#fdf5f6">
     <meta name="description" content="UX/UI Designer and LQA Specialist based in Madrid. Case studies in product design, accessibility, and interaction design.">
 
@@ -176,10 +182,14 @@
             
             <div class="projects-grid">
                 <!-- Red Dead Redemption Project - NDA Protected -->
-                <div class="project-card nda-protected" data-project-id="red-dead">
+                <div class="project-card featured-release-card clickable-card nda-protected" data-project-id="red-dead" role="button" tabindex="0" aria-label="Open protected Red Dead Redemption project">
                     <a href="#" data-href="https://www.rockstargames.com/reddeadredemption" target="_blank" class="project-image-link nda-link">
-                        <div class="project-image">
+                        <div class="project-image lqa-card-thumb">
                             <img src="Assets/Images/RedDeadRedemption.webp" alt="Red Dead Redemption" width="744" height="418" loading="lazy" decoding="async">
+                            <div class="lqa-card-overlay red-dead-lqa-overlay" aria-hidden="true">
+                                <span class="cs-card-tag">LQA · Italian · 2025</span>
+                                <span class="cs-card-open">View Project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
                             <!-- NDA Lock Overlay -->
                             <div class="nda-overlay">
                                 <div class="nda-lock-icon">🔒</div>
@@ -198,13 +208,15 @@
                     </div>
                 </div>
 
-                                <!-- Dead Take -->
-                <div class="project-card">
-                    <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" class="project-image-link">
-                        <div class="project-image">
+                <!-- Dead Take -->
+                <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Dead Take project page">
+                        <div class="project-image lqa-card-thumb">
                             <img src="Assets/Images/DeadTake.webp" alt="Dead Take" width="744" height="418" loading="lazy" decoding="async">
+                            <div class="lqa-card-overlay">
+                                <span class="cs-card-tag">LQA · Italian · 2025</span>
+                                <span class="cs-card-open">View Project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
                         </div>
-                    </a>
                     <div class="project-info">
                         <div class="project-header">
                             <h3 class="project-title">Dead Take</h3>
@@ -213,7 +225,26 @@
                         <p class="project-description">Worked on the Italian localization of the horror game Dead Take, with a focus on linguistic accuracy, atmosphere, and player immersion.</p>
                         <p class="project-meta">Surgent Studios - 2025</p>
                     </div>
-                </div>
+                </a>
+
+                <!-- Kiln -->
+                <a href="https://www.doublefine.com/games/kiln" target="_blank" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Kiln project page">
+                        <div class="project-image lqa-card-thumb">
+                            <img src="Assets/Images/Kiln.webp" alt="Kiln" width="744" height="418" loading="lazy" decoding="async">
+                            <div class="lqa-card-overlay">
+                                <span class="cs-card-tag">LQA · Italian · 2026</span>
+                                <span class="cs-card-open">View Project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            </div>
+                        </div>
+                    <div class="project-info">
+                        <div class="project-header">
+                            <h3 class="project-title">Kiln</h3>
+                            <span class="project-badge">SHIPPED</span>
+                        </div>
+                        <p class="project-description">Worked on the Italian localization of Kiln, with a focus on linguistic accuracy, consistency, and preserving the tone of the experience.</p>
+                        <p class="project-meta">Double Fine Productions - 2026</p>
+                    </div>
+                </a>
 
             </div>
         </section>
@@ -225,23 +256,41 @@
                         aria-expanded="false"
                         aria-controls="accordionContent">
                     <span class="accordion-title">Other Projects I've Contributed To</span>
-                    <span class="accordion-count">(12)</span>
+                    <span class="accordion-count">(15)</span>
                     <span class="accordion-icon" id="accordionIcon" aria-hidden="true">+</span>
                 </button>
                 <div class="accordion-content" id="accordionContent">
                     <div class="projects-list">
-                        <div class="project-list-item nda-protected-item" data-project-id="seven-deadly-sins-origin" data-release-date="2026-03-23">
-                            <span class="project-name nda-hidden-text">The Seven Deadly Sins: Origin</span>
+                        <a href="https://7origin.netmarble.com/en/update" target="_blank" class="project-list-item clickable">
+                            <span class="project-name">The Seven Deadly Sins: Origin</span>
                             <span class="project-divider">·</span>
-                            <span class="project-studio nda-hidden-text">Netmarble</span>
+                            <span class="project-studio">Netmarble</span>
                             <span class="project-year">2026</span>
-                        </div>
-                        <div class="project-list-item nda-protected-item" data-project-id="little-nightmares-vr" data-release-date="2026-04-24">
-                            <span class="project-name nda-hidden-text">Little Nightmares VR: Altered Echoes</span>
+                        </a>
+                        <a href="https://en.bandainamcoent.eu/little-nightmares/little-nightmares-vr-altered-echoes" target="_blank" class="project-list-item clickable">
+                            <span class="project-name">Little Nightmares VR: Altered Echoes</span>
                             <span class="project-divider">·</span>
-                            <span class="project-studio nda-hidden-text">Iconik Studio</span>
+                            <span class="project-studio">Iconik Studio</span>
                             <span class="project-year">2026</span>
-                        </div>
+                        </a>
+                        <a href="https://store.steampowered.com/app/3672400/Farever/" target="_blank" class="project-list-item clickable">
+                            <span class="project-name">Farever</span>
+                            <span class="project-divider">·</span>
+                            <span class="project-studio">Shiro Games</span>
+                            <span class="project-year">2026</span>
+                        </a>
+                        <a href="https://nba.2k.com/en-US/2k26/" target="_blank" class="project-list-item clickable">
+                            <span class="project-name">NBA 2K26</span>
+                            <span class="project-divider">·</span>
+                            <span class="project-studio">Visual Concepts</span>
+                            <span class="project-year">2026</span>
+                        </a>
+                        <a href="https://store.steampowered.com/app/1614440/B_Path_of_the_Teal_Lotus/" target="_blank" class="project-list-item clickable">
+                            <span class="project-name">Bō: Path of the Teal Lotus</span>
+                            <span class="project-divider">·</span>
+                            <span class="project-studio">Squid Shock Studios, Christopher Stair, Trevor Youngquist</span>
+                            <span class="project-year">2025</span>
+                        </a>
                         <a href="https://en.bandainamcoent.eu/dragon-ball/dragon-ball-sparking-zero" target="_blank" class="project-list-item clickable">
                             <span class="project-name">Dragon Ball: Sparking! Zero</span>
                             <span class="project-divider">·</span>
@@ -312,7 +361,7 @@
             <div class="projects-grid">
 
                 <!-- Cines Callao -->
-                <div class="project-card cs-card" id="card-callao" role="button" tabindex="0" aria-label="Open Cines Callao case study">
+                <div class="project-card cs-card featured-release-card clickable-card" id="card-callao" role="button" tabindex="0" aria-label="Open Cines Callao case study">
                     <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#1a0a0c 0%,#2d0a0e 100%);">
                         <img src="Assets/Images/CinesCallao.webp" alt="Cines Callao" width="744" height="418" loading="eager" decoding="async">
                         <div class="cs-card-overlay">
@@ -331,7 +380,7 @@
                 </div>
 
                 <!-- Abruzzo Experience -->
-                <div class="project-card cs-card" id="card-abruzzo" role="button" tabindex="0" aria-label="Open Abruzzo Experience case study">
+                <div class="project-card cs-card featured-release-card clickable-card" id="card-abruzzo" role="button" tabindex="0" aria-label="Open Abruzzo Experience case study">
                     <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#0a1a0f 0%,#0d2416 100%);">
                         <img src="Assets/Images/AbruzzoExperience.webp" alt="Abruzzo Experience" width="744" height="418" loading="eager" decoding="async">
                         <div class="cs-card-overlay">
@@ -350,7 +399,7 @@
                 </div>
 
                 <!-- Dicarlobus -->
-                <div class="project-card cs-card" id="card-dicarlobus" role="button" tabindex="0" aria-label="Open Dicarlobus case study">
+                <div class="project-card cs-card featured-release-card clickable-card" id="card-dicarlobus" role="button" tabindex="0" aria-label="Open Dicarlobus case study">
                     <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#1a0e00 0%,#261500 100%);">
                         <img src="Assets/Images/DicarlobusRedesign.webp" alt="Dicarlobus Redesign" width="744" height="418" loading="eager" decoding="async">
                         <div class="cs-card-overlay">
@@ -369,7 +418,7 @@
                 </div>
 
                 <!-- QuickCheckout -->
-                <div class="project-card cs-card" id="card-quickcheckout" role="button" tabindex="0" aria-label="Open QuickCheckout case study">
+                <div class="project-card cs-card featured-release-card clickable-card" id="card-quickcheckout" role="button" tabindex="0" aria-label="Open QuickCheckout case study">
                     <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#040c1a 0%,#0a1a2e 100%);">
                         <img src="Assets/Images/QuickCheckout.webp" alt="QuickCheckout" width="744" height="418" loading="eager" decoding="async">
                         <div class="cs-card-overlay">
@@ -382,7 +431,7 @@
                             <h3 class="project-title">QuickCheckout</h3>
                             <span class="project-badge cs-badge" style="border-color:#2563eb;color:#2563eb;">CASE STUDY</span>
                         </div>
-                        <p class="project-description">Redesigned e-commerce checkout experience. Compressed 4 steps into 1 view. Form errors reduced by 42% through inline validation.</p>
+                        <p class="project-description">Transformed the checkout flow by merging four steps into a single, streamlined view. Inline validation reduced form errors by forty-two percent, making the path to payment clearer and faster.</p>
                         <p class="project-meta">Personal Project · 2024</p>
                     </div>
                 </div>
@@ -424,27 +473,6 @@
     </div>
     <!-- Version indicator -->
 
-    <!-- ── Case Study Card Styles ── -->
-    <style>
-    .cs-card { cursor: pointer; }
-    .cs-card:focus-visible { outline: 2px solid var(--color-text); outline-offset: 4px; border-radius: 14px; }
-    .cs-card-thumb { position: relative; overflow: hidden; }
-    .cs-card-thumb img { transition: transform .55s cubic-bezier(.25,.46,.45,.94), filter .4s ease; }
-    .cs-card:hover .cs-card-thumb img { transform: scale(1.06); filter: brightness(.85); }
-    .cs-card-overlay {
-        position: absolute; inset: 0;
-        background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 50%);
-        display: flex; flex-direction: column; justify-content: flex-end; padding: 20px;
-        opacity: 0; transform: translateY(6px);
-        transition: opacity .3s ease, transform .3s cubic-bezier(.34,1.2,.64,1);
-        pointer-events: none;
-    }
-    .cs-card:hover .cs-card-overlay { opacity: 1; transform: translateY(0); }
-    .cs-card-tag { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 6px; }
-    .cs-card-open { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -.01em; }
-    .project-badge.cs-badge { font-size: 11px !important; padding: 3px 10px !important; background: transparent !important; }
-    .project-badge.cs-badge::after { display: none !important; }
-    </style>
     <!-- ═══════════════════════════════════════════════════════
          CASE STUDY OVERLAYS
     ═══════════════════════════════════════════════════════ -->

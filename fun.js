@@ -9,15 +9,18 @@ const CATEGORY_SUBTITLES = {
 };
 
 let currentCategory = 'travel';
+let switching = false;
 
 function switchCategory(category) {
-    currentCategory = category;
+    if (switching) return;
+    switching = true;
+
+    const currentSection = document.querySelector('.category-section.active');
+    if (currentSection) currentSection.classList.add('exiting');
+
     const subtitle = document.getElementById('categorySubtitle');
     subtitle.style.opacity = '0';
-    setTimeout(() => {
-        subtitle.textContent = CATEGORY_SUBTITLES[category];
-        subtitle.style.opacity = '1';
-    }, 150);
+
     document.querySelectorAll('.category-btn').forEach(btn => {
         btn.classList.remove('active');
         btn.setAttribute('aria-selected', 'false');
@@ -25,21 +28,37 @@ function switchCategory(category) {
     const activeBtn = document.querySelector(`[data-category="${category}"]`);
     activeBtn.classList.add('active');
     activeBtn.setAttribute('aria-selected', 'true');
-    document.querySelectorAll('.category-section').forEach(s => {
-        s.classList.remove('active');
-        s.setAttribute('hidden', '');
-    });
-    const activePanel = document.getElementById(`${category}-section`);
-    activePanel.classList.add('active');
-    activePanel.removeAttribute('hidden');
 
-    if (category === 'travel' && !travelDataLoaded) {
-        loadTravelPhotos('all'); travelDataLoaded = true;
-    } else if (category === 'music' && !musicDataLoaded) {
-        loadMySong(); loadFavoriteArtists(); musicDataLoaded = true;
-    } else if (category === 'gaming' && !gamingDataLoaded) {
-        loadGames(); gamingDataLoaded = true;
-    }
+    setTimeout(() => {
+        document.querySelectorAll('.category-section').forEach(s => {
+            s.classList.remove('active', 'exiting');
+            s.setAttribute('hidden', '');
+        });
+        const nextSection = document.getElementById(`${category}-section`);
+        nextSection.removeAttribute('hidden');
+        nextSection.classList.add('active');
+
+        subtitle.textContent = CATEGORY_SUBTITLES[category];
+        subtitle.style.opacity = '1';
+
+        switching = false;
+
+        if (category === 'travel' && !travelDataLoaded) {
+            loadTravelPhotos('all');
+            travelDataLoaded = true;
+        } else if (category === 'music' && !musicDataLoaded) {
+            loadMySong();
+            loadFavoriteArtists();
+            musicDataLoaded = true;
+        } else if (category === 'gaming' && !gamingDataLoaded) {
+            loadGames();
+            gamingDataLoaded = true;
+        }
+    }, 180);
+
+    setTimeout(() => {
+        document.querySelectorAll('.category-section.exiting').forEach(s => s.classList.remove('exiting'));
+    }, 500);
 }
 
 let travelDataLoaded = false;
@@ -58,20 +77,14 @@ document.querySelectorAll('.category-btn').forEach(btn => {
 
 let currentCountry = 'all';
 let travelData = [];
-let travelConfig = null;
 
 async function loadTravelPhotos(country = 'all') {
     const grid = document.getElementById('travelGrid');
     grid.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading travel moments...</p></div>';
     try {
-        if (!travelConfig) {
-            const response = await fetch('data-travel.js');
-            const scriptText = await response.text();
-            const tempFunc = new Function(scriptText + '; return travelConfig;');
-            travelConfig = tempFunc();
-            if (!travelConfig || !travelConfig.destinations) throw new Error('Invalid travel config');
-            generateFlagButtons();
-        }
+        const travelConfig = window.travelConfig;
+        if (!travelConfig || !travelConfig.destinations) throw new Error('Missing travelConfig from data-travel.js');
+        generateFlagButtons();
         const allPhotos = [];
         for (const destination of travelConfig.destinations) {
             const folderPath = `Assets/Images/Travel/${destination.folder}`;
@@ -98,6 +111,8 @@ function generateFlagButtons() {
     const flagNav = document.getElementById('flagNavigation');
     const isWindows = navigator.platform.toLowerCase().includes('win');
     const countries = {};
+    const travelConfig = window.travelConfig;
+    if (!travelConfig || !travelConfig.destinations) return;
     travelConfig.destinations.forEach(dest => {
         if (!countries[dest.country]) {
             countries[dest.country] = {
@@ -267,7 +282,7 @@ function layoutMasonry() {
     const cards = Array.from(grid.querySelectorAll('.travel-card'));
     const gap = 12;
     const w = window.innerWidth;
-    const columns = w > 1400 ? 4 : w > 1024 ? 3 : 2;
+    const columns = w > 1400 ? 4 : w > 1024 ? 3 : w > 600 ? 2 : 1;
     const gridWidth = grid.offsetWidth;
     const colW = (gridWidth - gap * (columns - 1)) / columns;
     const colHeights = Array(columns).fill(0);
@@ -298,20 +313,10 @@ function layoutMasonry() {
 
     function revealCard(card, instant) {
         if (card.dataset.animDone) return;
-        card.dataset.animDone = '1';
         if (instant) {
-            // Already in viewport on load — just show, no animation
-            card.style.opacity = '1';
-            card.style.transform = 'none';
+            card.dataset.animDone = '1';
         } else {
-            // Scrolled into view — animate in
-            void card.offsetWidth;
-            card.classList.add('revealed');
-            card.addEventListener('animationend', () => {
-                card.style.opacity = '1';
-                card.style.transform = 'none';
-                card.classList.remove('revealed');
-            }, { once: true });
+            card.dataset.animDone = '1';
         }
     }
 
@@ -334,7 +339,7 @@ function layoutMasonry() {
                 doReveal();
             }
         });
-    }, { threshold: 0, rootMargin: '0px 0px 400px 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px 2000px 0px' });
 
     cards.forEach(card => { if (!card.dataset.animDone) observer.observe(card); });
 }
@@ -357,11 +362,7 @@ window.addEventListener('resize', () => {
 async function loadMySong() {
     const container = document.getElementById('myMusicContainer');
     try {
-        const response   = await fetch('data-music.js');
-        const scriptText = await response.text();
-        const tempFunc   = new Function(scriptText + '; return musicData;');
-        const musicData  = tempFunc();
-        const song = musicData?.mySong;
+        const song = window.musicData?.mySong;
         if (!song) throw new Error('No song data');
 
         const videoId    = song.youtubeEmbedId;
@@ -503,16 +504,12 @@ async function loadFavoriteArtists() {
     grid.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Loading artists...</p></div>';
 
     try {
-        const response   = await fetch('data-music.js');
-        const scriptText = await response.text();
-        const tempFunc   = new Function(scriptText + '; return musicData;');
-        const musicData  = tempFunc();
-        const artists    = musicData?.artists || [];
+        const artists = window.musicData?.artists || [];
         if (artists.length === 0) throw new Error('No artists data');
 
         // Set src directly in template — simple and reliable
         grid.innerHTML = artists.map((artist, i) => `
-            <div class="artist-card" data-index="${i}">
+            <div class="artist-card" data-index="${i}" style="--i: ${i}">
                 <div class="artist-image">
                     ${artist.image
                         ? `<img src="${artist.image}" alt="${artist.name}" onerror="this.style.display='none'">`
@@ -526,6 +523,7 @@ async function loadFavoriteArtists() {
                 </div>
             </div>
         `).join('');
+        requestAnimationFrame(() => grid.classList.add('revealed'));
 
         // Click opens Spotify search
         grid.querySelectorAll('.artist-card').forEach((card, i) => {
@@ -551,10 +549,8 @@ async function loadFavoriteArtists() {
 async function loadGames() {
     const section = document.getElementById('gaming-section');
     try {
-        const response  = await fetch('data-games.js');
-        const scriptText = await response.text();
-        const tempFunc  = new Function(scriptText + '; return gamesData;');
-        const gamesData = tempFunc();
+        const gamesData = window.gamesData;
+        if (!gamesData) throw new Error('Missing gamesData from data-games.js');
 
         section.innerHTML = `
             <!-- Featured Hero -->
@@ -647,10 +643,10 @@ function buildFeatured(games) {
 
 // ── Game grid ──────────────────────────────────────────────
 function buildGrid(container, games) {
-    container.innerHTML = games.map(g => {
+    container.innerHTML = games.map((g, i) => {
         if (g.isSaga) {
             return `
-                <div class="game-card saga-card" data-id="${g.id}">
+                <div class="game-card saga-card" data-id="${g.id}" style="--i: ${i}">
                     <div class="game-cover">
                         <img src="${g.cover}" alt="${g.title}" loading="lazy">
                         <div class="game-cover-overlay"></div>
@@ -674,7 +670,7 @@ function buildGrid(container, games) {
             `;
         }
         return `
-            <div class="game-card" data-id="${g.id}">
+            <div class="game-card" data-id="${g.id}" style="--i: ${i}">
                 <div class="game-cover">
                     <img src="${g.cover}" alt="${g.title}" loading="lazy">
                     <div class="game-cover-overlay"></div>
@@ -686,6 +682,7 @@ function buildGrid(container, games) {
             </div>
         `;
     }).join('');
+    requestAnimationFrame(() => container.classList.add('revealed'));
 
     // Saga expand/collapse
     container.querySelectorAll('.saga-card').forEach(card => {
@@ -703,49 +700,6 @@ function buildGrid(container, games) {
 // ===================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    const hamburgerBtn   = document.getElementById('hamburgerBtn');
-    const mobileMenu     = document.getElementById('mobileMenu');
-    const mobileNavLinks = document.querySelectorAll('.mobile-menu .nav-link');
-
-    if (hamburgerBtn) {
-        hamburgerBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const isOpen = mobileMenu.classList.contains('active');
-            this.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            this.setAttribute('aria-expanded', String(!isOpen));
-            this.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
-            mobileMenu.setAttribute('aria-hidden', String(isOpen));
-        });
-    }
-    document.addEventListener('click', function(e) {
-        if (mobileMenu?.classList.contains('active')) {
-            if (!mobileMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
-                hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
-                mobileMenu.setAttribute('aria-hidden', 'true');
-            }
-        }
-    });
-    mobileNavLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            hamburgerBtn.classList.remove('active');
-            mobileMenu.classList.remove('active');
-            hamburgerBtn.setAttribute('aria-expanded', 'false');
-            hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
-            mobileMenu.setAttribute('aria-hidden', 'true');
-        });
-    });
-
-    const navigation = document.querySelector('.navigation');
-    function handleScroll() {
-        navigation.classList.toggle('scrolled', window.scrollY > 20);
-    }
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-
     loadTravelPhotos('all');
     travelDataLoaded = true;    document.getElementById('categorySubtitle').textContent = CATEGORY_SUBTITLES.travel;
 });

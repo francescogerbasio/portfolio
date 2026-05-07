@@ -5,46 +5,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     const navLinks = document.querySelectorAll('.nav-link');
-    const navigation = document.querySelector('.navigation');
     let navigatingAway = false; // set true when navigating to another page
-    
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
     const mobileNavLinks = document.querySelectorAll('.mobile-menu .nav-link');
-    
-    if (hamburgerBtn) {
-        hamburgerBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const isOpen = mobileMenu.classList.contains('active');
-            this.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-            this.setAttribute('aria-expanded', String(!isOpen));
-            this.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
-            mobileMenu.setAttribute('aria-hidden', String(isOpen));
-        });
-    }
-    
-    document.addEventListener('click', function(e) {
-        if (mobileMenu && mobileMenu.classList.contains('active')) {
-            if (!mobileMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-                hamburgerBtn.setAttribute('aria-expanded', 'false');
-                hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
-                mobileMenu.setAttribute('aria-hidden', 'true');
-            }
-        }
-    });
-    
-    mobileNavLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            hamburgerBtn.classList.remove('active');
-            mobileMenu.classList.remove('active');
-            hamburgerBtn.setAttribute('aria-expanded', 'false');
-            hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
-            mobileMenu.setAttribute('aria-hidden', 'true');
-        });
-    });
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -63,27 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ===================================
-    // FROSTED GLASS NAV ON SCROLL
-    // (single rAF-throttled listener — no layout reads)
-    // ===================================
-
-    let scrollScheduled = false;
-    function onScroll() {
-        if (scrollScheduled) return;
-        scrollScheduled = true;
-        requestAnimationFrame(() => {
-            navigation.classList.toggle('scrolled', window.scrollY > 20);
-            scrollScheduled = false;
-        });
-    }
     // nav-ready added on first user scroll — gates the dot animation so it never fires on load
-    window.addEventListener('scroll', function onFirstScroll() {
-        navigation.classList.add('nav-ready');
-    }, { passive: true, once: true });
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    const navigation = document.querySelector('.navigation');
+    if (navigation) {
+        window.addEventListener('scroll', function onFirstScroll() {
+            navigation.classList.add('nav-ready');
+        }, { passive: true, once: true });
+    }
 
 
     // ===================================
@@ -119,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "Coffee first, wireframes second, everything else maybe.",
         "I have strong opinions about button radius.",
         "Dark mode is not a phase, it's a lifestyle.",
-        "I speak three languages: Italian, English, and Design Systems."
+        "I speak four languages: Italian, English, Spanish, and Design Systems."
     ];
     
     let currentPhraseIndex = 0;
@@ -277,6 +225,45 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation();
             currentNdaProject = this.closest('.project-card');
             openNdaModal();
+        });
+    });
+
+    document.querySelectorAll('.project-card.nda-protected').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('.nda-modal')) return;
+            if (e.target.closest('.project-image-link')) return;
+            const link = this.querySelector('.project-image-link.nda-link');
+            if (link && link.classList.contains('unlocked')) {
+                const href = link.getAttribute('href');
+                if (href) window.open(href, link.target || '_self');
+                return;
+            }
+            currentNdaProject = this;
+            openNdaModal();
+        });
+
+        card.addEventListener('keydown', function(e) {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            this.click();
+        });
+    });
+
+    // ===================================
+    // CARD-LOCAL GLOW HOTSPOT
+    // ===================================
+
+    const glowTargets = document.querySelectorAll('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
+    glowTargets.forEach(target => {
+        target.addEventListener('pointermove', function(e) {
+            const rect = this.getBoundingClientRect();
+            this.style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
+            this.style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
+        });
+
+        target.addEventListener('pointerleave', function() {
+            this.style.removeProperty('--glow-x');
+            this.style.removeProperty('--glow-y');
         });
     });
     
