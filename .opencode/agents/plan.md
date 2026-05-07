@@ -1,6 +1,6 @@
 ---
 description: High-level architectural planning using GLM-5.1 or Kimi K2.6
-mode: subagent
+mode: primary
 model: opencode-go/glm-5.1
 temperature: 0.1
 permission:

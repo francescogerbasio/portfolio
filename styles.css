@@ -1136,7 +1136,6 @@ a {
         padding: 4px 9px;
         white-space: nowrap;
         width: fit-content;
-        align-self: flex-start;
     }
 }
 
@@ -1597,7 +1596,7 @@ a {
 
 .project-header {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 16px;
 }
 
@@ -1615,7 +1614,6 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    align-self: flex-start;
 }
 
 .project-description {

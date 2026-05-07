@@ -1,6 +1,6 @@
 ---
 description: Code generation and feature implementation using Kimi K2.6 or DeepSeek V4 Pro
-mode: subagent
+mode: primary
 model: opencode-go/kimi-k2.6
 temperature: 0.3
 permission:
