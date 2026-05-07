@@ -194,6 +194,10 @@
     color: var(--color-text-light);
 }
 
+[data-theme="dark"] .sidebar::before {
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 14%, rgba(255,255,255,0.12) 86%, rgba(255,255,255,0) 100%);
+}
+
 /* Dark mode — theme toggle button */
 .theme-toggle {
     background: none;
@@ -408,6 +412,10 @@ a {
     background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 14%, rgba(0,0,0,0.18) 86%, rgba(0,0,0,0) 100%);
     transition: right 0.3s ease;
     margin-right: -1px; /* Account for border width */
+}
+
+[data-theme="dark"] .hero::after {
+    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 14%, rgba(255,255,255,0.12) 86%, rgba(255,255,255,0) 100%);
 }
 
 .hero-content {
@@ -1752,7 +1760,7 @@ a {
         display: block;
         width: 100%;
         height: 1px;
-        background-color: var(--color-text);
+        background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 14%, rgba(0,0,0,0.18) 86%, rgba(0,0,0,0) 100%);
         margin-bottom: 40px;
     }
     
@@ -1884,7 +1892,7 @@ a {
         display: block;
         width: 100%;
         height: 1px;
-        background-color: var(--color-text);
+        background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 14%, rgba(0,0,0,0.18) 86%, rgba(0,0,0,0) 100%);
         margin-bottom: 40px;
     }
     

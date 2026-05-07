@@ -1,6 +1,6 @@
 ---
 description: Routine edits, CSS tweaks, and debugging using DeepSeek V4 Flash
-mode: subagent
+mode: all
 model: opencode-go/deepseek-v4-flash
 temperature: 0.2
 permission:
