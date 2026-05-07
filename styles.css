@@ -1122,20 +1122,20 @@ a {
     }
 
     .project-header {
-        flex-wrap: wrap;
-        align-items: flex-start;
-        gap: 10px 12px;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 10px;
     }
 
     .project-header .project-title {
-        flex: 1 1 100%;
+        flex: 1 1 auto;
+        min-width: 0;
     }
 
     .project-header .project-badge {
         font-size: 11px;
         padding: 4px 9px;
         white-space: nowrap;
-        width: fit-content;
     }
 }
 
