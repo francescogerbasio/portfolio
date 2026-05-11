@@ -403,7 +403,7 @@
   line-height: 1;
   color: var(--cs-accent);
   margin-bottom: 8px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-heading);
 }
 
 .cs-stat-desc {
@@ -705,7 +705,7 @@
 }
 
 .cs-result-num {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(26px,3.5vw,38px);
   font-weight: 800;
   letter-spacing: -.04em;
