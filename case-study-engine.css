@@ -1016,9 +1016,9 @@ body.cs-is-open .mobile-menu {
 }
 
 
-/* .num — swap to body font wherever Qurova lacks numeral glyphs */
+/* .num — Qurova numerals for inline numbers */
 .num {
-  font-family: var(--font-body, sans-serif);
+  font-family: var(--font-heading, sans-serif);
   font-weight: 700;
 }
 
