@@ -461,11 +461,10 @@ a {
 
 /* Fixed height container wrapper */
 .phrase-container {
-    height: 240px;
+    min-height: 200px;
     margin-top: clamp(16px, 1.8vw, 28px);
     margin-bottom: clamp(56px, 6vw, 92px);
     position: relative;
-    overflow: hidden;
 }
 
 /* Phrase inside can be any size */
@@ -1935,10 +1934,9 @@ a {
     }
     
     .phrase-container {
-        height: 220px;
+        min-height: 180px;
         margin-top: 10px;
         margin-bottom: 50px;
-        overflow: hidden;
     }
     
     .hero-subtitle {
