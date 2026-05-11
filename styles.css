@@ -464,7 +464,7 @@ a {
     height: 230px;
     overflow: hidden;
     margin-top: clamp(16px, 1.8vw, 28px);
-    margin-bottom: clamp(56px, 6vw, 92px);
+    margin-bottom: clamp(20px, 1.5vw, 32px);
     position: relative;
 }
 
@@ -1938,7 +1938,7 @@ a {
         height: 200px;
         overflow: hidden;
         margin-top: 10px;
-        margin-bottom: 50px;
+        margin-bottom: 24px;
     }
     
     .hero-subtitle {
