@@ -651,6 +651,10 @@
   margin-top: 14px;
 }
 
+[data-theme="dark"] .cs-showcase-caption {
+  color: rgba(255,255,255,.35);
+}
+
 /* ══════════════════════════════════════
    RESULTS CALLOUT
 ══════════════════════════════════════ */
