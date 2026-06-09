@@ -268,6 +268,71 @@
 
 
 /* ===================================
+   SCROLL TO TOP BUTTON
+   =================================== */
+
+.scroll-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: linear-gradient(180deg, rgba(253, 245, 246, 0.84) 0%, rgba(253, 245, 246, 0.68) 100%);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+                transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s ease;
+    box-shadow: 0 8px 24px rgba(15, 15, 15, 0.08);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.scroll-to-top:hover {
+    box-shadow: 0 12px 32px rgba(15, 15, 15, 0.12);
+    transform: translateY(0) scale(1.08);
+}
+
+.scroll-to-top.visible:hover {
+    transform: translateY(0) scale(1.08);
+}
+
+[data-theme="dark"] .scroll-to-top {
+    border-color: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(48, 48, 48, 0.88) 0%, rgba(37, 37, 37, 0.82) 100%);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26);
+}
+
+[data-theme="dark"] .scroll-to-top:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.34);
+}
+
+@media (max-width: 768px) {
+    .scroll-to-top {
+        width: 44px;
+        height: 44px;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+/* ===================================
    RESET & BASE STYLES
    =================================== */
 

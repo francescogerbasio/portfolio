@@ -1,14 +1,15 @@
 ---
-description: Code generation and feature implementation using MiniMax 2.7
+description: Code generation using GPT-5.3 Codex
 mode: primary
-model: opencode-go/minimax-m2.7
+model: openai/gpt-5.3-codex
+variant: xhigh
 temperature: 0.3
 permission:
   edit: allow
   bash: allow
 ---
 
-# Build Agent — Code Generation & Implementation
+# Build-Codex Agent — Code Generation & Implementation
 
 ## Run locally (always)
 ```sh

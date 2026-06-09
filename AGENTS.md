@@ -18,7 +18,8 @@ Load the appropriate file for your task type:
 | Task | File | Models |
 |---|---|---|
 | **Plan** | `.opencode/agents/plan.md` | GLM-5.1, Kimi K2.6 |
-| **Build** | `.opencode/agents/build.md` | Kimi K2.6, DeepSeek V4 Pro |
+| **Build** | `.opencode/agents/build.md` | MiniMax 2.7 |
+| **Build-Codex** | `.opencode/agents/build-codex.md` | GPT-5.3 Codex (xhigh) |
 | **Refactor / Debug** | `.opencode/agents/refactor.md` | DeepSeek V4 Flash, GLM-5.1 |
 
-Use `@plan`, `@build`, or `@refactor` to manually invoke a subagent, or rely on the primary agent to auto-select via the Task tool.
+Use `@plan`, `@build`, `@build-codex`, or `@refactor` to manually invoke a subagent, or rely on the primary agent to auto-select via the Task tool.
