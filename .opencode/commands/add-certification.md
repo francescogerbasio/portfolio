@@ -43,10 +43,10 @@ Add or remove certifications from the Certifications section on the Career page 
    If no URL is given, use `href="#"` and change the link text to **"View Certificate"**.
    If the URL starts with `Assets/` (local PDF), use **"View Certificate"** as the link text.
 
-4. **Insert each card** in the correct position within `<div class="certifications-grid">`:
-   - Sort by year descending (newest first)
-   - Within the same year, insert at the end (append after existing cards of that year)
-   - Parse existing `.cert-card` elements to find the right insertion point
+4. **Insert each card** at the top of `<div class="certifications-grid">`:
+   - Newest additions go first — insert at the very beginning of the grid
+   - Within the same year, newer additions go before older ones
+   - Insert right after the opening `<div class="certifications-grid">` tag
 
 5. **Run validation**: `python3 validate.py`
 
