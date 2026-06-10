@@ -3708,15 +3708,26 @@ html[data-vt-direction="back"] ::view-transition-new(root) {
     to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ── Nav bar: cross-fade in place ── */
+/* ── Nav bar: stays in place, new fades in over old ── */
 ::view-transition-group(nav-bar) {
     animation-duration: 300ms;
+    /* Solid backdrop so the glass blur has something to work with */
+    background: var(--color-bg);
+    border-radius: 50px;
 }
-::view-transition-old(nav-bar),
+::view-transition-old(nav-bar) {
+    animation: 300ms ease both vt-nav-stay;
+    mix-blend-mode: normal;
+}
 ::view-transition-new(nav-bar) {
-    animation: 300ms ease both vt-crossfade;
+    animation: 300ms ease both vt-nav-appear;
+    mix-blend-mode: normal;
 }
-@keyframes vt-crossfade {
+@keyframes vt-nav-stay {
+    from { opacity: 1; }
+    to   { opacity: 1; }
+}
+@keyframes vt-nav-appear {
     from { opacity: 0; }
     to   { opacity: 1; }
 }
