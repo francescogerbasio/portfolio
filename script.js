@@ -205,7 +205,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const ndaCancelBtn = document.getElementById('ndaCancelBtn');
     const ndaErrorMessage = document.getElementById('ndaErrorMessage');
     let currentNdaProject = null;
-    
+    let lastFocusedElement = null;
+
+    function getFocusableElements(container) {
+        return Array.from(container.querySelectorAll(
+            'a[href], button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'
+        )).filter(el => !el.disabled && el.offsetParent !== null);
+    }
+
+    function trapFocus(e) {
+        if (e.key !== 'Tab') return;
+        const focusable = getFocusableElements(ndaModal);
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    }
+
+    function onNdaKeydown(e) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            closeNdaModal();
+        } else if (e.key === 'Tab') {
+            trapFocus(e);
+        }
+    }
+
     if (ndaPasswordToggle) {
         ndaPasswordToggle.addEventListener('click', function() {
             const type = ndaPasswordInput.getAttribute('type');
@@ -268,6 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function openNdaModal() {
+        lastFocusedElement = document.activeElement;
         ndaModal.classList.add('active');
         ndaModal.setAttribute('aria-hidden', 'false');
         ndaPasswordInput.value = '';
@@ -276,12 +308,18 @@ document.addEventListener('DOMContentLoaded', function() {
         ndaPasswordInput.classList.remove('error');
         ndaErrorMessage.classList.remove('show');
         setTimeout(() => ndaPasswordInput.focus(), 100);
+        document.addEventListener('keydown', onNdaKeydown);
     }
-    
+
     function closeNdaModal() {
         ndaModal.classList.remove('active');
         ndaModal.setAttribute('aria-hidden', 'true');
+        document.removeEventListener('keydown', onNdaKeydown);
         currentNdaProject = null;
+        if (lastFocusedElement) {
+            lastFocusedElement.focus();
+            lastFocusedElement = null;
+        }
     }
     
     ndaCancelBtn.addEventListener('click', closeNdaModal);

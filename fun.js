@@ -11,6 +11,16 @@ const CATEGORY_SUBTITLES = {
 let currentCategory = 'travel';
 let switching = false;
 
+function makeKeyboardClickable(el, handler) {
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        handler(el);
+    });
+}
+
 function switchCategory(category) {
     if (switching) return;
     switching = true;
@@ -195,12 +205,14 @@ function displayEditorial(grid) {
     `).join('');
 
     grid.querySelectorAll('.travel-card').forEach(card => {
-        card.addEventListener('click', () => {
+        const handler = () => {
             const c = card.getAttribute('data-country');
             activateCountryFilter(c);
             displayMasonry(grid, c);
             document.getElementById('travel-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+        };
+        card.addEventListener('click', handler);
+        makeKeyboardClickable(card, handler);
     });
 
     layoutMasonry();
@@ -255,12 +267,14 @@ function displayMasonry(grid, country) {
     `).join('');
 
     grid.querySelectorAll('.travel-card').forEach(card => {
-        card.addEventListener('click', () => {
+        const handler = () => {
             const c = card.getAttribute('data-country');
             activateCountryFilter(c);
             displayMasonry(grid, c);
             document.getElementById('travel-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+        };
+        card.addEventListener('click', handler);
+        makeKeyboardClickable(card, handler);
     });
 
     layoutMasonry();
@@ -527,9 +541,11 @@ async function loadFavoriteArtists() {
 
         // Click opens Spotify search
         grid.querySelectorAll('.artist-card').forEach((card, i) => {
-            card.addEventListener('click', () => {
+            const handler = () => {
                 window.open(`https://open.spotify.com/search/${encodeURIComponent(artists[i].name)}`, '_blank');
-            });
+            };
+            card.addEventListener('click', handler);
+            makeKeyboardClickable(card, handler);
         });
 
     } catch (error) {
@@ -588,9 +604,9 @@ function buildFeatured(games) {
     let autoTimer;
 
     container.innerHTML = `
-        <div class="gf-track" id="gfTrack">
+        <div class="gf-track" id="gfTrack" role="region" aria-roledescription="carousel" aria-label="Featured games">
             ${games.map((g, i) => `
-                <div class="gf-slide" data-index="${i}">
+                <div class="gf-slide" data-index="${i}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${games.length}">
                     <div class="gf-bg">
                         <img src="${g.cover}" alt="${g.title}" class="gf-bg-img">
                         <div class="gf-bg-overlay"></div>
@@ -603,13 +619,13 @@ function buildFeatured(games) {
                 </div>
             `).join('')}
         </div>
-        <div class="gf-dots">
+        <div class="gf-dots" role="tablist" aria-label="Featured game slides">
             ${games.map((_, i) => `
-                <button class="gf-dot" data-i="${i}"></button>
+                <button class="gf-dot" data-i="${i}" role="tab" aria-label="Go to slide ${i + 1}" aria-selected="${i === 0 ? 'true' : 'false'}" tabindex="${i === 0 ? '0' : '-1'}"></button>
             `).join('')}
         </div>
-        <button class="gf-arrow gf-prev" aria-label="Previous">‹</button>
-        <button class="gf-arrow gf-next" aria-label="Next">›</button>
+        <button class="gf-arrow gf-prev" aria-label="Previous slide">‹</button>
+        <button class="gf-arrow gf-next" aria-label="Next slide">›</button>
     `;
 
     const slides = container.querySelectorAll('.gf-slide');
@@ -626,9 +642,13 @@ function buildFeatured(games) {
     function goTo(n) {
         slides[current].classList.remove('active');
         dots[current].classList.remove('active');
+        dots[current].setAttribute('aria-selected', 'false');
+        dots[current].setAttribute('tabindex', '-1');
         current = (n + games.length) % games.length;
         slides[current].classList.add('active');
         dots[current].classList.add('active');
+        dots[current].setAttribute('aria-selected', 'true');
+        dots[current].setAttribute('tabindex', '0');
     }
 
     function startAuto() { autoTimer = setInterval(() => goTo(current + 1), 5000); }
@@ -686,12 +706,14 @@ function buildGrid(container, games) {
 
     // Saga expand/collapse
     container.querySelectorAll('.saga-card').forEach(card => {
-        card.addEventListener('click', () => {
+        const handler = () => {
             const isOpen = card.classList.contains('open');
             // Close all open sagas in this grid first
             container.querySelectorAll('.saga-card.open').forEach(c => c.classList.remove('open'));
             if (!isOpen) card.classList.add('open');
-        });
+        };
+        card.addEventListener('click', handler);
+        makeKeyboardClickable(card, handler);
     });
 }
 

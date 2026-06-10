@@ -53,7 +53,7 @@
     </nav>
 
     <!-- Hamburger Button -->
-    <button class="hamburger-menu" id="hamburgerBtn" aria-label="Open navigation menu" aria-expanded="false">
+    <button class="hamburger-menu" id="hamburgerBtn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenu">
         <span></span>
         <span></span>
         <span></span>
@@ -63,7 +63,7 @@
     <div class="hamburger-fade-zone"></div>
 
     <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true" aria-label="Navigation menu">
         <a href="index.html#work" class="nav-link">Work</a>
         <a href="career.html" class="nav-link">Career</a>
         <a href="fun.html" class="nav-link active">Fun</a>
@@ -80,17 +80,17 @@
     <!-- Main Content -->
     <main class="container">
         <!-- Category Navigation at Top Right -->
-        <div class="category-nav-top">
-            <button class="category-btn active" data-category="travel">Travel</button>
-            <button class="category-btn" data-category="music">Music</button>
-            <button class="category-btn" data-category="gaming">Gaming</button>
+        <div class="category-nav-top" role="tablist" aria-label="Content categories">
+            <button class="category-btn active" data-category="travel" role="tab" aria-selected="true" aria-controls="travel-section" id="tab-travel">Travel</button>
+            <button class="category-btn" data-category="music" role="tab" aria-selected="false" aria-controls="music-section" id="tab-music">Music</button>
+            <button class="category-btn" data-category="gaming" role="tab" aria-selected="false" aria-controls="gaming-section" id="tab-gaming">Gaming</button>
         </div>
 
         <!-- Dynamic Subtitle -->
         <p class="category-subtitle" id="categorySubtitle">Places I've been and stories from the road. Every journey tells a story, and these are mine captured through moments and memories.</p>
 
         <!-- Travel Section -->
-        <section class="category-section active" id="travel-section">
+        <section class="category-section active" id="travel-section" role="tabpanel" aria-labelledby="tab-travel">
             <div class="flag-navigation" id="flagNavigation">
                 <button class="flag-btn active" data-country="all">🌍 All</button>
             </div>
@@ -103,7 +103,7 @@
         </section>
 
         <!-- Music Section -->
-        <section class="category-section" id="music-section">
+        <section class="category-section" id="music-section" role="tabpanel" aria-labelledby="tab-music" hidden>
             <div class="music-category">
                 <h3 class="music-category-title">Music Production</h3>
                 <div class="my-music-container" id="myMusicContainer">
@@ -125,7 +125,7 @@
         </section>
 
         <!-- Gaming Section -->
-        <section class="category-section" id="gaming-section">
+        <section class="category-section" id="gaming-section" role="tabpanel" aria-labelledby="tab-gaming" hidden>
             <div class="loading-state">
                 <div class="spinner"></div>
                 <p>Loading games...</p>

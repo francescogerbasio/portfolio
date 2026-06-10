@@ -34,7 +34,7 @@
   function openOverlay(overlayId) {
     const study = studyMap[overlayId];
     if (!study) return;
-    const { overlay, panel } = study;
+    const { overlay, panel, closeBtn, card } = study;
 
     panel.querySelectorAll('.cs-section').forEach(s => s.classList.remove('cs-visible'));
     panel.scrollTop = 0;
@@ -46,6 +46,9 @@
     document.body.style.overflow = 'hidden';
     document.body.classList.add('cs-is-open');
 
+    // Move focus to close button for screen reader users
+    if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
+
     setTimeout(() => setupReveal(panel), 600);
   }
 
@@ -53,7 +56,7 @@
   function closeOverlay(overlayId) {
     const study = studyMap[overlayId];
     if (!study) return;
-    const { overlay, panel, progress } = study;
+    const { overlay, panel, progress, card } = study;
 
     panel.querySelectorAll('.cs-section').forEach(s => s.classList.remove('cs-visible'));
 
@@ -61,6 +64,9 @@
     overlay.classList.add('cs-closing');
     document.body.style.overflow = '';
     document.body.classList.remove('cs-is-open');
+
+    // Return focus to the card that triggered the overlay
+    if (card) setTimeout(() => card.focus(), 420);
 
     setTimeout(() => {
       overlay.classList.remove('cs-closing');
@@ -145,6 +151,15 @@
     registry[overlayId] = { cardId, overlayId };
     const card = document.getElementById(cardId);
     if (!card) return;
+
+    // Make card keyboard-focusable and actionable
+    if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
+    if (!card.getAttribute('role')) card.setAttribute('role', 'button');
+    card.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      card.click();
+    });
 
     card.addEventListener('click', async () => {
       if (!loaded[overlayId]) {
