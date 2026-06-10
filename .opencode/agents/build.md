@@ -52,6 +52,13 @@ Never open via `file://` — `fetch()` and weather APIs will break.
 ## Deploy/hosting config
 - `_headers` and `htaccess` must be kept in sync when changing asset naming or caching strategy.
 
+## Modern Web Guidance
+When implementing web features, consult the Modern Web Guidance skill:
+- Run `npx modern-web-guidance@latest search "<query>"` to find relevant guides
+- Run `npx modern-web-guidance@latest retrieve "<guide-id>"` to get detailed guidance
+- This project targets **Baseline 2025** — prefer modern CSS/HTML APIs over JavaScript solutions
+- Provide progressive enhancement fallbacks for limited-availability features
+
 ## Before committing
 1. Run `python3 validate.py` — link check and image alt check must pass.
 2. Test on `localhost:8000`, not `file://`.

@@ -1,5 +1,15 @@
 # AGENTS.md — Master
 
+## Baseline target
+This project's Baseline target is **Baseline 2025**.
+
+## Modern Web Guidance
+This project uses [Modern Web Guidance](https://developer.chrome.com/docs/modern-web-guidance) for all web platform decisions.
+- Search for guides: `npx modern-web-guidance@latest search "<query>"`
+- Retrieve guide details: `npx modern-web-guidance@latest retrieve "<guide-id>"`
+- Prefer modern CSS/HTML APIs over JavaScript solutions
+- Provide progressive enhancement fallbacks for limited-availability features
+
 ## Project shape
 - Static multi-page portfolio (no package manager, no build system).
 - Pages: `index.html` (Work), `fun.html` (Fun), `about.html` (About).

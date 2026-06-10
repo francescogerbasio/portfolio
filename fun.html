@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
     <script src="theme.js"></script>
+    <script>
+        window.addEventListener('pagereveal', (event) => {
+            if (event.viewTransition && sessionStorage.getItem('vt-is-back') === '1') {
+                document.documentElement.setAttribute('data-vt-direction', 'back');
+                sessionStorage.removeItem('vt-is-back');
+            }
+        });
+    </script>
     <script src="transitions.js" defer></script>
     <script src="navigation-ui.js" defer></script>
     <link rel="icon" href="Assets/Images/favicon.svg" type="image/svg+xml">

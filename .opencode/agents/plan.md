@@ -43,6 +43,13 @@ permission:
 - No libraries or frameworks — vanilla HTML/CSS/JS only.
 - Hosting on Netlify; caching controlled by `_headers` and `htaccess`.
 
+## Modern Web Guidance
+When planning web platform features, consult the Modern Web Guidance skill:
+- Run `npx modern-web-guidance@latest search "<query>"` to find relevant guides
+- Run `npx modern-web-guidance@latest retrieve "<guide-id>"` to get detailed guidance
+- This project targets **Baseline 2025** — prefer modern CSS/HTML APIs over JavaScript solutions
+- Provide progressive enhancement fallbacks for limited-availability features
+
 ## When planning a feature
 1. Understand existing patterns before proposing new structures.
 2. Prefer improving what exists over adding new files.

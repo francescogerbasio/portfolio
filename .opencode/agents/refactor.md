@@ -46,5 +46,12 @@ Test on `localhost:8000`, never `file://`.
 - Prefer targeted fixes over restructuring.
 - If reverting code, verify `window.*` exports are preserved in data files.
 
+## Modern Web Guidance
+When refactoring or debugging web features, consult the Modern Web Guidance skill:
+- Run `npx modern-web-guidance@latest search "<query>"` to find relevant guides
+- Run `npx modern-web-guidance@latest retrieve "<guide-id>"` to get detailed guidance
+- This project targets **Baseline 2025** — prefer modern CSS/HTML APIs over JavaScript solutions
+- Provide progressive enhancement fallbacks for limited-availability features
+
 ## Validation
 Always end with `python3 validate.py`. Both link check and image alt check must pass. If either fails, fix before considering the task done.

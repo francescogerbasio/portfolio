@@ -54,6 +54,11 @@
         --color-border: #888888;
     }
 }
+
+@view-transition {
+    navigation: auto;
+}
+
 /* ===================================
    DARK MODE
    =================================== */
@@ -318,6 +323,7 @@ a {
     border-radius: 50px;
     border: 1px solid transparent;
     transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    view-transition-name: nav-bar;
 }
 
 /* Glass layer - animates independently from nav text */
@@ -3664,46 +3670,72 @@ html {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PAGE TRANSITIONS — Apple spring
-   Only <main> animates. Fixed nav/hamburger are siblings
-   so they're completely unaffected by the transform.
+   PAGE TRANSITIONS — Cross-Document View Transitions
+   Shared-axis slide with fixed nav cross-fade.
+   Fallback JS transitions for unsupported browsers.
 ═══════════════════════════════════════════════════════ */
 
-/* ── ENTER: spring up from below ── */
-main.pt-enter,
-.container.pt-enter {
-    will-change: transform, opacity;
-    animation: pt-spring-in 520ms cubic-bezier(0.34, 1.18, 0.64, 1) both;
+/* ── Root transition: shared-axis slide ── */
+::view-transition-old(root) {
+    animation: 250ms cubic-bezier(0.4, 0, 1, 1) both vt-slide-out-left;
+}
+::view-transition-new(root) {
+    animation: 350ms cubic-bezier(0, 0, 0.2, 1) 80ms both vt-slide-in-right;
 }
 
-@keyframes pt-spring-in {
-    0%   { opacity: 0; transform: translateY(28px) scale(0.98); filter: blur(6px); }
-    55%  { opacity: 1; filter: blur(0); }
-    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+/* ── Backward transition ── */
+html[data-vt-direction="back"] ::view-transition-old(root) {
+    animation: 250ms cubic-bezier(0.4, 0, 1, 1) both vt-slide-out-right;
+}
+html[data-vt-direction="back"] ::view-transition-new(root) {
+    animation: 350ms cubic-bezier(0, 0, 0.2, 1) 80ms both vt-slide-in-left;
 }
 
-/* ── LEAVE: float up and dissolve ── */
-main.pt-leave,
-.container.pt-leave {
-    animation: pt-float-out 260ms cubic-bezier(0.4, 0, 1, 1) both;
-    pointer-events: none;
+@keyframes vt-slide-out-left {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(-60px); }
+}
+@keyframes vt-slide-in-right {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes vt-slide-out-right {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(60px); }
+}
+@keyframes vt-slide-in-left {
+    from { opacity: 0; transform: translateX(-60px); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
-@keyframes pt-float-out {
-    0%   { opacity: 1; transform: translateY(0) scale(1);    filter: blur(0); }
-    100% { opacity: 0; transform: translateY(-20px) scale(0.98); filter: blur(4px); }
+/* ── Nav bar: cross-fade in place ── */
+::view-transition-group(nav-bar) {
+    animation-duration: 300ms;
+}
+::view-transition-old(nav-bar),
+::view-transition-new(nav-bar) {
+    animation: 300ms ease both vt-crossfade;
+}
+@keyframes vt-crossfade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    main.pt-enter, .container.pt-enter {
-        animation: pt-fade-in 250ms ease both;
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation-duration: 150ms !important;
     }
-    main.pt-leave, .container.pt-leave {
-        animation: pt-fade-out 200ms ease both;
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: 150ms ease both vt-fade !important;
     }
-    @keyframes pt-fade-in  { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes pt-fade-out { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes vt-fade {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
 
     .category-section,
     .category-section.active,
@@ -3721,4 +3753,39 @@ main.pt-leave,
     .category-section:not(.active) {
         display: none;
     }
+}
+
+/* ── Fallback: manual JS transitions for non-VT browsers ── */
+main.pt-enter,
+.container.pt-enter {
+    will-change: transform, opacity;
+    animation: pt-spring-in 520ms cubic-bezier(0.34, 1.18, 0.64, 1) both;
+}
+
+@keyframes pt-spring-in {
+    0%   { opacity: 0; transform: translateY(28px) scale(0.98); filter: blur(6px); }
+    55%  { opacity: 1; filter: blur(0); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+main.pt-leave,
+.container.pt-leave {
+    animation: pt-float-out 260ms cubic-bezier(0.4, 0, 1, 1) both;
+    pointer-events: none;
+}
+
+@keyframes pt-float-out {
+    0%   { opacity: 1; transform: translateY(0) scale(1);    filter: blur(0); }
+    100% { opacity: 0; transform: translateY(-20px) scale(0.98); filter: blur(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    main.pt-enter, .container.pt-enter {
+        animation: pt-fade-in 250ms ease both;
+    }
+    main.pt-leave, .container.pt-leave {
+        animation: pt-fade-out 200ms ease both;
+    }
+    @keyframes pt-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes pt-fade-out { from { opacity: 1; } to { opacity: 0; } }
 }
