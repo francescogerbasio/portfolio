@@ -1,7 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="theme.js"></script>
+    <script>
+(function () {
+    'use strict';
+    const STORAGE_KEY = 'theme';
+    const html = document.documentElement;
+    function applyTheme(theme) {
+        html.setAttribute('data-theme', theme);
+        const color = theme === 'dark' ? '#252525' : '#fdf5f6';
+        let meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) { meta.parentNode.removeChild(meta); }
+        meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        meta.id = 'themeColorMeta';
+        meta.content = color;
+        document.head.appendChild(meta);
+    }
+    function getSavedTheme() { return localStorage.getItem(STORAGE_KEY) || 'light'; }
+    function toggleTheme() {
+        const current = html.getAttribute('data-theme') || 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(STORAGE_KEY, next);
+        if (window.innerWidth <= 768) { location.reload(); } else { applyTheme(next); }
+    }
+    applyTheme(getSavedTheme());
+    document.addEventListener('DOMContentLoaded', function () {
+        const meta = document.getElementById('themeColorMeta');
+        if (meta) meta.setAttribute('content', getSavedTheme() === 'dark' ? '#252525' : '#fdf5f6');
+        ['themeToggle', 'themeToggleMobile'].forEach(function (id) {
+            const btn = document.getElementById(id);
+            if (btn) btn.addEventListener('click', toggleTheme);
+        });
+        window.addEventListener('storage', function (e) {
+            if (e.key === STORAGE_KEY && e.newValue) { applyTheme(e.newValue); }
+        });
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+            if (!localStorage.getItem(STORAGE_KEY)) { applyTheme(e.matches ? 'dark' : 'light'); }
+        });
+    });
+})();
+    </script>
     <script>
         window.addEventListener('pagereveal', (event) => {
             if (event.viewTransition && sessionStorage.getItem('vt-is-back') === '1') {
@@ -13,11 +52,11 @@
     <script src="transitions.js" defer></script>
     <script src="navigation-ui.js" defer></script>
     <meta charset="UTF-8">
+    <meta name="color-scheme" content="light dark">
     <!-- Favicons -->
     <link rel="icon" href="Assets/Images/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="Assets/Images/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="Assets/Images/apple-touch-icon.png">
-    <link rel="apple-touch-icon-precomposed" href="Assets/Images/apple-touch-icon-precomposed.png">
     <meta name="theme-color" id="themeColorMeta" content="#fdf5f6">
     <link rel="canonical" href="https://gerbas.io/about.html">
     <meta name="description" content="About Francesco Gerbasio — UX/UI Designer and LQA Specialist based in Madrid. Background, skills, and experience.">
@@ -30,6 +69,9 @@
     <meta name="twitter:title" content="About — Francesco Gerbasio">
     <meta name="twitter:description" content="About Francesco Gerbasio — UX/UI Designer and LQA Specialist based in Madrid. Background, skills, and experience.">
     <meta name="twitter:image" content="https://gerbas.io/Assets/Images/og-image.webp">
+    <meta property="og:site_name" content="Francesco Gerbasio">
+    <meta property="og:locale" content="en_US">
+    <meta name="author" content="Francesco Gerbasio">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About — Francesco Gerbasio</title>
     <!-- DNS prefetch for non-critical external origins -->
@@ -37,7 +79,21 @@
     <link rel="preload" href="Assets/Fonts/Qurova/Qurova-Bold.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="Assets/Fonts/BrittiSans/BrittiSans-Semibold.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="about.css">
+    <link rel="stylesheet" href="about.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="about.css"></noscript>
+    <script type="speculationrules">
+    {
+      "prerender": [
+        { "where": { "href_matches": "/career.html"}, "eagerness": "moderate" },
+        { "where": { "href_matches": "/fun.html"}, "eagerness": "moderate" },
+        { "where": { "href_matches": "/about.html"}, "eagerness": "moderate" }
+      ],
+      "prefetch": [
+        { "where": { "href_matches": "/career.html"}, "eagerness": "conservative" },
+        { "where": { "href_matches": "/fun.html"}, "eagerness": "conservative" }
+      ]
+    }
+    </script>
 
     <!-- Structured Data — JSON-LD -->
     <script type="application/ld+json">
@@ -93,7 +149,7 @@
         <a href="career.html" class="nav-link">Career</a>
         <a href="fun.html" class="nav-link">Fun</a>
         <a href="about.html" class="nav-link active">About</a>
-        <a href="#" class="nav-link" data-cv-trigger>Resume</a>
+        <button type="button" class="nav-link" data-cv-trigger aria-haspopup="popover" aria-expanded="false">Resume</button>
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
     </nav>
 
@@ -111,7 +167,7 @@
         <a href="career.html" class="nav-link">Career</a>
         <a href="fun.html" class="nav-link">Fun</a>
         <a href="about.html" class="nav-link active">About</a>
-        <a href="#" class="nav-link" data-cv-trigger>Resume</a>
+        <button type="button" class="nav-link" data-cv-trigger aria-haspopup="popover" aria-expanded="false">Resume</button>
         <button class="theme-toggle theme-toggle-mobile" id="themeToggleMobile" aria-label="Toggle dark mode">
             <span class="theme-toggle-label">
                 <span class="label-light">Light mode</span>
@@ -133,11 +189,11 @@
             </p>
         </section>
 
-        <div class="about-divider" id="heroDivider"></div>
+        <div class="about-divider" id="heroDivider" aria-hidden="true"></div>
 
         <div class="about-grid scroll-reveal" id="storyGrid">
             <div class="about-story">
-                <span class="section-label">The story</span>
+                <h2 class="section-label">The story</h2>
                 <p>I grew up in <strong>Abruzzo, Italy</strong> — a region most people can't place on a map, which probably explains why I've always been drawn to making things clearer. I got into design the hard way: by using software that frustrated me until I figured out how to fix it myself. No epiphany — just a low tolerance for bad interfaces and a Computer Science background that made me dangerous with code.</p>
                 <p>I moved to <strong>Madrid</strong> and built a career at the crossroads of two disciplines: UX/UI design and Localization QA. One asks me to think in systems and empathy; the other asks me to think in precision and edge cases. Together, they make me unusually good at catching what shouldn't ship.</p>
                 <p>Outside the screen, I'm producing music, rewatching the same games I've loved for fifteen years, and photographing corners of cities most people walk past.</p>
@@ -238,10 +294,10 @@
 
     </main>
 
-    <script src="location-config.js"></script>
-    <script src="cv-picker.js"></script>
-    <script src="scroll-reveal.js"></script>
-    <script src="about.js"></script>
+    <script src="location-config.js" defer></script>
+    <script src="cv-picker.js" defer></script>
+    <script src="scroll-reveal.js" defer></script>
+    <script src="about.js" defer></script>
 
  <!-- CV Picker -->
     <div class="cv-picker" id="cvPicker" popover="manual" aria-label="Choose CV language">

@@ -37,14 +37,12 @@
   inset: 0;
   background: rgba(8,8,8,0);
   backdrop-filter: blur(0px) saturate(100%);
-  -webkit-backdrop-filter: blur(0px) saturate(100%);
-  will-change: backdrop-filter;
+  will-change: transform;
 }
 
 .cs-overlay.cs-open .cs-backdrop {
   background: rgba(8,8,8,.72);
   backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
   transition:
     background      var(--cs-dur-slow) var(--cs-ease-out),
     backdrop-filter var(--cs-dur-slow) var(--cs-ease-out);
@@ -123,7 +121,6 @@
   border-radius: 50%;
   background: rgba(10,10,10,.55);
   backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255,255,255,.12);
   color: rgba(255,255,255,.9);
   font-size: 17px;
@@ -245,7 +242,6 @@
   position: relative;
   transition: transform .45s var(--cs-ease-spring);
   /* Subpixel antialiasing — prevents jagged edges on rotated/transformed phones */
-  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   transform-style: preserve-3d;
   isolation: isolate;
@@ -259,8 +255,7 @@
   display: block;
   /* Force GPU layer for crisp image rendering inside transformed container */
   transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 /* 3-phone layout tilt */
@@ -616,7 +611,6 @@
     inset 0 1px 0 rgba(255,255,255,.06);
   flex-shrink: 0;
   transition: transform .4s var(--cs-ease-spring);
-  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   transform-style: preserve-3d;
   isolation: isolate;
@@ -631,8 +625,7 @@
   object-position: top center;
   display: block;
   transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .cs-showcase-phone:nth-child(1) { transform: rotate(-5deg) translateY(16px); opacity: .75; }

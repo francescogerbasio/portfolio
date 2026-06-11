@@ -231,9 +231,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const type = ndaPasswordInput.getAttribute('type');
             if (type === 'password') {
                 ndaPasswordInput.setAttribute('type', 'text');
+                ndaPasswordToggle.setAttribute('aria-label', 'Hide password');
                 ndaPasswordToggle.innerHTML = `<svg class="eye-closed" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
             } else {
                 ndaPasswordInput.setAttribute('type', 'password');
+                ndaPasswordToggle.setAttribute('aria-label', 'Show password');
                 ndaPasswordToggle.innerHTML = `<svg class="eye-open" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
             }
         });
@@ -270,26 +272,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ===================================
-    // CARD-LOCAL GLOW HOTSPOT
+    // CARD-LOCAL GLOW HOTSPOT — event delegation
     // ===================================
 
-    const glowTargets = document.querySelectorAll('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
-    glowTargets.forEach(target => {
-        target.addEventListener('pointermove', function(e) {
-            const rect = this.getBoundingClientRect();
-            this.style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
-            this.style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
-        });
+    document.body.addEventListener('pointermove', (e) => {
+        const target = e.target.closest('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
+        if (!target) return;
+        const rect = target.getBoundingClientRect();
+        target.style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
+        target.style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
+    });
 
-        target.addEventListener('pointerleave', function() {
-            this.style.removeProperty('--glow-x');
-            this.style.removeProperty('--glow-y');
-        });
+    document.body.addEventListener('pointerleave', (e) => {
+        const target = e.target.closest('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
+        if (!target) return;
+        target.style.removeProperty('--glow-x');
+        target.style.removeProperty('--glow-y');
     });
     
     function openNdaModal() {
         ndaPasswordInput.value = '';
         ndaPasswordInput.setAttribute('type', 'password');
+        ndaPasswordToggle.setAttribute('aria-label', 'Show password');
         ndaPasswordToggle.innerHTML = `<svg class="eye-open" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
         ndaPasswordInput.classList.remove('error');
         ndaErrorMessage.classList.remove('show');
@@ -338,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     ndaSubmitBtn.addEventListener('click', submitPassword);
-    ndaPasswordInput.addEventListener('keypress', function(e) {
+    ndaPasswordInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') submitPassword();
     });
     

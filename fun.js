@@ -282,13 +282,22 @@ function displayMasonry(grid, country) {
 
 function shuffleArray(array) {
     const shuffled = [...array];
-    let seed = 12345;
+    const seedBuffer = new Uint32Array(1);
+    crypto.getRandomValues(seedBuffer);
+    let seed = seedBuffer[0];
     for (let i = shuffled.length - 1; i > 0; i--) {
         seed = (seed * 9301 + 49297) % 233280;
         const j = Math.floor((seed / 233280) * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
+}
+
+let masonryObserver = null;
+
+function revealCard(card) {
+    if (card.dataset.animDone) return;
+    card.dataset.animDone = '1';
 }
 
 function layoutMasonry() {
@@ -319,34 +328,28 @@ function layoutMasonry() {
         colHeights[col] += h + gap;
     });
 
-    grid.style.height = Math.max(...colHeights) + 'px';
-    grid.style.transition = 'opacity 0.25s ease';
-    grid.style.opacity = '1';
-
+    // Batch read: collect viewport positions of all cards first
     const viewH = window.innerHeight;
-
-    function revealCard(card, instant) {
-        if (card.dataset.animDone) return;
-        if (instant) {
-            card.dataset.animDone = '1';
-        } else {
-            card.dataset.animDone = '1';
-        }
-    }
+    const cardRects = cards.map(card => card.getBoundingClientRect().top);
 
     // Cards already visible on load: show instantly, no animation
-    cards.forEach(card => {
-        if (card.getBoundingClientRect().top < viewH) revealCard(card, true);
+    cards.forEach((card, i) => {
+        if (cardRects[i] < viewH) revealCard(card);
     });
 
+    // Disconnect previous observer before creating a new one
+    if (masonryObserver) {
+        masonryObserver.disconnect();
+    }
+
     // Cards below fold: animate in just before they enter viewport
-    const observer = new IntersectionObserver((entries) => {
+    masonryObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
             const card = entry.target;
-            observer.unobserve(card);
+            masonryObserver.unobserve(card);
             const img = card.querySelector('img');
-            const doReveal = () => revealCard(card, false);
+            const doReveal = () => revealCard(card);
             if (img && !img.complete) {
                 img.decode().catch(() => {}).then(doReveal);
             } else {
@@ -355,19 +358,27 @@ function layoutMasonry() {
         });
     }, { threshold: 0, rootMargin: '0px 0px 2000px 0px' });
 
-    cards.forEach(card => { if (!card.dataset.animDone) observer.observe(card); });
+    cards.forEach(card => { if (!card.dataset.animDone) masonryObserver.observe(card); });
 }
 
 let resizeTimer;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-        const grid = document.getElementById('travelGrid');
-        if (!grid || !grid.querySelector('.travel-card')) return;
-        grid.style.opacity = '0';
-        layoutMasonry();
-    }, 250);
-});
+let masonryResizeObserver;
+function observeGridResize() {
+    const grid = document.getElementById('travelGrid');
+    if (!grid) return;
+    if (masonryResizeObserver) masonryResizeObserver.disconnect();
+    masonryResizeObserver = new ResizeObserver(() => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (!grid.querySelector('.travel-card')) return;
+            grid.style.opacity = '0';
+            layoutMasonry();
+        }, 250);
+    });
+    masonryResizeObserver.observe(grid);
+}
+
+observeGridResize();
 
 // ===================================
 // MUSIC — Apple-grade flipping card
@@ -658,7 +669,22 @@ function buildFeatured(games) {
     container.querySelector('.gf-prev').addEventListener('click', () => { stopAuto(); goTo(current - 1); startAuto(); });
     dots.forEach(d => d.addEventListener('click', () => { stopAuto(); goTo(+d.dataset.i); startAuto(); }));
 
+    // Keyboard navigation: left/right arrow keys
+    container.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); stopAuto(); goTo(current - 1); startAuto(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); stopAuto(); goTo(current + 1); startAuto(); }
+    });
+
     startAuto();
+
+    // Pause/resume carousel auto-advance on tab visibility
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopAuto();
+        } else {
+            startAuto();
+        }
+    });
 }
 
 // ── Game grid ──────────────────────────────────────────────

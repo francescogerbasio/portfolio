@@ -49,6 +49,23 @@
     // Move focus to close button for screen reader users
     if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
 
+    // Focus trap: cycle Tab/Shift+Tab within the panel
+    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    let focusTrapHandler = (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = Array.from(panel.querySelectorAll(focusableSelector)).filter(el => !el.disabled && el.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last  = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+      }
+    };
+    panel.addEventListener('keydown', focusTrapHandler);
+    study._focusTrapHandler = focusTrapHandler;
+
     setTimeout(() => setupReveal(panel), 600);
   }
 
@@ -59,6 +76,12 @@
     const { overlay, panel, progress, card } = study;
 
     panel.querySelectorAll('.cs-section').forEach(s => s.classList.remove('cs-visible'));
+
+    // Remove focus trap
+    if (study._focusTrapHandler) {
+      panel.removeEventListener('keydown', study._focusTrapHandler);
+      study._focusTrapHandler = null;
+    }
 
     overlay.classList.remove('cs-open');
     overlay.classList.add('cs-closing');
@@ -100,10 +123,15 @@
     studies.push(study);
     studyMap[overlayId] = study;
 
+    let scrollRaf = null;
     panel.addEventListener('scroll', () => {
       if (!progress) return;
-      const sh = panel.scrollHeight - panel.clientHeight;
-      progress.style.width = sh > 0 ? (panel.scrollTop / sh) * 100 + '%' : '0%';
+      if (scrollRaf) return;
+      scrollRaf = requestAnimationFrame(() => {
+        scrollRaf = null;
+        const sh = panel.scrollHeight - panel.clientHeight;
+        progress.style.width = sh > 0 ? (panel.scrollTop / sh) * 100 + '%' : '0%';
+      });
     });
 
     if (closeBtn) closeBtn.addEventListener('click', () => closeOverlay(overlayId));

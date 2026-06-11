@@ -1,13 +1,3 @@
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(28px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes lineGrow {
-    from { transform: scaleX(0); }
-    to   { transform: scaleX(1); }
-}
-
 .career-hero {
     padding-top: clamp(80px, 12vw, 160px);
     padding-bottom: clamp(60px, 8vw, 120px);
