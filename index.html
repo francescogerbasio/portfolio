@@ -19,6 +19,7 @@
     <link rel="apple-touch-icon" href="Assets/Images/apple-touch-icon.png">
     <link rel="apple-touch-icon-precomposed" href="Assets/Images/apple-touch-icon-precomposed.png">
     <meta name="theme-color" id="themeColorMeta" content="#fdf5f6">
+    <link rel="canonical" href="https://gerbas.io/">
     <meta name="description" content="UX/UI Designer and LQA Specialist based in Madrid. Case studies in product design, accessibility, and interaction design.">
 
     <!-- Open Graph -->
@@ -51,6 +52,10 @@
     <!-- Case-study CSS only needed when an overlay opens — load non-blocking -->
     <link rel="stylesheet" href="case-study-engine.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="case-study-engine.css"></noscript>
+
+    <!-- Project card hover styles -->
+    <link rel="stylesheet" href="styles-append.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="styles-append.css"></noscript>
 
     <!-- Structured Data — JSON-LD -->
     <script type="application/ld+json">
@@ -193,7 +198,7 @@
             <div class="projects-grid">
                 <!-- Red Dead Redemption Project - NDA Protected -->
                 <div class="project-card featured-release-card clickable-card nda-protected" data-project-id="red-dead" role="button" tabindex="0" aria-label="Open protected Red Dead Redemption project">
-                    <a href="#" data-href="https://www.rockstargames.com/reddeadredemption" target="_blank" class="project-image-link nda-link">
+                    <a href="#" data-href="https://www.rockstargames.com/reddeadredemption" target="_blank" rel="noopener noreferrer" class="project-image-link nda-link">
                         <div class="project-image lqa-card-thumb">
                             <img src="Assets/Images/RedDeadRedemption.webp" alt="Red Dead Redemption" width="744" height="418" loading="lazy" decoding="async">
                             <div class="lqa-card-overlay red-dead-lqa-overlay" aria-hidden="true">
@@ -219,7 +224,7 @@
                 </div>
 
                 <!-- Dead Take -->
-                <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Dead Take project page">
+                <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" rel="noopener noreferrer" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Dead Take project page">
                         <div class="project-image lqa-card-thumb">
                             <img src="Assets/Images/DeadTake.webp" alt="Dead Take" width="744" height="418" loading="lazy" decoding="async">
                             <div class="lqa-card-overlay">
@@ -238,7 +243,7 @@
                 </a>
 
                 <!-- Kiln -->
-                <a href="https://www.doublefine.com/games/kiln" target="_blank" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Kiln project page">
+                <a href="https://www.doublefine.com/games/kiln" target="_blank" rel="noopener noreferrer" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Kiln project page">
                         <div class="project-image lqa-card-thumb">
                             <img src="Assets/Images/Kiln.webp" alt="Kiln" width="744" height="418" loading="lazy" decoding="async">
                             <div class="lqa-card-overlay">
@@ -271,103 +276,103 @@
                 </button>
                 <div class="accordion-content" id="accordionContent">
                     <div class="projects-list">
-                        <a href="https://en.bandainamcoent.eu/elden-ring/elden-ring" target="_blank" class="project-list-item clickable">
+                        <a href="https://en.bandainamcoent.eu/elden-ring/elden-ring" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Elden Ring</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">FromSoftware</span>
                             <span class="project-year">2026</span>
                         </a>
-                        <a href="https://7origin.netmarble.com/en/update" target="_blank" class="project-list-item clickable">
+                        <a href="https://7origin.netmarble.com/en/update" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">The Seven Deadly Sins: Origin</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Netmarble</span>
                             <span class="project-year">2026</span>
                         </a>
-                        <a href="https://en.bandainamcoent.eu/little-nightmares/little-nightmares-vr-altered-echoes" target="_blank" class="project-list-item clickable">
+                        <a href="https://en.bandainamcoent.eu/little-nightmares/little-nightmares-vr-altered-echoes" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Little Nightmares VR: Altered Echoes</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Iconik Studio</span>
                             <span class="project-year">2026</span>
                         </a>
-                        <a href="https://store.steampowered.com/app/3672400/Farever/" target="_blank" class="project-list-item clickable">
+                        <a href="https://store.steampowered.com/app/3672400/Farever/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Farever</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Shiro Games</span>
                             <span class="project-year">2026</span>
                         </a>
-                        <a href="https://nba.2k.com/en-US/2k26/" target="_blank" class="project-list-item clickable">
+                        <a href="https://nba.2k.com/en-US/2k26/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">NBA 2K26</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Visual Concepts</span>
                             <span class="project-year">2026</span>
                         </a>
-                        <a href="https://pgatour.2k.com/2k25/" target="_blank" class="project-list-item clickable">
+                        <a href="https://pgatour.2k.com/2k25/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">PGA Tour 2K25</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">HB Studios</span>
                             <span class="project-year">2026</span>
                         </a>
-                        <a href="https://store.steampowered.com/app/1614440/B_Path_of_the_Teal_Lotus/" target="_blank" class="project-list-item clickable">
+                        <a href="https://store.steampowered.com/app/1614440/B_Path_of_the_Teal_Lotus/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Bō: Path of the Teal Lotus</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Squid Shock Studios, Christopher Stair, Trevor Youngquist</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://en.bandainamcoent.eu/dragon-ball/dragon-ball-sparking-zero" target="_blank" class="project-list-item clickable">
+                        <a href="https://en.bandainamcoent.eu/dragon-ball/dragon-ball-sparking-zero" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Dragon Ball: Sparking! Zero</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Spike Chunsoft</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://www.paydaythegame.com/payday3/" target="_blank" class="project-list-item clickable">
+                        <a href="https://www.paydaythegame.com/payday3/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Payday 3</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Starbreeze Studios</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://en.bandainamcoent.eu/tamagotchi/tamagotchi-plaza" target="_blank" class="project-list-item clickable">
+                        <a href="https://en.bandainamcoent.eu/tamagotchi/tamagotchi-plaza" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Tamagotchi Plaza Nintendo Switch™ 2 Edition</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Hyde, Inc.</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://gameofthrones.netmarble.com/en" target="_blank" class="project-list-item clickable">
+                        <a href="https://gameofthrones.netmarble.com/en" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Game of Thrones: Kingsroad</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">netmarbleNeo</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://www.roblox.com/communities/5544719/Cartoon-Network-Games#!/about" target="_blank" class="project-list-item clickable">
+                        <a href="https://www.roblox.com/communities/5544719/Cartoon-Network-Games#!/about" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Cartoon Network Games</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Roblox Corporation</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://7dsgc.netmarble.com/en" target="_blank" class="project-list-item clickable">
+                        <a href="https://7dsgc.netmarble.com/en" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">The Seven Deadly Sins: Grand Cross</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Netmarble</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://en.bandainamcoent.eu/synduality/synduality" target="_blank" class="project-list-item clickable">
+                        <a href="https://en.bandainamcoent.eu/synduality/synduality" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">SYNDUALITY Echo of Ada</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Game Studio</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://en.bandainamcoent.eu/bleach/bleach-rebirth-of-souls" target="_blank" class="project-list-item clickable">
+                        <a href="https://en.bandainamcoent.eu/bleach/bleach-rebirth-of-souls" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">BLEACH Rebirth of Souls</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Tamsoft</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://en.bandainamcoent.eu/pac-man/shadow-labyrinth" target="_blank" class="project-list-item clickable">
+                        <a href="https://en.bandainamcoent.eu/pac-man/shadow-labyrinth" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">SHADOW LABYRINTH</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Bandai Namco Studio Inc.</span>
                             <span class="project-year">2025</span>
                         </a>
-                        <a href="https://en.bandainamcoent.eu/dragon-ball/dragon-ball-the-breakers" target="_blank" class="project-list-item clickable">
+                        <a href="https://en.bandainamcoent.eu/dragon-ball/dragon-ball-the-breakers" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">DRAGON BALL: THE BREAKERS</span>
                             <span class="project-divider">·</span>
                             <span class="project-studio">Dimps</span>
@@ -540,7 +545,7 @@
     
             <a class="cv-picker-option" id="cvOptEn"
                href="Assets/CV/Francesco_Gerbasio_CV_EN.pdf"
-               target="_blank" rel="noopener">
+               target="_blank" rel="noopener noreferrer">
                 <span class="cv-picker-flag">🇬🇧</span>
                 <span class="cv-picker-info">
                     <span class="cv-picker-lang">English</span>
@@ -551,7 +556,7 @@
     
             <a class="cv-picker-option" id="cvOptEs"
                href="Assets/CV/Francesco_Gerbasio_CV_ES.pdf"
-               target="_blank" rel="noopener">
+               target="_blank" rel="noopener noreferrer">
                 <span class="cv-picker-flag">🇪🇸</span>
                 <span class="cv-picker-info">
                     <span class="cv-picker-lang">Español</span>
