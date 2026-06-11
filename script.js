@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
     
     let currentPhraseIndex = 0;
+    let phraseInterval;
     
     function rotatePhrase() {
         const textElement = document.getElementById('rotatingText');
@@ -86,7 +87,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    setInterval(rotatePhrase, 5000);
+    function startPhraseRotation() {
+        phraseInterval = setInterval(rotatePhrase, 5000);
+    }
+    
+    function stopPhraseRotation() {
+        clearInterval(phraseInterval);
+    }
+    
+    // Start rotation only when page is visible; pause when hidden
+    if (!document.hidden) {
+        startPhraseRotation();
+    }
+    
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopPhraseRotation();
+        } else {
+            startPhraseRotation();
+        }
+    });
     
     // ===================================
     // LOCATION & WEATHER WIDGET

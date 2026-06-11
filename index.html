@@ -40,6 +40,10 @@
     <!-- Preconnect to 3rd-party origin used for weather (reduces TTFB on the fetch) -->
     <link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
 
+    <!-- DNS prefetch for non-critical external origins -->
+    <link rel="dns-prefetch" href="https://www.linkedin.com">
+    <link rel="dns-prefetch" href="https://www.instagram.com">
+
     <!-- Preload the LCP image so the browser discovers it immediately -->
     <link rel="preload" as="image" href="Assets/Images/Francesco_Gerbasio.webp" fetchpriority="high">
 
@@ -85,6 +89,16 @@
     </script>
 </head>
 <body>
+    <!-- Inline SVG sprite for arrow icons — used by cards, CV picker, etc. -->
+    <svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <symbol id="icon-arrow-right" viewBox="0 0 14 14">
+            <path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+        <symbol id="icon-arrow-out" viewBox="0 0 14 14">
+            <path d="M1 7h12M8 2.5L12.5 7 8 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+    </svg>
+
     <!-- Navigation -->
     <nav class="navigation">
         <a href="#work" class="nav-link active">Work</a>
@@ -203,7 +217,7 @@
                             <img src="Assets/Images/RedDeadRedemption.webp" alt="Red Dead Redemption" width="744" height="418" loading="lazy" decoding="async">
                             <div class="lqa-card-overlay red-dead-lqa-overlay" aria-hidden="true">
                                 <span class="cs-card-tag">LQA · Italian · 2025</span>
-                                <span class="cs-card-open">View Project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                                <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
                             </div>
                             <!-- NDA Lock Overlay -->
                             <div class="nda-overlay">
@@ -229,7 +243,7 @@
                             <img src="Assets/Images/DeadTake.webp" alt="Dead Take" width="744" height="418" loading="lazy" decoding="async">
                             <div class="lqa-card-overlay">
                                 <span class="cs-card-tag">LQA · Italian · 2025</span>
-                                <span class="cs-card-open">View Project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                                <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
                             </div>
                         </div>
                     <div class="project-info">
@@ -248,7 +262,7 @@
                             <img src="Assets/Images/Kiln.webp" alt="Kiln" width="744" height="418" loading="lazy" decoding="async">
                             <div class="lqa-card-overlay">
                                 <span class="cs-card-tag">LQA · Italian · 2026</span>
-                                <span class="cs-card-open">View Project <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                                <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
                             </div>
                         </div>
                     <div class="project-info">
@@ -393,7 +407,7 @@
                         <img src="Assets/Images/CinesCallao.webp" alt="Cines Callao" width="744" height="418" loading="eager" decoding="async">
                         <div class="cs-card-overlay">
                             <span class="cs-card-tag">UX/UI · iOS · 2025</span>
-                            <span class="cs-card-open">View Case Study <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
                         </div>
                     </div>
                     <div class="project-info">
@@ -412,7 +426,7 @@
                         <img src="Assets/Images/AbruzzoExperience.webp" alt="Abruzzo Experience" width="744" height="418" loading="eager" decoding="async">
                         <div class="cs-card-overlay">
                             <span class="cs-card-tag">UX/UI · Travel App · 2024</span>
-                            <span class="cs-card-open">View Case Study <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
                         </div>
                     </div>
                     <div class="project-info">
@@ -431,7 +445,7 @@
                         <img src="Assets/Images/DicarlobusRedesign.webp" alt="Dicarlobus Redesign" width="744" height="418" loading="eager" decoding="async">
                         <div class="cs-card-overlay">
                             <span class="cs-card-tag">UX/UI · Transport · 2024</span>
-                            <span class="cs-card-open">View Case Study <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
                         </div>
                     </div>
                     <div class="project-info">
@@ -450,7 +464,7 @@
                         <img src="Assets/Images/QuickCheckout.webp" alt="QuickCheckout" width="744" height="418" loading="eager" decoding="async">
                         <div class="cs-card-overlay">
                             <span class="cs-card-tag">UX/UI · E-Commerce · 2024</span>
-                            <span class="cs-card-open">View Case Study <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
                         </div>
                     </div>
                     <div class="project-info">
@@ -540,7 +554,7 @@
                     <span class="cv-picker-lang">English</span>
                     <span class="cv-picker-sub">EN version</span>
                 </span>
-                <span class="cv-picker-arrow"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="cv-picker-arrow"><svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
             </a>
     
             <a class="cv-picker-option" id="cvOptEs"
@@ -551,7 +565,7 @@
                     <span class="cv-picker-lang">Español</span>
                     <span class="cv-picker-sub">Versión ES</span>
                 </span>
-                <span class="cv-picker-arrow"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px;"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="cv-picker-arrow"><svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
             </a>
     
         </div>

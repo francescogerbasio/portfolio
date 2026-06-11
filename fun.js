@@ -390,7 +390,7 @@ async function loadMySong() {
 
                     <div class="song-card-front">
                         <div class="song-card-artwork">
-                            <img src="${artworkSrc}" alt="${song.title}"
+                            <img src="${artworkSrc}" alt="${song.title}" loading="lazy" decoding="async"
                                  onerror="this.src='https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'">
                         </div>
                         <div class="song-card-info">
@@ -526,7 +526,7 @@ async function loadFavoriteArtists() {
             <div class="artist-card" data-index="${i}" style="--i: ${i}">
                 <div class="artist-image">
                     ${artist.image
-                        ? `<img src="${artist.image}" alt="${artist.name}" onerror="this.style.display='none'">`
+                        ? `<img src="${artist.image}" alt="${artist.name}" loading="lazy" decoding="async" onerror="this.style.display='none'">`
                         : ''
                     }
                 </div>
@@ -608,7 +608,7 @@ function buildFeatured(games) {
             ${games.map((g, i) => `
                 <div class="gf-slide" data-index="${i}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${games.length}">
                     <div class="gf-bg">
-                        <img src="${g.cover}" alt="${g.title}" class="gf-bg-img">
+                        <img src="${g.cover}" alt="${g.title}" class="gf-bg-img" loading="lazy" decoding="async">
                         <div class="gf-bg-overlay"></div>
                     </div>
                     <div class="gf-content">
