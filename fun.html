@@ -151,15 +151,8 @@
     <script src="fun.js"></script>
     <script src="cv-picker.js"></script>
     
-    <!-- ═══════════════════════════════════════════════════
-         CV LANGUAGE PICKER
-    ═══════════════════════════════════════════════════ -->
-    
-    <!-- Backdrop (mobile sheet / desktop close target) -->
-    <div class="cv-picker-backdrop" id="cvPickerBackdrop"></div>
-    
-    <!-- Popover (desktop) / Bottom sheet (mobile) -->
-    <div class="cv-picker" id="cvPicker" role="dialog" aria-label="Choose CV language" aria-modal="true">
+    <!-- CV Picker -->
+    <div class="cv-picker" id="cvPicker" popover="manual" aria-label="Choose CV language">
     
         <!-- Desktop: drag handle visible on mobile only -->
         <div class="cv-picker-handle"></div>

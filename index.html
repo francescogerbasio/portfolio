@@ -467,11 +467,7 @@
         </section>
     </main>
     <!-- NDA Password Modal -->
-    <div class="nda-modal" id="ndaModal"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="ndaModalTitle"
-         aria-hidden="true">
+    <dialog class="nda-modal" id="ndaModal" aria-labelledby="ndaModalTitle">
         <div class="nda-modal-content">
             <h2 class="nda-modal-title" id="ndaModalTitle">🔒 Protected Project</h2>
             <p class="nda-modal-description">This project is under NDA. Please enter the password provided to view the full details.</p>
@@ -497,7 +493,7 @@
                 <button class="nda-btn nda-btn-primary" id="ndaSubmitBtn">Unlock</button>
             </div>
         </div>
-    </div>
+    </dialog>
     <!-- Version indicator -->
 
     <!-- ═══════════════════════════════════════════════════════
@@ -526,15 +522,8 @@
     });
     </script>
     
-    <!-- ═══════════════════════════════════════════════════
-         CV LANGUAGE PICKER
-    ═══════════════════════════════════════════════════ -->
-    
-    <!-- Backdrop (mobile sheet / desktop close target) -->
-    <div class="cv-picker-backdrop" id="cvPickerBackdrop"></div>
-    
-    <!-- Popover (desktop) / Bottom sheet (mobile) -->
-    <div class="cv-picker" id="cvPicker" role="dialog" aria-label="Choose CV language" aria-modal="true">
+    <!-- CV Picker -->
+    <div class="cv-picker" id="cvPicker" popover="manual" aria-label="Choose CV language">
     
         <!-- Desktop: drag handle visible on mobile only -->
         <div class="cv-picker-handle"></div>

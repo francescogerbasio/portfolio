@@ -161,8 +161,8 @@
     background: rgba(37,37,37,0.5);
 }
 
-[data-theme="dark"] .nda-modal {
-    background: rgba(0,0,0,0.75);
+[data-theme="dark"] dialog.nda-modal::backdrop {
+    background: rgba(0, 0, 0, 0.75);
 }
 [data-theme="dark"] .nda-modal-content {
     background: #2e3035;
@@ -409,6 +409,108 @@ a {
 
 .nav-link:hover {
     font-weight: 600;
+}
+
+/* ===================================
+   SCROLL-DRIVEN NAV ANIMATION
+   Progressive enhancement: replaces .scrolled
+   class toggle with CSS scroll-driven animation.
+   Falls back to .scrolled class for Firefox/older.
+   =================================== */
+
+@supports (animation-timeline: scroll()) {
+    @keyframes navGlass {
+        from {
+            border-color: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            transform: none;
+        }
+        to {
+            border-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(28px) saturate(140%);
+            -webkit-backdrop-filter: blur(28px) saturate(140%);
+            transform: translateY(-2px);
+        }
+    }
+
+    @keyframes navGlassBefore {
+        from {
+            opacity: 0;
+            transform: scaleX(0.92);
+        }
+        to {
+            opacity: 1;
+            transform: scaleX(1);
+            background: linear-gradient(180deg, rgba(253, 245, 246, 0.84) 0%, rgba(253, 245, 246, 0.68) 100%);
+            box-shadow: 0 14px 36px rgba(15, 15, 15, 0.08);
+        }
+    }
+
+    /* Light mode: animate nav + ::before together */
+    .navigation.scrolled {
+        animation: navGlass linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0px 20px;
+    }
+
+    .navigation.scrolled::before {
+        animation: navGlassBefore linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0px 20px;
+    }
+
+    /* Dark mode: override only the colors that differ */
+    @keyframes navGlassDark {
+        to {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+    }
+
+    @keyframes navGlassBeforeDark {
+        to {
+            background: linear-gradient(180deg, rgba(48, 48, 48, 0.88) 0%, rgba(37, 37, 37, 0.82) 100%);
+        }
+    }
+
+    [data-theme="dark"] .navigation.scrolled {
+        animation: navGlass linear both, navGlassDark linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0px 20px, 0px 20px;
+    }
+
+    [data-theme="dark"] .navigation.scrolled::before {
+        animation: navGlassBefore linear both, navGlassBeforeDark linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0px 20px, 0px 20px;
+    }
+
+    /* Animation takes precedence — unset class-based fallbacks */
+    .navigation.scrolled::before {
+        opacity: unset;
+        transform: unset;
+        transition: none;
+    }
+
+    .navigation.scrolled {
+        border-color: unset;
+        transform: unset;
+        backdrop-filter: unset;
+        -webkit-backdrop-filter: unset;
+        transition: none;
+    }
+
+    /* Nav dots still use .scrolled class (no animation needed) */
+    .navigation.scrolled .nav-link::after {
+        opacity: 0;
+        transform: translateX(-50%) scale(0);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .navigation.scrolled .nav-link.active::after {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
 }
 
 /* ===================================
@@ -683,21 +785,61 @@ a {
    NDA PASSWORD MODAL
    =================================== */
 
-.nda-modal {
-    display: none;
+/* ── NDA Modal — <dialog> with @starting-style ── */
+dialog.nda-modal {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
     z-index: 1000;
+    display: flex;
     align-items: center;
     justify-content: center;
-    animation: fadeIn 0.3s ease;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    padding: 0;
+    max-width: 100vw;
+    max-height: 100vh;
+    margin: 0;
+    /* Entry animation */
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity   0.3s ease,
+        transform 0.3s ease,
+        display  0.3s allow-discrete,
+        overlay  0.3s allow-discrete;
 }
 
-.nda-modal.active {
-    display: flex;
+/* Open state */
+dialog.nda-modal:open {
+    opacity: 1;
+    transform: translateY(0);
 }
 
+/* Starting style for entry animation */
+@starting-style {
+    dialog.nda-modal:open {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+/* Backdrop */
+dialog.nda-modal::backdrop {
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.3s ease, display 0.3s allow-discrete, overlay 0.3s allow-discrete;
+}
+
+dialog.nda-modal:open::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+@starting-style {
+    dialog.nda-modal:open::backdrop {
+        background: rgba(0, 0, 0, 0);
+    }
+}
+
+/* Content panel */
 .nda-modal-content {
     background: var(--color-bg);
     padding: 40px;
@@ -705,7 +847,6 @@ a {
     max-width: 400px;
     width: 90%;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    animation: slideUp 0.3s ease;
 }
 
 .nda-modal-title {
@@ -833,19 +974,65 @@ a {
     display: block;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+/* Reduced motion: simple fade */
+@media (prefers-reduced-motion: reduce) {
+    dialog.nda-modal {
+        transition: opacity 0.2s ease, display 0.2s allow-discrete, overlay 0.2s allow-discrete;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    dialog.nda-modal:open { opacity: 1; transform: none; }
+    @starting-style { dialog.nda-modal:open { opacity: 0; transform: none; } }
+    dialog.nda-modal::backdrop { transition: background 0.2s; }
+
+    /* CV Picker — simplify popover transitions */
+    .cv-picker {
+        transition: opacity 0.15s ease, display 0.15s allow-discrete, overlay 0.15s allow-discrete;
+    }
+
+    .cv-picker:popover-open {
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    .cv-picker::backdrop { transition: background 0.2s; }
+
+    @media (max-width: 768px) {
+        .cv-picker:popover-open {
+            transform: translateY(0);
+        }
+
+        .cv-picker:popover-open::backdrop {
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+    }
+
+    /* Scroll-driven nav — disable animation, rely on .scrolled class fallback */
+    @supports (animation-timeline: scroll()) {
+        .navigation.scrolled {
+            animation: none;
+        }
+        .navigation.scrolled::before {
+            animation: none;
+            opacity: 1;
+            transform: scaleX(1);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .navigation.scrolled {
+            border-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(28px) saturate(140%);
+            -webkit-backdrop-filter: blur(28px) saturate(140%);
+            transform: translateY(-2px);
+        }
+        [data-theme="dark"] .navigation.scrolled {
+            animation: none;
+        }
+        [data-theme="dark"] .navigation.scrolled::before {
+            animation: none;
+            background: linear-gradient(180deg, rgba(48, 48, 48, 0.88) 0%, rgba(37, 37, 37, 0.82) 100%);
+        }
+        [data-theme="dark"] .navigation.scrolled {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
     }
 }
 
@@ -3294,30 +3481,7 @@ html {
    Popover on desktop, bottom sheet on mobile
    =================================== */
 
-/* ── Backdrop ── */
-.cv-picker-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 600;
-    background: transparent;
-    pointer-events: none;
-    transition: background 0.3s ease;
-}
-
-.cv-picker-backdrop.active {
-    pointer-events: auto;
-}
-
-/* Only darken on mobile (bottom sheet needs it) */
-@media (max-width: 768px) {
-    .cv-picker-backdrop.active {
-        background: rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-    }
-}
-
-/* ── Shared picker shell ── */
+/* ── CV Picker — Popover API ── */
 .cv-picker {
     position: fixed;
     z-index: 601;
@@ -3329,17 +3493,44 @@ html {
         0 4px 16px rgba(0, 0, 0, 0.08),
         0 16px 48px rgba(0, 0, 0, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.7);
-
-    /* Hidden state */
+    /* Hidden state for animation */
     opacity: 0;
-    pointer-events: none;
-    visibility: hidden;
+    transform: translateX(-50%) translateY(-8px) scale(0.96);
+    transition:
+        opacity   0.22s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.28s cubic-bezier(0.34, 1.3, 0.64, 1),
+        display 0.22s allow-discrete,
+        overlay 0.22s allow-discrete;
 }
 
-.cv-picker.active {
+/* Open state */
+.cv-picker:popover-open {
     opacity: 1;
-    pointer-events: auto;
-    visibility: visible;
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+
+/* Starting style for entry animation */
+@starting-style {
+    .cv-picker:popover-open {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-8px) scale(0.96);
+    }
+}
+
+/* Backdrop — transparent on desktop, dark on mobile */
+.cv-picker::backdrop {
+    background: transparent;
+    transition: background 0.3s ease, display 0.3s allow-discrete, overlay 0.3s allow-discrete;
+}
+
+.cv-picker:popover-open::backdrop {
+    background: transparent;
+}
+
+@starting-style {
+    .cv-picker:popover-open::backdrop {
+        background: transparent;
+    }
 }
 
 /* ── DESKTOP — popover anchored below nav link ── */
@@ -3347,23 +3538,10 @@ html {
     .cv-picker {
         top: var(--cv-picker-top, 80px);
         left: var(--cv-picker-left, 50%);
-        transform: translateX(-50%) translateY(-8px) scale(0.96);
         transform-origin: top center;
         width: 220px;
         border-radius: 16px;
         padding: 8px;
-        transition:
-            opacity   0.22s cubic-bezier(0.4, 0, 0.2, 1),
-            transform 0.28s cubic-bezier(0.34, 1.3, 0.64, 1),
-            visibility 0s linear 0.22s;
-    }
-
-    .cv-picker.active {
-        transform: translateX(-50%) translateY(0) scale(1);
-        transition:
-            opacity   0.22s cubic-bezier(0.4, 0, 0.2, 1),
-            transform 0.28s cubic-bezier(0.34, 1.3, 0.64, 1),
-            visibility 0s linear 0s;
     }
 
     /* Small caret pointing up toward nav */
@@ -3400,16 +3578,32 @@ html {
         transition:
             transform 0.38s cubic-bezier(0.34, 1.15, 0.64, 1),
             opacity   0.2s ease,
-            visibility 0s linear 0.38s;
+            display 0.38s allow-discrete,
+            overlay 0.38s allow-discrete;
         border-bottom: none;
     }
 
-    .cv-picker.active {
+    .cv-picker:popover-open {
         transform: translateY(0);
-        transition:
-            transform 0.38s cubic-bezier(0.34, 1.15, 0.64, 1),
-            opacity   0.2s ease,
-            visibility 0s linear 0s;
+    }
+
+    @starting-style {
+        .cv-picker:popover-open {
+            transform: translateY(100%);
+        }
+    }
+
+    /* Mobile backdrop: dark overlay */
+    .cv-picker:popover-open::backdrop {
+        background: rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+
+    @starting-style {
+        .cv-picker:popover-open::backdrop {
+            background: rgba(0, 0, 0, 0);
+        }
     }
 
     .cv-picker::before { display: none; }
@@ -3579,25 +3773,25 @@ html {
         background 0.15s ease;
 }
 
-.cv-picker.active .cv-picker-option:nth-child(1) {
+.cv-picker:popover-open .cv-picker-option:nth-child(1) {
     opacity: 1;
     transform: translateY(0);
     transition-delay: 0.07s;
 }
 
-.cv-picker.active .cv-picker-option:nth-child(2) {
+.cv-picker:popover-open .cv-picker-option:nth-child(2) {
     opacity: 1;
     transform: translateY(0);
     transition-delay: 0.13s;
 }
 
 /* hover override — don't fight the entrance animation */
-.cv-picker.active .cv-picker-option:hover {
+.cv-picker:popover-open .cv-picker-option:hover {
     transform: translateX(2px);
 }
 
 @media (max-width: 768px) {
-    .cv-picker.active .cv-picker-option:hover {
+    .cv-picker:popover-open .cv-picker-option:hover {
         transform: none;
     }
 }

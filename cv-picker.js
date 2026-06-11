@@ -1,22 +1,16 @@
 /* ===================================
-   CV LANGUAGE PICKER
-   Paste this in your main JS file, or
-   add as <script src="cv-picker.js"> before </body>
+   CV LANGUAGE PICKER — Popover API
    =================================== */
 
 document.addEventListener('DOMContentLoaded', function () {
 (function () {
     'use strict';
 
-    const picker   = document.getElementById('cvPicker');
-    const backdrop = document.getElementById('cvPickerBackdrop');
-    if (!picker || !backdrop) return;
+    const picker = document.getElementById('cvPicker');
+    if (!picker) return;
 
     // All nav links that should trigger the picker
-    // Works across desktop nav + mobile menu + any other instance
     const triggers = document.querySelectorAll('[data-cv-trigger]');
-
-    let isOpen = false;
 
     /* ── Position picker below the clicked trigger (desktop only) ── */
     function positionBelow(trigger) {
@@ -32,41 +26,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* ── Open ── */
     function open(trigger) {
-        if (isOpen) { close(); return; } // toggle
         positionBelow(trigger);
-        picker.classList.add('active');
-        backdrop.classList.add('active');
-        isOpen = true;
+        picker.showPopover(); // native: top layer, focus trap
         trigger.setAttribute('aria-expanded', 'true');
     }
 
     /* ── Close ── */
     function close() {
-        if (!isOpen) return;
-        picker.classList.remove('active');
-        backdrop.classList.remove('active');
-        isOpen = false;
+        picker.hidePopover(); // native: removes from top layer
         triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
     }
 
     /* ── Bind triggers ── */
     triggers.forEach(trigger => {
-        trigger.setAttribute('aria-haspopup', 'dialog');
+        trigger.setAttribute('aria-haspopup', 'menu');
         trigger.setAttribute('aria-expanded', 'false');
         trigger.setAttribute('aria-controls', 'cvPicker');
 
         trigger.addEventListener('click', function (e) {
             e.preventDefault();
-            open(this);
+            if (picker.matches(':popover-open')) {
+                close(); // toggle off
+            } else {
+                open(this); // open
+            }
         });
     });
 
-    /* ── Close on backdrop click ── */
-    backdrop.addEventListener('click', close);
-
-    /* ── Close on ESC ── */
+    /* ── Close on ESC (popover="manual" doesn't auto-close on ESC) ── */
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && isOpen) close();
+        if (e.key === 'Escape' && picker.matches(':popover-open')) close();
     });
 
     /* ── Close when a CV link is actually clicked ── */
@@ -79,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* ── Reposition on resize ── */
     window.addEventListener('resize', function () {
-        if (isOpen) {
+        if (picker.matches(':popover-open')) {
             const activeTrigger = document.querySelector('[data-cv-trigger][aria-expanded="true"]');
             if (activeTrigger) positionBelow(activeTrigger);
         }
