@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
             navLinks.forEach(l => l.classList.remove('active'));
             mobileNavLinks.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
-            document.querySelectorAll(`.nav-link[href="${href}"]`).forEach(l => {
+            Array.from(navLinks).filter(l => l.getAttribute('href') === href).forEach(l => {
                 l.classList.add('active');
             });
         });
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
             const id = entry.target.getAttribute('id');
-            const match = document.querySelector(`.nav-link[href="#${id}"]`);
+            const match = Array.from(navLinks).find(l => l.getAttribute('href') === `#${id}`);
             if (match) {
                 navLinks.forEach(l => l.classList.remove('active'));
                 match.classList.add('active');
