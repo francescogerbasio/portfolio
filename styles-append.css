@@ -1,9 +1,14 @@
-
 /* ═══════════════════════════════════════
    CASE STUDY CARD STYLES
    Added for cs-card interactions on the
    UX/UI project grid
-═══════════════════════════════════════ */
+   ═══════════════════════════════════════ */
+
+/* ── CSS Cascade Layers (must match styles.css order) ── */
+@layer base, components;
+
+/* ── Components Layer ── */
+@layer components {
 
 .cs-card {
     cursor: pointer;
@@ -12,7 +17,7 @@
 .cs-card:focus-visible {
     outline: 2px solid var(--color-text);
     outline-offset: 4px;
-    border-radius: 14px;
+    border-radius: var(--radius-sm);
 }
 
 .cs-card-thumb {
@@ -73,3 +78,5 @@
     padding: 3px 10px !important;
     background: transparent !important;
 }
+
+} /* end @layer components */

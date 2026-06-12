@@ -1,3 +1,9 @@
+/* ── CSS Cascade Layers (must match styles.css order) ── */
+@layer base, components;
+
+/* ── Components Layer ── */
+@layer components {
+
 .about-hero {
     padding-top: clamp(80px, 12vw, 160px);
     padding-bottom: clamp(60px, 8vw, 120px);
@@ -97,7 +103,7 @@
     aspect-ratio: 4/5;
     border-radius: 20px;
     overflow: hidden;
-    background: rgba(0,0,0,0.06);
+    background: var(--shadow-subtle);
 }
 
 .about-photo img {
@@ -129,7 +135,7 @@
 
 .stat-item {
     padding: 32px 24px;
-    border-right: 1px solid rgba(0,0,0,0.12);
+    border-right: 1px solid var(--shadow-light);
     transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
@@ -187,7 +193,7 @@
     border: 1px solid rgba(0,0,0,0.2);
     padding: 6px 14px;
     border-radius: 100px;
-    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.4, 0.64, 1);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s var(--ease-spring);
     cursor: default;
 }
 
@@ -304,7 +310,7 @@
     top: 10px;
     bottom: 10px;
     width: 1px;
-    background: rgba(0,0,0,0.12);
+    background: var(--shadow-light);
 }
 
 @media (max-width: 768px) { .timeline::before { left: 68px; } }
@@ -314,7 +320,7 @@
     grid-template-columns: 80px 1fr;
     gap: 32px;
     padding: 28px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
+    border-bottom: 1px solid var(--shadow-subtle);
     transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
@@ -400,7 +406,7 @@
 
 .bento-card {
     background: rgba(0,0,0,0.04);
-    border-radius: 18px;
+    border-radius: var(--radius-md);
     padding: 28px;
     transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), background 0.25s ease;
 }
@@ -463,7 +469,7 @@
     font-size: 13px;
     font-weight: 500;
     color: var(--color-text);
-    background: rgba(0,0,0,0.08);
+    background: var(--shadow-faint);
     padding: 5px 12px;
     border-radius: 100px;
 }
@@ -513,7 +519,7 @@
     border-radius: 100px;
     cursor: pointer;
     text-decoration: none;
-    transition: transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.25s ease;
+    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
 }
 
 .btn-primary:hover {
@@ -535,7 +541,7 @@
     border-radius: 100px;
     cursor: pointer;
     text-decoration: none;
-    transition: transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1), background 0.2s ease;
+    transition: transform 0.25s var(--ease-spring), background 0.2s ease;
 }
 
 .btn-secondary:hover {
@@ -622,3 +628,5 @@
 [data-theme="dark"] .values-header {
     border-bottom-color: rgba(255,255,255,0.1);
 }
+
+} /* end @layer components */

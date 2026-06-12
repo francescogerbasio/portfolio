@@ -1,3 +1,9 @@
+/* ── CSS Cascade Layers (must match styles.css order) ── */
+@layer base, components;
+
+/* ── Components Layer ── */
+@layer components {
+
 .career-hero {
     padding-top: clamp(80px, 12vw, 160px);
     padding-bottom: clamp(60px, 8vw, 120px);
@@ -80,12 +86,12 @@
 .cert-card {
     background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.68) 100%);
     border: 1px solid rgba(15, 15, 15, 0.08);
-    border-radius: 18px;
+    var(--radius-md);
     padding: 28px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1), 
+    transition: transform 0.3s var(--ease-spring), 
                 box-shadow 0.3s ease,
                 border-color 0.2s ease;
 }
@@ -163,3 +169,5 @@
     border-color: rgba(255,255,255,0.12);
     box-shadow: 0 14px 36px rgba(0,0,0,0.3);
 }
+
+} /* end @layer components */

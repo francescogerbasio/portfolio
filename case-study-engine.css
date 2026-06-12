@@ -3,6 +3,12 @@
    Depends on: styles.css (portfolio tokens)
    ============================================================ */
 
+/* ── CSS Cascade Layers (must match styles.css order) ── */
+@layer base, components;
+
+/* ── Base Layer: Case Study Tokens ── */
+@layer base {
+
 /* ── Tokens ── */
 :root {
   --cs-ease-spring: cubic-bezier(.34,1.18,.64,1);
@@ -14,6 +20,11 @@
   --cs-accent: #888;
   --cs-accent-rgb: 136,136,136;
 }
+
+} /* end @layer base */
+
+/* ── Components Layer ── */
+@layer components {
 
 /* ── Overlay shell ── */
 .cs-overlay {
@@ -484,7 +495,7 @@
 
 .cs-insight {
   background: rgba(0,0,0,.04);
-  border-radius: 18px;
+  border-radius: var(--radius-md);
   padding: 26px 22px;
   transition: background .2s ease;
 }
@@ -1105,3 +1116,5 @@ body.cs-is-open .mobile-menu {
 [data-theme="dark"] .cs-showcase-tablet {
   background: #2a2c32;
 }
+
+} /* end @layer components */

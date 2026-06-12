@@ -4,6 +4,12 @@
    For now, I'm using similar fallback fonts
    =================================== */
 
+/* ── CSS Cascade Layers ── */
+@layer base, components;
+
+/* ── Base Layer: Design Tokens & Foundations ── */
+@layer base {
+
 .visually-hidden {
     position: absolute;
     width: 1px;
@@ -57,6 +63,15 @@
     --color-text-light: oklch(44% 0 0 / 1); /* #888888 */
     --color-border: oklch(60% 0 0 / 1); /* #888888 */
     
+    /* Tier 3: General UI Design Tokens */
+    --shadow-faint: var(--shadow-faint);
+    --shadow-subtle: var(--shadow-subtle);
+    --shadow-light: var(--shadow-light);
+    --blur-glass: blur(28px) saturate(140%);
+    --radius-sm: 14px;
+    --radius-md: 18px;
+    --ease-spring: var(--ease-spring);
+    
     /* Fallback for older browsers */
     @supports not (color: oklch(0% 0 0)) {
         --color-bg: #fdf5f6;
@@ -69,6 +84,11 @@
 @view-transition {
     navigation: auto;
 }
+
+} /* end @layer base */
+
+/* ── Components Layer: All Component Styles ── */
+@layer components {
 
 /* ===================================
    DARK MODE
@@ -290,7 +310,7 @@ dialog.nda-modal::backdrop {
     transform: translateY(-50%);
     height: 28px;
     width: 1px;
-    background: rgba(0,0,0,0.12);
+    background: var(--shadow-light);
     transition: none !important;
 }
 [data-theme="dark"] .theme-toggle::before {
@@ -413,7 +433,7 @@ a {
 .navigation.scrolled {
     border-color: light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08));
     transform: translateY(-2px);
-    backdrop-filter: blur(28px) saturate(140%);
+    backdrop-filter: var(--blur-glass);
 }
 
 .nav-link {
@@ -481,7 +501,7 @@ a {
         }
         to {
             border-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(28px) saturate(140%);
+            backdrop-filter: var(--blur-glass);
             
             transform: translateY(-2px);
         }
@@ -1049,7 +1069,7 @@ dialog.nda-modal:open::backdrop {
         }
         .navigation.scrolled {
             border-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(28px) saturate(140%);
+            backdrop-filter: var(--blur-glass);
             
             transform: translateY(-2px);
         }
@@ -1084,7 +1104,7 @@ dialog.nda-modal:open::backdrop {
     position: relative;
     padding: 18px 20px;
     background: linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.44) 100%);
-    border: 1px solid rgba(0,0,0,0.08);
+    border: 1px solid var(--shadow-faint);
     border-radius: 24px;
     box-shadow: 0 1px 0 rgba(255,255,255,0.75) inset;
     cursor: pointer;
@@ -1173,7 +1193,7 @@ dialog.nda-modal:open::backdrop {
     flex-direction: column;
     padding: 6px 0 18px;
     background: linear-gradient(180deg, rgba(255,255,255,0.46) 0%, rgba(255,255,255,0.24) 100%);
-    border: 1px solid rgba(0,0,0,0.06);
+    border: 1px solid var(--shadow-subtle);
     border-radius: 26px;
     box-shadow: 0 1px 0 rgba(255,255,255,0.72) inset;
     overflow: hidden;
@@ -1188,7 +1208,7 @@ dialog.nda-modal:open::backdrop {
     padding: 18px 22px;
     background: transparent;
     border: none;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
+    border-bottom: 1px solid var(--shadow-subtle);
     font-size: clamp(15px, 1.3vw, 18px);
     text-decoration: none;
     color: inherit;
@@ -1660,7 +1680,7 @@ dialog.nda-modal:open::backdrop {
     align-items: center;
     justify-content: center;
     gap: 16px;
-    border-radius: 14px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     transition: background 0.3s ease;
     z-index: 10;
@@ -1698,7 +1718,7 @@ dialog.nda-modal:open::backdrop {
 .project-image {
     width: 100%;
     aspect-ratio: 16/9;
-    border-radius: 14px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
 }
 
@@ -1804,10 +1824,6 @@ dialog.nda-modal:open::backdrop {
         padding: 1px;
         background:
             radial-gradient(240px circle at var(--glow-x) var(--glow-y), rgba(255, 164, 201, 0.58), rgba(255, 164, 201, 0.2) 22%, rgba(255, 164, 201, 0.07) 42%, rgba(255, 164, 201, 0) 62%);
-        -webkit-mask:
-            linear-gradient(#fff 0 0) content-box,
-            linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
         mask:
             linear-gradient(#fff 0 0) content-box,
             linear-gradient(#fff 0 0);
@@ -2272,9 +2288,9 @@ html {
     --gaming-accent:  oklch(65% 0.18 145);
 
     /* ── Card Language ── */
-    --card-radius: 14px;
-    --card-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
-    --card-shadow-hover: 0 8px 24px rgba(0,0,0,0.12), 0 24px 48px rgba(0,0,0,0.10);
+    --card-radius: var(--radius-sm);
+    --card-shadow: 0 2px 8px var(--shadow-faint), 0 8px 24px var(--shadow-subtle);
+    --card-shadow-hover: 0 8px 24px var(--shadow-light), 0 24px 48px rgba(0,0,0,0.10);
 }
 
 .page-title {
@@ -2441,7 +2457,7 @@ html {
     border-radius: 46px;
     box-shadow:
         0 1px 3px  rgba(0,0,0,0.10),
-        0 4px 12px rgba(0,0,0,0.08);
+        0 4px 12px var(--shadow-faint);
     transition:
         left   0.35s cubic-bezier(0.4, 0, 0.2, 1),
         width  0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2482,7 +2498,7 @@ html {
 
 .editorial-card-all {
     position: absolute;
-    border-radius: 14px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
     cursor: pointer;
     opacity: 0;
@@ -2512,7 +2528,7 @@ html {
 .editorial-card-all:hover {
     box-shadow:
         0 8px  20px rgba(0,0,0,0.10),
-        0 20px 48px rgba(0,0,0,0.12);
+        0 20px 48px var(--shadow-light);
     z-index: 5;
 }
 
@@ -2666,7 +2682,7 @@ html {
 .song-card-back {
     position: absolute;
     inset: 0;
-    border-radius: 18px;
+    border-radius: var(--radius-md);
     backface-visibility: hidden;
     clip-path: inset(0 round 18px);
 }
@@ -2686,7 +2702,7 @@ html {
     position: relative;
     flex: 1;
     overflow: hidden;
-    border-radius: 18px 18px 0 0;
+    border-radius: var(--radius-md) 18px 0 0;
 }
 
 .song-card-artwork img {
@@ -3109,7 +3125,7 @@ html {
 }
 
 @media (max-width: 768px) {
-    .games-featured { aspect-ratio: 4/3; border-radius: 14px; }
+    .games-featured { aspect-ratio: 4/3; border-radius: var(--radius-sm); }
 }
 
 .gf-slide {
@@ -3314,7 +3330,7 @@ html {
     background: #1a1a1a;
     box-shadow:
         0 2px 4px  rgba(0,0,0,0.10),
-        0 8px 20px rgba(0,0,0,0.12);
+        0 8px 20px var(--shadow-light);
     transition: transform 0.4s cubic-bezier(0.34, 1.20, 0.64, 1),
                 box-shadow 0.4s ease;
 }
@@ -3437,7 +3453,7 @@ html {
     list-style: none;
     margin: 10px 0 0 0;
     padding: 0;
-    border-top: 1px solid rgba(0,0,0,0.08);
+    border-top: 1px solid var(--shadow-faint);
     padding-top: 8px;
     display: flex;
     flex-direction: column;
@@ -3723,7 +3739,7 @@ html {
 
     .cv-picker-option {
         padding: 16px;
-        border-radius: 14px;
+        border-radius: var(--radius-sm);
         background: rgba(0, 0, 0, 0.03);
         border: 1px solid rgba(0, 0, 0, 0.06);
     }
@@ -3753,7 +3769,7 @@ html {
     color: var(--color-text);
     transition:
         background 0.15s ease,
-        transform  0.2s cubic-bezier(0.34, 1.4, 0.64, 1);
+        transform  0.2s var(--ease-spring);
     position: relative;
     overflow: hidden;
 }
@@ -3788,7 +3804,7 @@ html {
     font-size: 24px;
     line-height: 1;
     flex-shrink: 0;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12));
+    filter: drop-shadow(0 1px 2px var(--shadow-light));
     transition: transform 0.2s cubic-bezier(0.34, 1.5, 0.64, 1);
 }
 
@@ -3827,7 +3843,7 @@ html {
     transform: translate(-4px, 4px);
     transition:
         opacity   0.15s ease,
-        transform 0.2s cubic-bezier(0.34, 1.4, 0.64, 1);
+        transform 0.2s var(--ease-spring);
     flex-shrink: 0;
 }
 
@@ -4066,3 +4082,5 @@ main.pt-leave,
     @keyframes pt-fade-in  { from { opacity: 0; } to { opacity: 1; } }
     @keyframes pt-fade-out { from { opacity: 1; } to { opacity: 0; } }
 }
+
+} /* end @layer components */
