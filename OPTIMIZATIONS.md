@@ -291,60 +291,53 @@ Reset 2026-06-12: All items reset to TODO for MWG verification pass.
 - MWG Verification Needed: Check web components / partials guidance
 
 ### #53 — Extract theme toggle SVG icons to sprite
-- Status: TODO
-- Issue: Moon/sun SVGs fully inlined and repeated in both desktop and mobile nav on each page.
-- MWG Verification Needed: Check SVG sprite patterns
+- Status: DONE
+- Files: All 4 HTML pages (index.html, about.html, career.html, fun.html)
+- Fix: Added `icon-moon` and `icon-sun` symbols to each page's SVG sprite. Replaced 4 inline full SVG markup with `<use href="#icon-moon">` and `<use href="#icon-sun">` references. MWG-2025/SVG-sprite — sprite pattern correct.
 
 ### #54 — Remove or archive case-study-overlays.html
-- Status: TODO
-- Issue: 994-line file that duplicates content from individual `cs-*.html` files.
-- MWG Verification Needed: Confirm deletion plan
+- Status: DONE
+- File: case-study-overlays.html (deleted)
+- Fix: File deleted — was a 994-line duplicate of individual `cs-*.html` fragments and was not referenced anywhere in the codebase. MWG-2025/code-quality — dead code removal.
 
 ### #55 — Move inline styles in about.html:196-201 and career.html:158 to CSS classes
-- Status: TODO
-- Issue: `<p style="font-size:clamp(15px,1.3vw,18px);line-height:1.75;opacity:0.7;color:var(--color-text);margin:0 0 24px 0;">`
-- MWG Verification Needed: Check CSS best practices
+- Status: DONE
+- Files: career.html:253,256, career.css (new .career-body-text class)
+- Fix: about.html inline styles already removed previously. career.html inline `<p>` styles extracted to `.career-body-text` CSS class. MWG-2025/CSS — no inline styles.
 
 ### #56 — Add `role="separator" aria-hidden="true"` to decorative dividers
-- Status: TODO
-- Files: about.html:136, career.html:141
-- Issue: Decorative `<div>` elements without ARIA semantics.
-- MWG Verification Needed: Check role separator / hr guidance
+- Status: DONE
+- Files: about.html:192, career.html:198
+- Fix: Added `role="separator"` to both `.about-divider` and `.career-divider`. Both already had `aria-hidden="true"`. MWG-2025/aria — decorative separator correctly annotated.
 
-### #57 — Use `<dl>`/`<dt>`/`<dd>` for stats in career.html:143-156
-- Status: TODO
-- Issue: `<div class="stat-item">` with `<div class="stat-number">` and `<div class="stat-label">` is not accessible data markup.
-- MWG Verification Needed: Check semantic HTML / definition lists guidance
+### #57 — Use `<dl>`/`<dt>`/`<dd>` for stats in career.html
+- Status: DONE (already implemented)
+- File: career.html:200-213
+- Fix: Already uses `<dl class="about-stats">` with `<dt class="stat-number">` and `<dd class="stat-label">`. MWG-2025/semantic-HTML — definition list correct.
 
 ### #58 — Use `<article>` for project cards and bento cards
-- Status: TODO
-- Issue: `<div class="project-card">` and `<div class="bento-card">` are standalone content units.
-- MWG Verification Needed: Check semantic HTML / article element guidance
+- Status: PARTIAL
+- Files: about.html (5 bento cards), index.html (LQA cards)
+- Fix: about.html 5 bento cards changed from `<div>` to `<article>`. index.html LQA `<a>`-wrapped cards (Dead Take, Kiln) remain as `<a>` due to nested interactive elements — changing to `<article>` would require restructuring those cards. MWG-2025/semantic-HTML — bento cards correctly converted to article; project cards require further evaluation.
 
-### #59 — Consider `<details>`/`<summary>` for accordion progressive enhancement
-- Status: TODO
-- File: index.html:284-297
-- Issue: Accordion uses `<button>` + `<div>` without `<details>`/`<summary>` baseline.
-- MWG Verification Needed: Check details/summary progressive enhancement guidance
+### #59 — Use `<details>`/`<summary>` for accordion
+- Status: DONE
+- Files: index.html:369-481, styles.css (accordion CSS updated)
+- Fix: Converted `<button>` + `<div>` accordion to `<details>` + `<summary>` for native progressive enhancement. CSS updated to use `details[open]` selectors for animations. No JS needed for open/close; native browser behavior handles it. MWG-2025/progressive-enhancement — details/summary correct pattern.
 
 ### #60 — Add `font-size-adjust: from-font` to heading rules for Qurova
-- Status: TODO
-- File: styles.css
-- Issue: Qurova headings may shift significantly when fallback font loads.
-- MWG Verification Needed: Check font-size-adjust guidance
+- Status: DONE
+- Files: styles.css (5 rules), about.css (6 rules), career.css (5 rules), case-study-engine.css (6 rules)
+- Fix: Added `font-size-adjust: from-font` to all Qurova heading rules for CLS reduction on font load. MWG-2025/font-size-adjust — correct implementation.
 
 ### #61 — Remove `will-change: filter` from NDA card image
-- Status: TODO
+- Status: DONE
 - File: styles.css:1600
-- Issue: `.project-card.nda-protected .project-image img` has `will-change: filter, transform`. `filter` is not compositor-only — it requires paint and can hurt scroll performance. Only `transform` is compositor-friendly.
-- Fix: Change to `will-change: transform` — the blur is static (not animated), so `filter` doesn't need to be in the will-change hint.
-- MWG Verification: Check will-change / rendering-performance guidance
+- Fix: Changed `will-change: filter, transform` → `will-change: transform`. `filter` is not compositor-friendly and the blur is static. MWG-2025/rendering-performance — compositor-only properties correct.
 
 ### #62 — Replace `filter: blur()` in `@keyframes text-reveal`
-- Status: TODO
+- Status: DONE
 - File: styles.css:1667-1669
-- Issue: `@keyframes text-reveal` uses `filter: blur(10px) → blur(0)` which is not compositor-only. Page transition keyframes were cleaned up in #42, but this decorative entrance animation was missed.
-- Fix: Replace blur animation with `opacity` + `transform: scale()` for compositor-friendly effect, or accept as-is since it's a short decorative animation (not scroll-affecting).
-- MWG Verification: Check rendering-performance / compositor-only animations guidance
+- Fix: Replaced `filter: blur(10px) → blur(0)` with `opacity: 0 → 1` + `transform: scale(1.05) → 1`. Fully compositor-friendly. MWG-2025/rendering-performance — compositor-only properties.
 
 (End of file - total 353 lines)

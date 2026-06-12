@@ -169,6 +169,20 @@
         <symbol id="icon-arrow-out" viewBox="0 0 14 14">
             <path d="M1 7h12M8 2.5L12.5 7 8 11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </symbol>
+        <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </symbol>
+        <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </symbol>
     </svg>
 
     <!-- Navigation -->
@@ -178,7 +192,7 @@
         <a href="fun.html" class="nav-link">Fun</a>
         <a href="about.html" class="nav-link">About</a>
         <button type="button" class="nav-link" commandfor="cvPicker" command="toggle-popover">Resume</button>
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><svg class="icon-moon" width="18" height="18" aria-hidden="true"><use href="#icon-moon"/></svg><svg class="icon-sun" width="18" height="18" aria-hidden="true"><use href="#icon-sun"/></svg></button>
     </nav>
 
     <!-- Hamburger Menu (Mobile Only) -->
@@ -352,15 +366,13 @@
 
         <!-- Other Projects Accordion -->
         <section class="work-section" aria-label="Other projects">
-            <div class="other-projects-accordion">
-                <button class="accordion-trigger" id="accordionTrigger"
-                        aria-expanded="false"
-                        aria-controls="accordionContent">
-                    <span class="accordion-title">Other Projects I've Contributed To</span>
-                    <span class="accordion-count">(17)</span>
-                    <span class="accordion-icon" id="accordionIcon" aria-hidden="true">+</span>
-                </button>
-                <div class="accordion-content" id="accordionContent">
+            <details class="other-projects-accordion" id="otherProjectsAccordion">
+                    <summary class="accordion-trigger" id="accordionTrigger">
+                        <span class="accordion-title">Other Projects I've Contributed To</span>
+                        <span class="accordion-count">(17)</span>
+                        <span class="accordion-icon" id="accordionIcon" aria-hidden="true">+</span>
+                    </summary>
+                    <div class="accordion-content" id="accordionContent">
                     <div class="projects-list">
                         <a href="https://en.bandainamcoent.eu/elden-ring/elden-ring" target="_blank" rel="noopener noreferrer" class="project-list-item clickable">
                             <span class="project-name">Elden Ring</span>
@@ -466,7 +478,7 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </details>
         </section>
         <!-- UX/UI Design Section -->
         <section class="work-section" aria-labelledby="uxui-heading">
