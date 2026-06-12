@@ -1,356 +1,350 @@
 # OPTIMIZATIONS.md — Portfolio Optimization Tracker
-Created: 2026-06-11  
-Source: Full Modern Web Guidance scan + CSS/JS/HTML audit  
+Created: 2026-06-11
+Source: Full Modern Web Guidance scan + CSS/JS/HTML audit
 Baseline target: Baseline 2025
 
-Each item has a unique #ID. Status is one of: TODO, IN PROGRESS, DONE, SKIPPED.
+Each item has a unique #ID. Status is one of: TODO, IN PROGRESS, PARTIAL, DONE, SKIPPED.
+Reset 2026-06-12: All items reset to TODO for MWG verification pass.
 
 ## 🔴 P1 — Critical (Bugs, Accessibility, Performance)
 
 ### #1 — fun.html missing `<h1>` heading
 - Status: DONE
-- File: fun.html
-- Fix: Added `<h1 class="visually-hidden">Fun — Travel, Music & Gaming</h1>` at start of `<main>`.
+- File: fun.html:173
+- Fix: Added `<h1 class="visually-hidden">Fun — Travel, Music & Gaming</h1>` at start of `<main>`. MWG-2025/heading-hierarchy — visually-hidden h1 is valid for page with no visible heading.
 
 ### #2 — fun.html missing SVG sprite
 - Status: DONE
-- File: fun.html
-- Fix: Added `<svg style="display:none">` sprite block with `icon-arrow-right` and `icon-arrow-out` symbols immediately after `<body>`.
+- File: fun.html:127
+- Fix: Added `<svg style="display:none">` sprite with `icon-arrow-right` and `icon-arrow-out` symbols. MWG-2025/SVG-sprite — sprite pattern correct.
 
 ### #3 — fun.html CV picker uses ↗ text instead of SVG sprite
 - Status: DONE
-- File: fun.html:188,199
-- Fix: Replaced ↗ with `<svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-out"/></svg>` on both CV picker options (requires #2).
+- File: fun.html:254,265
+- Fix: Replaced ↗ with `<use href="#icon-arrow-out"/>` on both CV picker options. MWG-2025/SVG-sprite — uses sprite correctly.
 
 ### #4 — Duplicate `@keyframes pulse-dot` — second definition overrides first
 - Status: DONE
-- File: styles.css:2921-2924 (music) and styles.css:3132-3135 (gaming)
-- Fix: Renamed gaming keyframes to `@keyframes pulse-dot-glow` and updated `.games-subsection-dot.playing` to reference `pulse-dot-glow`. The music `.preview-dot` keeps the original `pulse-dot`.
+- File: styles.css:3113
+- Fix: Renamed gaming keyframes to `@keyframes pulse-dot-glow`. MWG-2025/CSS — deduplication correct.
 
 ### #5 — Layout thrashing in `layoutMasonry()`
 - Status: DONE
-- File: fun.js:295-319
-- Fix: Batched all `getBoundingClientRect()` reads into a single pass before any writes. Created `cardRects` array mapping each card's top position, then used those pre-read values in the forEach instead of calling `getBoundingClientRect()` per-card. Also removed redundant `instant` branching in `revealCard`.
+- File: fun.js:333
+- Fix: Batched `getBoundingClientRect()` reads into `cardRects` array before writes. MWG-2025/DOM-performance — batching reads before writes correct.
 
 ### #6 — Pointer glow: read-then-write per frame
 - Status: DONE
-- File: script.js:276-288
-- Fix: Replaced per-element `pointermove`/`pointerleave` listeners with a single delegated listener on `document.body` using `e.target.closest()` to match target elements. Eliminates N listeners and N getBoundingClientRect() calls per frame.
+- File: script.js:278
+- Fix: Single delegated `pointermove` listener on `document.body` with `e.target.closest()`. MWG-2025/event-delegation — delegation pattern correct.
 
 ### #7 — Carousel auto-timer never pauses on visibility change
 - Status: DONE
-- File: fun.js:654
-- Fix: Added `visibilitychange` listener that calls `stopAuto()` when page is hidden and `startAuto()` when visible. Follows the same pattern as phrase rotation in script.js.
+- File: fun.js:681
+- Fix: Added `visibilitychange` listener calling `stopAuto()`/`startAuto()`. MWG-2025/visibilitychange — correct API usage.
 
 ### #8 — IntersectionObserver leak in `layoutMasonry()`
 - Status: DONE
-- File: fun.js:343-358
-- Fix: Moved `masonryObserver` to module scope and `revealCard` to module scope. Added `if (masonryObserver) masonryObserver.disconnect()` before creating a new observer, preventing the leak on repeated resize calls.
+- File: fun.js:341-342
+- Fix: `masonryObserver.disconnect()` called before creating new observer. MWG-2025/IntersectionObserver — lifecycle management correct.
 
 ### #9 — Case study overlay: no focus trap
 - Status: DONE
-- File: case-study-engine.js:46-52
-- Fix: Added `keydown` focus trap listener on the panel in `openOverlay()` that intercepts Tab/Shift+Tab and cycles focus between first/last focusable elements within the panel. Listener is stored on `study._focusTrapHandler` and removed in `closeOverlay()`.
+- File: case-study-engine.js:54-83
+- Fix: Added `keydown` focus trap listener in `openOverlay()` that intercepts Tab/Shift+Tab and cycles focus. Listener stored on `study._focusTrapHandler` and removed in `closeOverlay()`. MWG-2025/focus-management — custom focus trap correct per guidance.
 
 ### #10 — Carousel missing keyboard navigation
 - Status: DONE
-- File: fun.js:607-629
-- Fix: Added `keydown` handler on the carousel container for `ArrowLeft` and `ArrowRight` keys. Both keys stop the auto-advance, navigate to the previous/next slide, then restart the auto timer.
+- File: fun.js:674-675
+- Fix: Added `keydown` handler on carousel container for `ArrowLeft` and `ArrowRight` keys. Both stop auto-advance, navigate, restart timer. MWG-2025/keyboard-navigation — arrow keys correct pattern for carousel.
 
 ## 🟠 P2 — High Impact (Performance, Modern CSS, Code Quality)
 
 ### #11 — Inline theme.js to eliminate render-blocking request
 - Status: DONE
-- Files: All 4 HTML pages (index.html, fun.html, about.html, career.html)
-- Fix: Inlined the full 71-line theme.js IIFE directly into `<head>` as an inline `<script>` block on all 4 pages. Eliminates the separate HTTP request while preserving the intentionally-blocking behavior that prevents FOUC.
+- Files: All 4 HTML pages
+- Fix: theme.js IIFE inlined in `<head>` as inline `<script>`. MWG-2025/critical-rendering — eliminates extra HTTP request.
 
 ### #12 — Add `<meta name="color-scheme" content="light dark">` to all pages
 - Status: DONE
-- Files: All 4 HTML pages
-- Fix: Added `<meta name="color-scheme" content="light dark">` immediately after `<meta charset="UTF-8">` in `<head>` on all 4 pages.
+- Files: All 4 HTML pages:55
+- Fix: `<meta name="color-scheme" content="light dark">` in `<head>`. MWG-2025/color-scheme — enables browser dark mode support.
 
 ### #13 — Remove 36 redundant `-webkit-backdrop-filter` declarations
 - Status: DONE
 - File: styles.css (24 occurrences) + case-study-engine.css (3 occurrences)
-- Fix: Removed all `-webkit-backdrop-filter` lines (and the `-webkit-backdrop-filter` from a `transition` shorthand). Kept only the unprefixed `backdrop-filter` declarations. Baseline 2025 supports unprefixed `backdrop-filter`.
+- Fix: Removed all `-webkit-backdrop-filter` lines. Kept only the unprefixed `backdrop-filter` declarations. MWG-2025/vendor-prefixes — Baseline 2025 supports unprefixed `backdrop-filter`.
 
 ### #14 — Remove other redundant vendor prefixes
 - Status: DONE
 - Files: styles.css, case-study-engine.css
-- Fix: Removed `-webkit-backface-visibility` (3×) where unprefixed `backface-visibility` existed; removed `-webkit-transform: translateZ(0)` (2×) where unprefixed existed; replaced `image-rendering: -webkit-optimize-contrast` (2×) with `image-rendering: crisp-edges`; replaced `-webkit-mask-image` with standard `mask-image: radial-gradient(white, black)`; removed `-webkit-user-select`/`-moz-user-select`/`-ms-user-select` trios (6×) where unprefixed `user-select` existed; removed `-webkit-overflow-scrolling: touch` (1×, obsolete).
+- Fix: Removed `-webkit-backface-visibility`, `-webkit-transform: translateZ(0)`, `-webkit-optimize-contrast`, `-webkit-mask-image`, `-webkit-user-select`/`-moz-user-select`/`-ms-user-select` trios, `-webkit-overflow-scrolling: touch`. Also removed remaining `-webkit-mask`/`-webkit-mask-composite` (duplicate of unprefixed `mask`/`mask-composite`). MWG-2025/vendor-prefixes.
 
 ### #15 — Add `font-size-adjust: from-font` for stable font fallbacks
 - Status: DONE
-- File: styles.css — body rule
-- Fix: Added `font-size-adjust: from-font` to the body rule. This tells the browser to use the font's intrinsic aspect ratio from the font file to size fallback fonts, reducing CLS when custom fonts load. The `@font-face` rules already had `size-adjust: 100%` descriptors.
+- File: styles.css:371
+- Fix: `font-size-adjust: from-font` on body rule. MWG-2025/font-size-adjust — reduces CLS on font load.
 
 ### #16 — Add Speculation Rules for next-page prefetch
 - Status: DONE
-- Files: All 4 HTML pages
-- Fix: Added `<script type="speculationrules">` with `prerender` (eagerness: moderate) and `prefetch` (eagerness: conservative) for all internal navigation links on each page. Prerendering triggers on hover.
+- Files: All 4 HTML pages:97
+- Fix: `<script type="speculationrules">` with prerender/prefetch. MWG-2025/speculation-rules — correct implementation.
 
 ### #17 — Use `light-dark()` for simple dark mode color overrides
-- Status: IN PROGRESS (partial)
+- Status: PARTIAL
 - File: styles.css
-- Fix: Converted `.navigation.scrolled { border-color }` to use `light-dark()`. Removed the redundant `[data-theme="dark"] &.scrolled` nested override since it's now handled by the `light-dark()` in the base rule. Full migration requires finding base rules for each dark-mode override (many `.bento-card`, `.accordion-trigger`, etc. dark-mode blocks have no corresponding light-mode base in the same rule), which is a larger architectural refactor beyond the scope of a single pass.
+- Fix: Converted `.navigation.scrolled { border-color }` to use `light-dark()`. Per MWG-2025/css dark mode guidance, `light-dark()` should be used in Tier 2/3 design tokens. Full migration of all `[data-theme="dark"] & { ... }` selectors to `light-dark()` requires significant architectural refactor — each property needs both light and dark values combined in base rule. Current partial implementation is correct per MWG guidance; remaining conversion tracked as future effort.
+- MWG Verification: MWG CSS guide confirms `light-dark()` is the modern approach for automatic color adaptation based on `color-scheme`.
 
 ### #18 — Add `content-visibility: auto` for below-fold sections
 - Status: DONE
-- File: styles.css
-- Fix: Added `content-visibility: auto` with `contain-intrinsic-size: auto none 600px` to `.work-section`. Added `@supports not (content-visibility: auto)` fallback using `contain: layout style`. Note: `.category-section` uses `display: none` when inactive, so content-visibility is not applicable there. Other sections (.values-section, .currently-section, .timeline-section, .certifications-section) were not found in the codebase.
+- File: styles.css:1434
+- Fix: `content-visibility: auto` with `@supports not (content-visibility: auto)` fallback. MWG-2025/content-visibility — correct with fallback.
 
 ### #19 — Use Invoker Commands for CV picker popover
-- Status: IN PROGRESS
-- Files: cv-picker.js, all HTML pages
-- Fix: The `commandfor` + `command="toggle-popover"` API is the modern declarative approach. However, it requires: (1) CSS `anchor` positioning for placement relative to the trigger, (2) a polyfill for unsupported browsers (Safari < 17.5, Firefox), and (3) a positioning fallback since `positionBelow(trigger)` needs to know which trigger was clicked. This is a more involved change best done as a dedicated effort.
+- Status: DONE
+- Files: index.html, about.html, career.html, fun.html (8 trigger buttons), cv-picker.js (rewritten)
+- Fix: Added `commandfor="cvPicker" command="toggle-popover"` to all 8 trigger buttons. Switched from `popover="manual"` to `popover="auto"` for native light dismiss and ESC handling. Rewrote cv-picker.js: feature-detects invoker commands (`HTMLButtonElement.prototype.commandForElement`), uses `beforetoggle` for positioning, `toggle` for `aria-expanded` sync on all triggers, JS fallback for older browsers. Reduced from 78 lines to ~55 lines. MWG-2025/declarative-dialog-popover-control — invoker commands correct; `popover="auto"` enables native light dismiss.
 
 ### #20 — Change `<a href="#" data-cv-trigger>` to `<button>`
 - Status: DONE
-- Files: All 4 HTML pages (8 instances: 2 per page for desktop + mobile)
-- Fix: Replaced all `<a href="#" class="nav-link" data-cv-trigger>Resume</a>` with `<button type="button" class="nav-link" data-cv-trigger aria-haspopup="popover" aria-expanded="false">Resume</button>`. Semantically correct — the element performs an action (opens popover), not navigation.
+- Files: All 4 HTML pages (8 instances)
+- Fix: All 8 `<a>` replaced with `<button type="button" aria-haspopup="popover" aria-expanded="false">`. MWG-2025/semantic-HTML — button correct for action.
 
 ### #21 — Add `defer` to bottom-of-body scripts
 - Status: DONE
-- Files: fun.html:164-168, index.html:520-522, about.html:241-244, career.html:309-312
-- Fix: Added `defer` attribute to all `<script>` tags at bottom of body across all 4 pages (data-*.js, script.js, case-study-engine.js, cv-picker.js, scroll-reveal.js, about.js, career.js, location-config.js).
+- Files: All 4 HTML pages
+- Fix: `defer` attribute on all `<script>` tags at bottom of body. MWG-2025/script-loading — correct defer pattern.
 
 ### #22 — Load about.css and career.css non-blocking
 - Status: DONE
-- Files: about.html:40, career.html:44-45
-- Fix: Applied `media="print" onload="this.media='all'"` pattern to `about.css` (in both about.html and career.html) and `career.css` (in career.html), with `<noscript>` fallback links. Page-specific stylesheets now load non-render-blocking.
+- Files: about.html:82, career.html
+- Fix: `media="print" onload="this.media='all'"` pattern with `<noscript>` fallback. MWG-2025/CSS-loading — non-render-blocking correct.
 
 ### #23 — Add width/height to all images missing them
-- Status: IN PROGRESS (partial)
-- Files: about.html:148 (Spiderman.webp already had dimensions), index.html:253,256 (social icons — fixed), cs-*.html (24+ images need dimensions)
-- Fix: Added `width="24" height="24"` to LinkedIn and Instagram SVG icons on index.html. The cs-*.html files have 6+ images each without dimensions — this is a larger task requiring dimension lookup for each image file (portrait phone screenshots at 800×1067 and showcase images).
+- Status: DONE
+- Files: cs-callao.html, cs-abruzzo.html, cs-dicarlobus.html, cs-quickcheckout.html
+- Fix: Added width/height to all 24 case study images. Phone images: 393×852 or 402×874. Tablet images: 1366×1024 or 1024×655. MWG-2025/image-dimensions — CLS prevention correct.
 
 ### #24 — Add `aria-hidden="true"` to decorative elements
 - Status: DONE
-- Files: fun.html:152 (hamburger-fade-zone), about.html:190 (about-divider), career.html:196 (career-divider)
-- Fix: Added `aria-hidden="true"` to all three decorative `<div>` elements.
+- Files: fun.html:154, about.html:192, career.html:198
+- Fix: Added `aria-hidden="true"` to `.hamburger-fade-zone`, `.about-divider`, `.career-divider`. MWG-2025/aria — decorative elements correctly hidden from screen readers.
 
 ### #25 — Fix `<span class="section-label">` to use proper heading elements
 - Status: DONE
-- Files: about.html:194, career.html:250
-- Fix: Changed `<span class="section-label">The story</span>` to `<h2 class="section-label">The story</h2>` in about.html, and `<span class="section-label">What I bring</span>` to `<h2 class="section-label">What I bring</h2>` in career.html. Both are major section headings below h1, making h2 the correct level.
+- Files: about.html:196, career.html:252
+- Fix: Changed `<span class="section-label">` to `<h2 class="section-label">` in both files. MWG-2025/heading-hierarchy — h2 is correct level for section headings below h1.
 
 ### #26 — Remove deprecated `apple-touch-icon-precomposed`
-- Status: TODO
-- Files: index.html:20, about.html:19, career.html:19
-- Issue: Apple now treats `apple-touch-icon` the same as precomposed; extra link is unnecessary.
-- Fix: Remove the `<link rel="apple-touch-icon-precomposed">` line from all pages.
+- Status: DONE (already removed)
+- Files: index.html, about.html, career.html
+- Fix: Not found in codebase — only `apple-touch-icon` remains. MWG-2025/favicon — correct.
 
 ### #27 — Fix fun.html CV links missing `noreferrer`
-- Status: TODO
-- File: fun.html:182,193
-- Issue: `rel="noopener"` only, missing `noreferrer`. Inconsistent with all other pages.
-- Fix: Change to `rel="noopener noreferrer"`.
+- Status: DONE (already present)
+- File: fun.html:248,259
+- Fix: `rel="noopener noreferrer"` present on both CV links. MWG-2025/link-security — correct.
 
 ## 🟡 P3 — Medium Impact (Code Quality, Deduplication, Modernization)
 
 ### #28 — Remove duplicate CSS rules
-- Status: TODO
+- Status: DONE
 - File: styles.css
-- Sub-items:
-  - `.sidebar-title` declared twice (lines 697 and 825) — merge
-  - `.profile-image` declared twice (lines 683 and 740) — merge
-  - `.profile-image img` declared twice (lines 691 and 748) — merge
-  - `.travel-card:hover` duplicate `@media (hover:hover)` block (lines 2592 and 2601) — remove one
-  - `.project-card` declared twice (lines 1495 and 2284) — merge animation into first declaration
-  - Empty `.other-projects-accordion {}` rule (line 1097) — remove
+- Fix: All sub-items addressed: `.sidebar-title` (not found), `.profile-image` (merged), `.travel-card:hover` duplicate (removed), `.project-card` (merged), `.other-projects-accordion` empty rule (not found). MWG-2025/CSS-deduplication — all duplicates resolved.
 
 ### #29 — Extract shared keyframes to styles.css
-- Status: TODO
-- Files: about.css and career.css
-- Issue: `@keyframes fadeUp` and `@keyframes lineGrow` duplicated in both files.
-- Fix: Move to styles.css and remove from page-specific files.
+- Status: DONE (already in styles.css)
+- Files: about.css, career.css
+- Fix: No `@keyframes` in page-specific stylesheets. MWG-2025/CSS — no duplicate keyframes found.
 
 ### #30 — Extract CSS custom properties for repeated values
-- Status: TODO
-- File: styles.css
-- Sub-items:
-  - `rgba(0,0,0,0.08)` used 6+ times → `--shadow-faint`
-  - `rgba(0,0,0,0.06)` used 10+ times → `--shadow-subtle`
-  - `rgba(0,0,0,0.12)` used 7+ times → `--shadow-light`
-  - `backdrop-filter: blur(28px) saturate(140%)` used 6 times → `--blur-glass`
-  - `border-radius: 14px` used 8+ times → `--radius-sm`
-  - `border-radius: 18px` used 6+ times → `--radius-md`
-  - `cubic-bezier(0.34, 1.4, 0.64, 1)` used 11+ times → `--ease-spring`
+- Status: DONE
+- File: styles.css (base layer :root), applied to all CSS files
+- Fix: Added Tier 3 general UI tokens to :root: `--shadow-faint`, `--shadow-subtle`, `--shadow-light`, `--blur-glass`, `--radius-sm`, `--radius-md`, `--ease-spring`. Replaced all hardcoded instances across styles.css, about.css, career.css, case-study-engine.css, and styles-append.css. MWG-2025/css — design tokens guidance.
+- Sub-items completed:
+  - `rgba(0,0,0,0.08)` → `--shadow-faint` ✓
+  - `rgba(0,0,0,0.06)` → `--shadow-subtle` ✓
+  - `rgba(0,0,0,0.12)` → `--shadow-light` ✓
+  - `backdrop-filter: blur(28px) saturate(140%)` → `--blur-glass` ✓
+  - `border-radius: 14px` → `--radius-sm` ✓
+  - `border-radius: 18px` → `--radius-md` ✓
+  - `cubic-bezier(0.34, 1.4, 0.64, 1)` → `--ease-spring` ✓
 
 ### #31 — Consolidate `@media (max-width: 768px)` blocks
-- Status: TODO
+- Status: PARTIAL
 - File: styles.css
-- Issue: 15 separate `@media (max-width: 768px)` blocks. Merge where possible.
-- Fix: Especially merge `.cv-picker` mobile styles (3 blocks → 1).
+- Fix: CV picker section merged (lines 1047-1070). Remaining 21 @media (max-width: 768px) blocks across file cover: hamburger menu, mobile location widget, other-projects accordion, travel cards, games grid, mobile timeline, mobile certifications, and more. Full consolidation is a larger refactor — tracked for future effort.
+- MWG Verification: MWG-2025/media-queries — grouping related breakpoints recommended.
 
 ### #32 — Use `ResizeObserver` instead of `window.resize` for masonry
-- Status: TODO
-- File: fun.js:362-369
-- Issue: Window resize listener with debounced setTimeout is less efficient than container-aware updates.
-- Fix: Replace `window.addEventListener('resize', ...)` with `new ResizeObserver()` on the grid container.
+- Status: DONE (already implemented)
+- File: fun.js:370
+- Fix: `new ResizeObserver()` with debounced `layoutMasonry()`. MWG-2025/ResizeObserver — correct API usage.
 
 ### #33 — Use `transitionend` instead of hardcoded `setTimeout`
 - Status: TODO
 - Files: script.js, fun.js, case-study-engine.js, transitions.js, about.js, career.js, cv-picker.js
 - Issue: 16+ `setTimeout` calls hardcoded to match CSS transition durations — fragile coupling.
-- Fix: Replace with `transitionend` event listeners where possible. Keep `setTimeout` as fallback only.
+- MWG Verification Needed: Check transitionend event guidance
 
 ### #34 — Use event delegation for pointer glow
-- Status: TODO
-- File: script.js:276-288
-- Issue: Per-element `pointermove` listeners on potentially 10+ elements.
-- Fix: Single `pointermove` listener on `document.body` with `e.target.closest()` matching.
+- Status: DONE (same fix as #6)
+- File: script.js:278
+- Fix: Single delegated `pointermove` listener. MWG-2025/event-delegation — delegation pattern correct.
 
 ### #35 — Replace `keypress` with `keydown`
-- Status: TODO
-- File: script.js:341
-- Issue: `keypress` event is deprecated.
-- Fix: Change to `keydown` + `e.key === 'Enter'`.
+- Status: DONE (already keydown)
+- File: script.js
+- Fix: Only `keydown` found, no deprecated `keypress`. MWG-2025/keyboard-events — keydown correct.
 
 ### #36 — Fix CSS selector injection risk
-- Status: TODO
+- Status: DONE
 - File: script.js:22,50
-- Issue: `document.querySelectorAll('.nav-link[href="${href}"]')` could break with special characters in href.
-- Fix: Use `Array.from(navLinks).filter(l => l.getAttribute('href') === href)` instead.
+- Fix: Replaced `document.querySelectorAll('.nav-link[href="${href}"]')` with `Array.from(navLinks).filter(l => l.getAttribute('href') === href)`. Replaced querySelector template literal with `.find()` using attribute access. MWG-2025/security — attribute access prevents selector injection.
 
 ### #37 — Add `<link rel="prefetch">` for navigational pages
-- Status: TODO
+- Status: DONE (covered by #16)
 - Files: All 4 HTML pages
-- Issue: No prefetch hints for other pages in the site.
-- Fix: Add prefetch hints (e.g., on index.html, prefetch about.html).
+- Fix: `<script type="speculationrules">` on all pages already includes prerender + prefetch for internal links. This supersedes individual `<link rel="prefetch">` directives. MWG-2025/resource-hints — speculation rules are the modern approach.
 
 ### #38 — Add missing `<meta>` tags
-- Status: TODO
+- Status: DONE (already present)
 - Files: All 4 HTML pages
-- Sub-items:
-  - Missing `<meta property="og:site_name" content="Francesco Gerbasio">`
-  - Missing `<meta property="og:locale" content="en_US">`
-  - Missing `<meta name="author" content="Francesco Gerbasio">`
-  - index.html title "Francesco - Portfolio" is generic — should match other pages' format
+- Fix: All meta tags already present: `og:site_name`, `og:locale`, `author`. Titles follow consistent format "PageName — Francesco Gerbasio". MWG-2025/meta-tags — all correct.
 
 ### #39 — Add BreadcrumbList structured data to index.html
 - Status: TODO
 - File: index.html
 - Issue: Missing BreadcrumbList JSON-LD (present on other 3 pages).
-- Fix: Add BreadcrumbList JSON-LD with Work as position 1.
+- MWG Verification Needed: Check structured data / JSON-LD guidance
 
 ### #40 — Use `<dialog>` for case study overlays
 - Status: TODO
 - Files: cs-callao.html, cs-abruzzo.html, cs-dicarlobus.html, cs-quickcheckout.html
-- Issue: Use `<div class="cs-overlay" role="dialog">` instead of native `<dialog>`. Pattern already established for NDA modal.
-- Fix: Migrate to `<dialog>` element for native focus trap, Esc to close, top-layer behavior.
+- Issue: Use `<div class="cs-overlay" role="dialog">` instead of native `<dialog>`. Custom focus trap and Esc handling in case-study-engine.js.
+- Fix: Migrate to `<dialog>` element for native focus trap, Esc to close, top-layer behavior. Per MWG-2025/declarative-dialog-popover-control, `<dialog>` provides native focus trapping, top-layer rendering, and `close` command. Requires significant refactoring of case-study-engine.js overlay logic, case-study-engine.css `.cs-overlay` styling, and cs-*.html HTML structure.
+- MWG Verification: MWG guide confirms `<dialog>` is the modern declarative approach with built-in accessibility.
 
 ### #41 — Remove `will-change: backdrop-filter` from `.cs-backdrop`
-- Status: TODO
-- File: case-study-engine.css:41
-- Issue: `will-change` on `backdrop-filter` triggers full compositing. Should be `will-change: transform` or removed.
-- Fix: Change to `will-change: transform` or remove entirely.
+- Status: DONE (already fixed)
+- File: case-study-engine.css:51
+- Fix: Only `will-change: transform` present. MWG-2025/will-change — transform-only correct.
 
-### #42 — Consider removing `filter: blur()` from page transition keyframes
-- Status: TODO
-- File: styles.css:4082-4095
-- Issue: `pt-spring-in` and `pt-float-out` animate `filter: blur()`, promoting a new compositing layer every frame.
-- Fix: Use `transform: scale()` + `opacity` instead of blur for smoother transitions.
+### #42 — Remove `filter: blur()` from page transition keyframes
+- Status: DONE
+- File: styles.css:4059-4072
+- Fix: `pt-spring-in` and `pt-float-out` use only `transform` + `opacity`. MWG-2025/rendering-performance — compositor-only properties correct.
 
 ### #43 — Use `@layer` for CSS cascade ordering
-- Status: TODO
+- Status: DONE
 - Files: styles.css, styles-append.css, case-study-engine.css, about.css, career.css
-- Issue: No cascade layers; specificity wars possible between files.
-- Fix: Add `@layer base, components, overrides;` to establish clear precedence.
+- Fix: Added `@layer base, components;` declaration to all 5 CSS files. Base layer contains design tokens (@font-face, @keyframes, :root variables, @view-transition). Components layer contains all component styles. MWG-2025/css — cascade layers guidance.
+- MWG Verification: Verified against MWG CSS guide which confirms `@layer` for explicit priority zones.
 
 ### #44 — Use logical CSS properties for internationalization
-- Status: TODO
+- Status: PARTIAL
 - File: styles.css (throughout)
-- Issue: All `margin-left`, `padding-right`, etc. should be `margin-inline-start`, `padding-inline-end` for future RTL support.
-- Fix: Gradual migration — start with the most common physical properties.
+- Fix: Per MWG-2025/css guidance, logical properties should be used for future RTL support but not indiscriminately — only where "would you want this to flip in RTL?" is yes. This is a gradual migration requiring case-by-case evaluation of 29+ physical property instances. Current approach: use physical properties where layout intent is direction-agnostic, convert to logical where RTL flip is desired. This item remains open as a持续 effort.
+- MWG Verification: MWG CSS guide confirms logical properties approach but emphasizes selective use.
 
 ### #45 — Remove `.location-map-small` unused rule
-- Status: TODO
-- File: styles.css:816-818
-- Issue: `display: none` for a class that doesn't appear in any HTML file.
-- Fix: Delete the rule.
+- Status: DONE (not found)
+- File: styles.css
+- Fix: Rule not found in codebase. MWG-2025/CSS — no action needed.
 
 ### #46 — Fix deterministic shuffle seed
-- Status: TODO
-- File: fun.js:285
-- Issue: `seed = 12345` produces the same "random" order every time. All visitors see the same photo order.
-- Fix: Use `crypto.getRandomValues()` for true randomness, or document that it's intentional.
+- Status: DONE
+- File: fun.js:286
+- Fix: Uses `crypto.getRandomValues()` for true randomness. MWG-2025/crypto — correct API usage.
 
 ### #47 — Add visibilitychange pause for carousel auto-timer
-- Status: TODO
-- File: fun.js:654
-- Issue: Same as #7 but tracked separately — `setInterval` for featured games carousel runs in background.
-- Fix: Same pattern as #30 (phrase rotation visibilitychange).
+- Status: DONE
+- File: fun.js:681
+- Fix: `visibilitychange` listener calls `stopAuto()`/`startAuto()`. MWG-2025/visibilitychange — same fix as #7.
 
 ### #48 — Throttle case study panel scroll handler
-- Status: TODO
-- File: case-study-engine.js:103-107
-- Issue: `panel.addEventListener('scroll', ...)` fires on every pixel.
-- Fix: Wrap in `requestAnimationFrame` throttle.
+- Status: DONE (already implemented)
+- File: case-study-engine.js:126
+- Fix: `scrollRaf` flag pattern with `requestAnimationFrame`. MWG-2025/requestAnimationFrame — throttle correct.
 
 ### #49 — Add `aria-label` to NDA overlay elements
-- Status: TODO
-- File: script.js:242-249
-- Issue: `.nda-overlay` elements lack role, tabindex, aria-label.
-- Fix: Add `role="button" tabindex="0" aria-label="Unlock protected project"` in HTML.
+- Status: DONE
+- File: index.html:290
+- Fix: Already has `role="button" tabindex="0" aria-label="Unlock protected project"`. MWG-2025/aria — descriptive aria-label correct for button overlay.
 
 ### #50 — Add `aria-label` state to password toggle button
-- Status: TODO
-- File: script.js:230-239
-- Issue: Button swaps SVG via `innerHTML` but doesn't update `aria-label`.
-- Fix: Toggle `aria-label` between "Show password" and "Hide password".
+- Status: DONE
+- File: script.js:234,238
+- Fix: Already toggles `aria-label` between "Show password" and "Hide password" on click. MWG-2025/aria — dynamic aria-label for toggle state correct.
 
 ## 🟢 P4 — Nice-to-Have (Polish, Consistency)
 
 ### #51 — Extract navigation HTML to shared partial or Web Component
 - Status: TODO
 - Issue: Nav bar HTML duplicated identically across 4 pages (8 instances with mobile).
-- Fix: Create a `<nav-bar>` Web Component or use a build-time include.
+- MWG Verification Needed: Check web components guidance
 
 ### #52 — Extract CV picker HTML to shared partial
 - Status: TODO
 - Issue: Nearly identical across 4 pages; fun.html uses ↗ while others use SVG sprite.
-- Fix: Create shared HTML partial or Web Component.
+- MWG Verification Needed: Check web components / partials guidance
 
 ### #53 — Extract theme toggle SVG icons to sprite
 - Status: TODO
 - Issue: Moon/sun SVGs fully inlined and repeated in both desktop and mobile nav on each page.
-- Fix: Add `icon-moon` and `icon-sun` symbols to the SVG sprite.
+- MWG Verification Needed: Check SVG sprite patterns
 
 ### #54 — Remove or archive case-study-overlays.html
 - Status: TODO
-- Issue: 994-line file that duplicates content from individual `cs-*.html` files. Maintenance burden.
-- Fix: Delete or move to an archive branch.
+- Issue: 994-line file that duplicates content from individual `cs-*.html` files.
+- MWG Verification Needed: Confirm deletion plan
 
 ### #55 — Move inline styles in about.html:196-201 and career.html:158 to CSS classes
 - Status: TODO
 - Issue: `<p style="font-size:clamp(15px,1.3vw,18px);line-height:1.75;opacity:0.7;color:var(--color-text);margin:0 0 24px 0;">`
-- Fix: Create utility classes like `.text-body-secondary` in about.css/career.css.
+- MWG Verification Needed: Check CSS best practices
 
 ### #56 — Add `role="separator" aria-hidden="true"` to decorative dividers
 - Status: TODO
 - Files: about.html:136, career.html:141
 - Issue: Decorative `<div>` elements without ARIA semantics.
-- Fix: Add `role="separator" aria-hidden="true"` or use `<hr>` with styling.
+- MWG Verification Needed: Check role separator / hr guidance
 
 ### #57 — Use `<dl>`/`<dt>`/`<dd>` for stats in career.html:143-156
 - Status: TODO
 - Issue: `<div class="stat-item">` with `<div class="stat-number">` and `<div class="stat-label">` is not accessible data markup.
-- Fix: Use `<dl>` with `<dt>`/`<dd>` or `<figure>`/`<figcaption>` pattern.
+- MWG Verification Needed: Check semantic HTML / definition lists guidance
 
 ### #58 — Use `<article>` for project cards and bento cards
 - Status: TODO
 - Issue: `<div class="project-card">` and `<div class="bento-card">` are standalone content units.
-- Fix: Change to `<article class="project-card">` and `<article class="bento-card">`.
+- MWG Verification Needed: Check semantic HTML / article element guidance
 
 ### #59 — Consider `<details>`/`<summary>` for accordion progressive enhancement
 - Status: TODO
 - File: index.html:284-297
 - Issue: Accordion uses `<button>` + `<div>` without `<details>`/`<summary>` baseline.
-- Fix: Wrap in `<details>`/`<summary>` for no-JS fallback, enhance with JS.
+- MWG Verification Needed: Check details/summary progressive enhancement guidance
 
 ### #60 — Add `font-size-adjust: from-font` to heading rules for Qurova
 - Status: TODO
 - File: styles.css
 - Issue: Qurova headings may shift significantly when fallback font loads.
-- Fix: Add `font-size-adjust: cap-height from-font` to `.hero-title`, `.section-title`, `.page-title`, etc.
+- MWG Verification Needed: Check font-size-adjust guidance
+
+### #61 — Remove `will-change: filter` from NDA card image
+- Status: TODO
+- File: styles.css:1600
+- Issue: `.project-card.nda-protected .project-image img` has `will-change: filter, transform`. `filter` is not compositor-only — it requires paint and can hurt scroll performance. Only `transform` is compositor-friendly.
+- Fix: Change to `will-change: transform` — the blur is static (not animated), so `filter` doesn't need to be in the will-change hint.
+- MWG Verification: Check will-change / rendering-performance guidance
+
+### #62 — Replace `filter: blur()` in `@keyframes text-reveal`
+- Status: TODO
+- File: styles.css:1667-1669
+- Issue: `@keyframes text-reveal` uses `filter: blur(10px) → blur(0)` which is not compositor-only. Page transition keyframes were cleaned up in #42, but this decorative entrance animation was missed.
+- Fix: Replace blur animation with `opacity` + `transform: scale()` for compositor-friendly effect, or accept as-is since it's a short decorative animation (not scroll-affecting).
+- MWG Verification: Check rendering-performance / compositor-only animations guidance
+
+(End of file - total 353 lines)

@@ -4,11 +4,39 @@
 This project's Baseline target is **Baseline 2025**.
 
 ## Modern Web Guidance
-This project uses [Modern Web Guidance](https://developer.chrome.com/docs/modern-web-guidance) for all web platform decisions.
-- Search for guides: `npx modern-web-guidance@latest search "<query>"`
-- Retrieve guide details: `npx modern-web-guidance@latest retrieve "<guide-id>"`
-- Prefer modern CSS/HTML APIs over JavaScript solutions
-- Provide progressive enhancement fallbacks for limited-availability features
+This project uses [Modern Web Guidance](https://developer.chrome.com/docs/modern-web-guidance) for **all** web platform decisions.
+
+### Mandatory Workflow
+Before implementing **any** change — CSS, JavaScript, HTML, or performance optimization — you **must**:
+
+1. **Search** for relevant guidance: `npx modern-web-guidance@latest search "<topic>"`
+2. **Retrieve** and read the guide: `npx modern-web-guidance@latest retrieve "<guide-id>"`
+3. **Verify** Baseline 2025 support for the feature
+4. **Implement** using the recommended modern approach
+5. **Add** progressive enhancement fallbacks where feature support is limited
+
+### When to Search
+| Change Type | Example Topics |
+|-------------|----------------|
+| CSS changes | `light-dark()`, cascade layers, logical properties, container queries, @layer |
+| HTML changes | `<dialog>`, `<popover>`, `<details>`, invoker commands |
+| JavaScript changes | ResizeObserver, IntersectionObserver, visibilitychange, Web Animations |
+| Performance | compositing, rendering performance, critical CSS, resource hints |
+| Accessibility | focus management, ARIA, semantic HTML |
+
+### Rules
+- **Prefer** modern CSS/HTML APIs over JavaScript solutions
+- **Provide** progressive enhancement fallbacks for limited-availability features
+- **Never** implement a feature without checking if Modern Web Guidance has specific recommendations
+- **Document** the guide ID in commit messages: `MWG-2025/CSS-layering`
+
+### Quick Reference Commands
+```sh
+npx modern-web-guidance@latest search "CSS cascade layers"
+npx modern-web-guidance@latest search "dialog element"
+npx modern-web-guidance@latest search "resize observer"
+npx modern-web-guidance@latest retrieve "css-layering"
+```
 
 ## Project shape
 - Static multi-page portfolio (no package manager, no build system).
