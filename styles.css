@@ -87,6 +87,7 @@
     --color-text: oklch(0% 0 0 / 1); /* #000000 */
     --color-text-light: oklch(44% 0 0 / 1); /* #888888 */
     --color-border: oklch(60% 0 0 / 1); /* #888888 */
+    --color-accent: light-dark(#c1121f, #ff6b6b);
     
     /* Tier 3: General UI Design Tokens */
     --shadow-faint: var(--shadow-faint);
@@ -103,7 +104,10 @@
         --color-text: #000000;
         --color-text-light: #6b6b6b;
         --color-border: #888888;
+        --color-accent: #c1121f;
     }
+
+    accent-color: var(--color-accent);
 }
 
 @view-transition {
@@ -1637,7 +1641,6 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
     filter: blur(12px);
     transform: scale(1.1);
     transition: none;
-    will-change: transform;
     position: relative;
     z-index: 0;
 }

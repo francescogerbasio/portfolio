@@ -88,8 +88,7 @@
     {
       "prerender": [
         { "where": { "href_matches": "/career.html"}, "eagerness": "moderate" },
-        { "where": { "href_matches": "/fun.html"}, "eagerness": "moderate" },
-        { "where": { "href_matches": "/about.html"}, "eagerness": "moderate" }
+        { "where": { "href_matches": "/fun.html"}, "eagerness": "moderate" }
       ],
       "prefetch": [
         { "where": { "href_matches": "/career.html"}, "eagerness": "conservative" },
@@ -220,6 +219,8 @@
                 <div class="about-photo">
                     <img src="Assets/Images/Spiderman.webp" alt="Francesco Gerbasio as Spiderman"
                          width="600" height="600" loading="lazy" decoding="async"
+                         srcset="Assets/Images/Spiderman-400w.webp 400w, Assets/Images/Spiderman-800w.webp 800w, Assets/Images/Spiderman.webp 900w"
+                         sizes="(max-width: 768px) 90vw, 600px"
                          onerror="this.style.display='none'">
                 </div>
                 <p class="photo-caption">Yes, I'm Spiderman. No, I will not be taking questions.</p>

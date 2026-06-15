@@ -71,6 +71,12 @@ function switchCategory(category) {
     }, 500);
 }
 
+function srcset(path, widths, originalWidth) {
+    const parts = widths.map(w => `${path.replace(/\.webp$/, `-${w}w.webp`)} ${w}w`);
+    if (originalWidth) parts.push(`${path} ${originalWidth}w`);
+    return parts.join(', ');
+}
+
 let travelDataLoaded = false;
 let musicDataLoaded  = false;
 let gamingDataLoaded = false;
@@ -196,7 +202,8 @@ function displayEditorial(grid) {
 
     grid.innerHTML = photos.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" width="800" height="1067" loading="lazy" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" width="800" height="1067" loading="lazy" decoding="async"
+                 srcset="${srcset(photo.image, [315], 630)}" sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -258,7 +265,8 @@ function displayMasonry(grid, country) {
 
     grid.innerHTML = filtered.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" width="800" height="1067" loading="lazy" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" width="800" height="1067" loading="lazy" decoding="async"
+                 srcset="${srcset(photo.image, [315], 630)}" sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -401,7 +409,8 @@ async function loadMySong() {
 
                     <div class="song-card-front">
                         <div class="song-card-artwork">
-                            <img src="${artworkSrc}" alt="${song.title}" width="340" height="340" loading="lazy" decoding="async"
+                            <img src="${artworkSrc}" alt="${song.title}" width="340" height="340" loading="lazy" fetchpriority="low" decoding="async"
+                                 srcset="${srcset(artworkSrc, [340, 680])}" sizes="340px"
                                  onerror="this.src='https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'">
                         </div>
                         <div class="song-card-info">
@@ -537,7 +546,7 @@ async function loadFavoriteArtists() {
             <div class="artist-card" data-index="${i}" style="--i: ${i}">
                 <div class="artist-image">
                     ${artist.image
-                        ? `<img src="${artist.image}" alt="${artist.name}" width="300" height="400" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+                        ? `<img src="${artist.image}" alt="${artist.name}" width="300" height="400" loading="lazy" decoding="async" srcset="${srcset(artist.image, [300, 600])}" sizes="(max-width: 600px) 33vw, 200px" onerror="this.style.display='none'">`
                         : ''
                     }
                 </div>
@@ -619,7 +628,8 @@ function buildFeatured(games) {
             ${games.map((g, i) => `
                 <div class="gf-slide" data-index="${i}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${games.length}">
                     <div class="gf-bg">
-                        <img src="${g.cover}" alt="${g.title}" class="gf-bg-img" width="2100" height="900" loading="lazy" decoding="async">
+                        <img src="${g.cover}" alt="${g.title}" class="gf-bg-img" width="2100" height="900" loading="lazy" fetchpriority="low" decoding="async"
+                             srcset="${srcset(g.cover, [800, 1600])}" sizes="100vw">
                         <div class="gf-bg-overlay"></div>
                     </div>
                     <div class="gf-content">
@@ -695,7 +705,8 @@ function buildGrid(container, games) {
             return `
                 <div class="game-card saga-card" data-id="${g.id}" style="--i: ${i}">
                     <div class="game-cover">
-                        <img src="${g.cover}" alt="${g.title}" width="300" height="400" loading="lazy" decoding="async">
+                        <img src="${g.cover}" alt="${g.title}" width="300" height="400" loading="lazy" decoding="async"
+                             srcset="${srcset(g.cover, [300, 600])}" sizes="(max-width: 600px) 33vw, 180px">
                         <div class="game-cover-overlay"></div>
                         <div class="saga-badge">${g.games.length} games</div>
                     </div>
