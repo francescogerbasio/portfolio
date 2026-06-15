@@ -22,6 +22,30 @@
     border: 0;
 }
 
+.skip-link:focus {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 10000;
+    width: auto;
+    height: auto;
+    padding: 12px 16px;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: nowrap;
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-text-light);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    text-decoration: none;
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.95rem;
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+}
+
 @font-face {
    font-family: 'Qurova';
    src: url('Assets/Fonts/Qurova/Qurova-Bold.woff2') format('woff2');
@@ -52,6 +76,7 @@
 
 /* Font fallbacks - Replace these with your custom fonts later */
 :root {
+    color-scheme: light dark;
     --font-heading: 'Qurova', sans-serif;
     --font-body: 'BrittiSans', sans-serif;
     --cursor-x: 50;
@@ -118,9 +143,7 @@
 }
 
 .bento-card {
-    [data-theme="dark"] & {
-        background: rgba(255,255,255,0.04);
-    }
+    background: light-dark(transparent, rgba(255,255,255,0.04));
     [data-theme="dark"] &:hover {
         background: rgba(255,255,255,0.08);
     }
@@ -139,11 +162,10 @@
 }
 
 .project-list-item {
-    [data-theme="dark"] & {
-        border-bottom-color: rgba(255,255,255,0.07);
-    }
-    [data-theme="dark"] &.clickable:hover {
-        background: rgba(255,255,255,0.04);
+    border-bottom-color: light-dark(var(--shadow-subtle), rgba(255,255,255,0.07));
+
+    &.clickable:hover {
+        background: light-dark(transparent, rgba(255,255,255,0.04));
     }
 }
 
@@ -156,24 +178,19 @@
 }
 
 .accordion-icon {
-    [data-theme="dark"] & {
-        background: rgba(255,255,255,0.14);
-    }
+    background: light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.14));
 }
 
 details[open] summary .accordion-icon {
-    [data-theme="dark"] & {
-        background: rgba(255,255,255,0.85);
-    }
-    [data-theme="dark"] &::after {
-        border-color: #252525;
+    background: light-dark(var(--color-text), rgba(255,255,255,0.85));
+
+    &::after {
+        border-color: light-dark(white, #252525);
     }
 }
 
 .accordion-count {
-    [data-theme="dark"] & {
-        background: rgba(255,255,255,0.08);
-    }
+    background: light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.08));
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -228,11 +245,9 @@ dialog.nda-modal::backdrop {
 }
 
 .nda-password-input {
-    [data-theme="dark"] & {
-        background: rgba(255,255,255,0.06);
-        border-color: rgba(255,255,255,0.15);
-        color: var(--color-text);
-    }
+    background: light-dark(white, rgba(255,255,255,0.06));
+    border-color: light-dark(var(--color-border), rgba(255,255,255,0.15));
+    color: var(--color-text);
 }
 
 .cv-picker {
@@ -243,9 +258,7 @@ dialog.nda-modal::backdrop {
 }
 
 .cv-picker-option:hover {
-    [data-theme="dark"] & {
-        background: rgba(255,255,255,0.06);
-    }
+    background: light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.06));
 }
 
 .hamburger-fade-zone {
@@ -310,16 +323,10 @@ dialog.nda-modal::backdrop {
     transform: translateY(-50%);
     height: 28px;
     width: 1px;
-    background: var(--shadow-light);
+    background: light-dark(var(--shadow-light), rgba(255,255,255,0.12));
     transition: none !important;
 }
-[data-theme="dark"] .theme-toggle::before {
-    background: rgba(255,255,255,0.12);
-}
 .theme-toggle:hover { opacity: 1; }
-.theme-toggle {
-    position: relative;
-}
 .theme-toggle svg {
     transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1);
 }
@@ -333,12 +340,19 @@ dialog.nda-modal::backdrop {
 .theme-toggle .icon-moon { opacity: 1; transform: scale(1) rotate(0deg); }
 [data-theme="dark"] .theme-toggle .icon-sun  { opacity: 1; transform: scale(1) rotate(0deg); }
 [data-theme="dark"] .theme-toggle .icon-moon { opacity: 0; transform: scale(0.4) rotate(-90deg); }
-[data-theme="dark"] .theme-toggle {
-    /* border handled by ::before pseudo */
-}
 
-/* Smooth global theme transition — pseudo-elements excluded to prevent nav dot flash */
-*, *::before {
+/* Smooth theme transitions scoped to elements that actually change with the theme */
+body, h1, h2, h3, h4, h5, h6, p, a, span, li, label, button, input, textarea,
+select, nav, header, main, section, article, aside, footer, figure, figcaption,
+.navigation, .bento-card, .project-card, .project-list-item, .accordion-trigger,
+.accordion-content, .accordion-icon, .accordion-count, .skill-tag, .lang-pill,
+.btn-primary, .btn-secondary, .cert-card, .career-skill-tag, .value-item,
+.stat-item, .values-header, .about-cta, .about-divider, .timeline-item,
+.about-stats, .game-card, .artist-card, .travel-card, .song-card, .category-btn,
+.flag-btn, .flag-navigation, .flag-nav-pill, .gf-arrow, .gf-dot, .nda-password-input,
+.cv-picker, .cv-picker-option, .nda-overlay, .nda-modal-content, .mobile-menu,
+.hamburger-fade-zone, .theme-toggle, .social-icon, .cs-panel, .cs-overlay,
+.cs-close-btn, .featured-release-card, .project-badge, .project-meta {
     transition: background-color 0.25s ease, color 0.15s ease;
 }
 /* But don't slow down existing transitions */
@@ -380,6 +394,21 @@ img {
 a {
     text-decoration: none;
     color: inherit;
+}
+
+p, blockquote, li {
+    text-wrap: pretty;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+/* Isolate self-contained cards so internal changes don't trigger page-wide reflows */
+.project-card, .bento-card, .cert-card, .game-card, .artist-card, .travel-card, .song-card {
+    contain: layout style paint;
 }
 
 /* ===================================
@@ -645,6 +674,7 @@ a {
     font-size-adjust: from-font;
     line-height: 1.05;
     letter-spacing: -0.04em;
+    text-wrap: balance;
     margin-bottom: 0;
     transition: font-size 0.3s ease;
 }
@@ -743,14 +773,15 @@ a {
 }
 
 .social-icon {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     display: block;
 }
 
 .social-icon img {
     width: 100%;
     height: 100%;
+    filter: light-dark(none, invert(1));
 }
 
 /* ===================================
@@ -937,8 +968,8 @@ dialog.nda-modal:open::backdrop {
 
 .nda-password-toggle {
     position: absolute;
-    right: 14px;
-    top: 14px;
+    right: 12px;
+    top: 12px;
     background: none;
     border: none;
     cursor: pointer;
@@ -949,8 +980,8 @@ dialog.nda-modal:open::backdrop {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
 }
 
 .nda-password-toggle:hover {
@@ -968,8 +999,7 @@ dialog.nda-modal:open::backdrop {
     display: block;
 }
 
-.nda-password-input:focus {
-    outline: none;
+.nda-password-input:focus-visible {
     border-color: var(--color-text);
 }
 
@@ -1456,6 +1486,7 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
     font-size-adjust: from-font;
     letter-spacing: -0.04em;
     text-transform: none;
+    text-wrap: balance;
     color: var(--color-text);
     margin-bottom: 24px;
 }
@@ -2406,17 +2437,11 @@ html {
     scroll-behavior: smooth;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    background: rgba(0,0,0,0.055);
+    background: light-dark(rgba(0,0,0,0.055), rgba(255,255,255,0.08));
     border-radius: 50px;
     padding: 4px;
     width: fit-content;
     max-width: 100%;
-}
-
-.flag-navigation::-webkit-scrollbar { display: none; }
-
-[data-theme="dark"] .flag-navigation {
-    background: rgba(255,255,255,0.08);
 }
 
 @media (max-width: 768px) {
@@ -2463,21 +2488,14 @@ html {
     top: 4px;
     left: 4px;
     height: calc(100% - 8px);
-    background: white;
+    background: light-dark(white, rgba(255,255,255,0.18));
     border-radius: 46px;
-    box-shadow:
-        0 1px 3px  rgba(0,0,0,0.10),
-        0 4px 12px var(--shadow-faint);
+    box-shadow: light-dark(0 1px 3px rgba(0,0,0,0.10), none);
     transition:
         left   0.35s cubic-bezier(0.4, 0, 0.2, 1),
         width  0.35s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
     z-index: 0;
-}
-
-[data-theme="dark"] .flag-nav-pill {
-    background: rgba(255,255,255,0.18);
-    box-shadow: none;
 }
 
 .flag-btn:active {
@@ -2698,7 +2716,7 @@ html {
 }
 
 .song-card-front {
-    background: #000;
+    background: light-dark(#000, #252830);
     box-shadow:
         0 1px 2px  rgba(0,0,0,0.10),
         0 8px 24px rgba(0,0,0,0.14),
@@ -2746,7 +2764,7 @@ html {
 
 .song-card-info {
     padding: 14px 16px 16px;
-    background: rgba(10, 10, 10, 0.72);
+    background: light-dark(rgba(10, 10, 10, 0.72), rgba(37, 40, 48, 0.85));
     backdrop-filter: blur(20px) saturate(180%);
     
     border-top: 0.5px solid rgba(255,255,255,0.08);
@@ -2935,7 +2953,7 @@ html {
     border-radius: var(--card-radius);
     cursor: pointer;
     aspect-ratio: 3/4;
-    background: #111;
+    background: light-dark(#111, #252830);
     position: relative;
 
     display: grid;
@@ -3131,7 +3149,7 @@ html {
     aspect-ratio: 21/9;
     border-radius: 20px;
     overflow: hidden;
-    background: #0a0a0a;
+    background: light-dark(#0a0a0a, #1e2025);
 }
 
 @media (max-width: 768px) {
@@ -3214,6 +3232,7 @@ html {
     color: #fff;
     line-height: 1.05;
     letter-spacing: -0.02em;
+    text-wrap: balance;
     text-shadow: 0 2px 20px rgba(0,0,0,0.5);
     margin: 0;
 }
@@ -3239,9 +3258,11 @@ html {
     height: 6px;
     border-radius: 50%;
     background: rgba(255,255,255,0.3);
+    background-clip: content-box;
     border: none;
     cursor: pointer;
-    padding: 0;
+    padding: 9px;
+    margin: -9px;
     transition: background 0.3s ease, transform 0.3s ease;
 }
 
@@ -3338,7 +3359,7 @@ html {
     aspect-ratio: 3/4;
     border-radius: var(--card-radius);
     overflow: hidden;
-    background: #1a1a1a;
+    background: light-dark(#1a1a1a, #2a2c32);
     box-shadow:
         0 2px 4px  rgba(0,0,0,0.10),
         0 8px 20px var(--shadow-light);
@@ -3894,6 +3915,7 @@ html {
 .theme-toggle-mobile {
     border-left: none;
     border: none;
+    border-top: 1px solid light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.08));
     padding: 10px 16px;
     margin: 4px 0 0 0;
     width: 100%;
@@ -3914,53 +3936,8 @@ html {
 [data-theme="dark"] .theme-toggle-label .label-dark  { display: none; }
 .theme-toggle-mobile:hover { transform: none; opacity: 1; }
 
-[data-theme="dark"] .theme-toggle-mobile {
-    border-top-color: rgba(255,255,255,0.08);
-}
-
 @media (min-width: 769px) {
     .theme-toggle-mobile { display: none; }
-}
-
-[data-theme="dark"] .song-card-front,
-[data-theme="dark"] .song-card-back {
-    background: oklch(18% 0.0000 0);
-}
-
-
-
-[data-theme="dark"] .social-links img {
-    filter: invert(1);
-}
-
-/* ══════════════════════════════════════
-   DARK MODE — lift hardcoded blacks
-══════════════════════════════════════ */
-
-/* Song card front + back (#000) */
-[data-theme="dark"] .song-card-front,
-[data-theme="dark"] .song-card-back {
-  background: #252830;
-}
-
-/* Song card info bar */
-[data-theme="dark"] .song-card-info {
-  background: rgba(37, 40, 48, 0.85);
-}
-
-/* Artist card (#111) */
-[data-theme="dark"] .artist-card {
-  background: #252830;
-}
-
-/* Game cover (#1a1a1a) */
-[data-theme="dark"] .game-cover {
-  background: #2a2c32;
-}
-
-/* Gaming featured (#0a0a0a) */
-[data-theme="dark"] .games-featured {
-  background: #1e2025;
 }
 
 /* ═══════════════════════════════════════════════════════

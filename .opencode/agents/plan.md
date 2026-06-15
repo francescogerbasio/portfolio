@@ -1,7 +1,7 @@
 ---
-description: High-level architectural planning using GLM-5.1 or Kimi K2.6
+description: High-level architectural planning using qwen3.7-max
 mode: primary
-model: opencode-go/glm-5.1
+model: opencode-go/qwen3.7-max
 temperature: 0.1
 permission:
   edit: deny

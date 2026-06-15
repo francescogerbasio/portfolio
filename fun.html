@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
+    <script blocking="render">
 (function () {
     'use strict';
     const STORAGE_KEY = 'theme';
     const html = document.documentElement;
     function applyTheme(theme) {
         html.setAttribute('data-theme', theme);
+        html.style.colorScheme = theme;
+        const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
+        if (colorSchemeMeta) colorSchemeMeta.content = theme;
         const color = theme === 'dark' ? '#252525' : '#fdf5f6';
         let meta = document.querySelector('meta[name="theme-color"]');
         if (meta) { meta.parentNode.removeChild(meta); }
@@ -123,6 +126,7 @@
     </script>
 </head>
 <body>
+    <a href="#main-content" class="skip-link visually-hidden">Skip to main content</a>
     <!-- Inline SVG sprite for arrow icons — used by cards, CV picker, etc. -->
     <svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
         <symbol id="icon-arrow-right" viewBox="0 0 14 14">
@@ -183,7 +187,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="container">
+    <main id="main-content" class="container">
         <h1 class="visually-hidden">Fun — Travel, Music & Gaming</h1>
         <!-- Category Navigation at Top Right -->
         <div class="category-nav-top" role="tablist" aria-label="Content categories">
@@ -209,7 +213,7 @@
         </section>
 
         <!-- Music Section -->
-        <section class="category-section" id="music-section" role="tabpanel" aria-labelledby="tab-music" hidden>
+        <section class="category-section" id="music-section" role="tabpanel" aria-labelledby="tab-music" hidden="until-found">
             <div class="music-category">
                 <h3 class="music-category-title">Music Production</h3>
                 <div class="my-music-container" id="myMusicContainer">
@@ -231,7 +235,7 @@
         </section>
 
         <!-- Gaming Section -->
-        <section class="category-section" id="gaming-section" role="tabpanel" aria-labelledby="tab-gaming" hidden>
+        <section class="category-section" id="gaming-section" role="tabpanel" aria-labelledby="tab-gaming" hidden="until-found">
             <div class="loading-state">
                 <div class="spinner"></div>
                 <p>Loading games...</p>

@@ -1,7 +1,7 @@
 ---
-description: Code generation and feature implementation using Kimi K2.6 or DeepSeek V4 Pro
+description: Code generation and feature implementation using kimi-k2.7-code
 mode: primary
-model: opencode-go/kimi-k2.6
+model: opencode-go/kimi-k2.7-code
 temperature: 0.3
 permission:
   edit: allow

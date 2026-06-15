@@ -10,6 +10,20 @@
     max-width: 1100px;
 }
 
+/* Defer rendering of below-fold sections */
+.certifications-section,
+.career-timeline-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+}
+
+@supports not (content-visibility: auto) {
+    .certifications-section,
+    .career-timeline-section {
+        contain: layout style;
+    }
+}
+
 .career-eyebrow {
     font-size: clamp(11px, 0.9vw, 13px);
     font-weight: 600;
@@ -26,6 +40,7 @@
     font-weight: 700;
     line-height: 1.05;
     letter-spacing: -0.02em;
+    text-wrap: balance;
     color: var(--color-text);
     font-size-adjust: from-font;
     margin: 0 0 32px 0;
@@ -46,7 +61,7 @@
 .career-divider {
     width: 100%;
     height: 1px;
-    background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 14%, rgba(0,0,0,0.18) 86%, rgba(0,0,0,0) 100%);
+    background: linear-gradient(90deg, transparent 0%, light-dark(rgba(0,0,0,0.18), rgba(255,255,255,0.12)) 14%, light-dark(rgba(0,0,0,0.18), rgba(255,255,255,0.12)) 86%, transparent 100%);
     transform-origin: left;
     transform: scaleX(0);
 }
@@ -73,8 +88,8 @@
 .career-skill-tag {
     display: inline-block;
     padding: 5px 12px;
-    background: rgba(0,0,0,0.04);
-    border: 1px solid rgba(0,0,0,0.08);
+    background: light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.06));
+    border: 1px solid light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.1));
     border-radius: 6px;
     font-size: 13px;
     font-weight: 500;
@@ -82,20 +97,10 @@
     transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s var(--ease-spring);
 }
 
-[data-theme="dark"] .career-skill-tag {
-    background: rgba(255,255,255,0.06);
-    border-color: rgba(255,255,255,0.1);
-}
-
 .career-skill-tag:hover {
-    background: rgba(0,0,0,0.08);
-    border-color: rgba(0,0,0,0.14);
+    background: light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.1));
+    border-color: light-dark(rgba(0,0,0,0.14), rgba(255,255,255,0.16));
     transform: translateY(-1px);
-}
-
-[data-theme="dark"] .career-skill-tag:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.16);
 }
 
 /* ── "What I bring" body text ── */
@@ -124,11 +129,7 @@
     top: 8px;
     bottom: 8px;
     width: 1px;
-    background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.06) 100%);
-}
-
-[data-theme="dark"] .career-timeline::before {
-    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.06) 100%);
+    background: linear-gradient(180deg, light-dark(rgba(0,0,0,0.2), rgba(255,255,255,0.2)) 0%, light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.06)) 100%);
 }
 
 .career-timeline-item {
@@ -194,6 +195,7 @@
     font-size: clamp(28px, 3vw, 44px);
     font-weight: 700;
     letter-spacing: -0.02em;
+    text-wrap: balance;
     margin: 0 0 48px 0;
     font-size-adjust: from-font;
 }
@@ -213,8 +215,8 @@
 }
 
 .cert-card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.68) 100%);
-    border: 1px solid rgba(15, 15, 15, 0.08);
+    background: linear-gradient(180deg, light-dark(rgba(255,255,255,0.85), rgba(48,48,48,0.88)) 0%, light-dark(rgba(255,255,255,0.68), rgba(37,37,37,0.82)) 100%);
+    border: 1px solid light-dark(rgba(15, 15, 15, 0.08), rgba(255,255,255,0.08));
     border-radius: var(--radius-md);
     padding: 28px;
     display: flex;
@@ -236,8 +238,8 @@
 
 .cert-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 36px rgba(15, 15, 15, 0.08);
-    border-color: rgba(15, 15, 15, 0.12);
+    box-shadow: 0 14px 36px light-dark(rgba(15, 15, 15, 0.08), rgba(0,0,0,0.3));
+    border-color: light-dark(rgba(15, 15, 15, 0.12), rgba(255,255,255,0.12));
 }
 
 .cert-year {
@@ -285,24 +287,6 @@
 /* ── CTA ── */
 .career-cta {
     margin-top: 80px;
-}
-
-/* ═══════════════════════════════════════
-   DARK MODE
-   ═══════════════════════════════════════ */
-
-[data-theme="dark"] .career-divider {
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 14%, rgba(255,255,255,0.12) 86%, rgba(255,255,255,0) 100%);
-}
-
-[data-theme="dark"] .cert-card {
-    background: linear-gradient(180deg, rgba(48,48,48,0.88) 0%, rgba(37,37,37,0.82) 100%);
-    border-color: rgba(255,255,255,0.08);
-}
-
-[data-theme="dark"] .cert-card:hover {
-    border-color: rgba(255,255,255,0.12);
-    box-shadow: 0 14px 36px rgba(0,0,0,0.3);
 }
 
 } /* end @layer components */

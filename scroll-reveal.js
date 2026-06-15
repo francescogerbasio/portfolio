@@ -5,17 +5,22 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ── Generic scroll-reveal for .scroll-reveal elements ──
-    const revealObs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                revealObs.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    const supportsScrollDriven = CSS.supports('(animation-timeline: view()) and (animation-range: entry 0% entry 30%)');
 
-    document.querySelectorAll('.scroll-reveal').forEach(el => revealObs.observe(el));
+    // ── Generic scroll-reveal for .scroll-reveal elements ──
+    // Use native CSS scroll-driven animations when available; fall back to IO.
+    if (!supportsScrollDriven) {
+        const revealObs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => revealObs.observe(el));
+    }
 
     // ── Staggered reveal for child elements within a container ──
     // Call after page loads so container dimensions are stable.

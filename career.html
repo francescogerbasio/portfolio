@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
+    <script blocking="render">
 (function () {
     'use strict';
     const STORAGE_KEY = 'theme';
     const html = document.documentElement;
     function applyTheme(theme) {
         html.setAttribute('data-theme', theme);
+        html.style.colorScheme = theme;
+        const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
+        if (colorSchemeMeta) colorSchemeMeta.content = theme;
         const color = theme === 'dark' ? '#252525' : '#fdf5f6';
         let meta = document.querySelector('meta[name="theme-color"]');
         if (meta) { meta.parentNode.removeChild(meta); }
@@ -140,6 +143,7 @@
     </script>
 </head>
 <body>
+    <a href="#main-content" class="skip-link visually-hidden">Skip to main content</a>
     <!-- Inline SVG sprite for arrow icons -->
     <svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
         <symbol id="icon-arrow-right" viewBox="0 0 14 14">
@@ -196,7 +200,7 @@
         </button>
     </div>
 
-    <main class="container">
+    <main id="main-content" class="container">
 
         <section class="career-hero" aria-label="Career overview">
             <p class="career-eyebrow">Career</p>

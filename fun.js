@@ -196,7 +196,7 @@ function displayEditorial(grid) {
 
     grid.innerHTML = photos.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" loading="lazy" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" width="800" height="1067" loading="lazy" decoding="async">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -258,7 +258,7 @@ function displayMasonry(grid, country) {
 
     grid.innerHTML = filtered.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" loading="lazy" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" width="800" height="1067" loading="lazy" decoding="async">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -401,7 +401,7 @@ async function loadMySong() {
 
                     <div class="song-card-front">
                         <div class="song-card-artwork">
-                            <img src="${artworkSrc}" alt="${song.title}" loading="lazy" decoding="async"
+                            <img src="${artworkSrc}" alt="${song.title}" width="340" height="340" loading="lazy" decoding="async"
                                  onerror="this.src='https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'">
                         </div>
                         <div class="song-card-info">
@@ -508,7 +508,7 @@ async function loadMySong() {
                         </div>
                     </div>
                     <div class="song-card-back">
-                        <img src="https://i.ytimg.com/vi/d2nUN5jcyfE/hqdefault.jpg" alt="BRONX"
+                        <img src="https://i.ytimg.com/vi/d2nUN5jcyfE/hqdefault.jpg" alt="BRONX" width="480" height="270"
                              style="width:100%;height:100%;object-fit:cover;">
                         <div class="song-card-back-overlay">
                             <p class="song-card-back-title">BRONX</p>
@@ -537,7 +537,7 @@ async function loadFavoriteArtists() {
             <div class="artist-card" data-index="${i}" style="--i: ${i}">
                 <div class="artist-image">
                     ${artist.image
-                        ? `<img src="${artist.image}" alt="${artist.name}" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+                        ? `<img src="${artist.image}" alt="${artist.name}" width="300" height="400" loading="lazy" decoding="async" onerror="this.style.display='none'">`
                         : ''
                     }
                 </div>
@@ -619,7 +619,7 @@ function buildFeatured(games) {
             ${games.map((g, i) => `
                 <div class="gf-slide" data-index="${i}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${games.length}">
                     <div class="gf-bg">
-                        <img src="${g.cover}" alt="${g.title}" class="gf-bg-img" loading="lazy" decoding="async">
+                        <img src="${g.cover}" alt="${g.title}" class="gf-bg-img" width="2100" height="900" loading="lazy" decoding="async">
                         <div class="gf-bg-overlay"></div>
                     </div>
                     <div class="gf-content">
@@ -662,7 +662,8 @@ function buildFeatured(games) {
         dots[current].setAttribute('tabindex', '0');
     }
 
-    function startAuto() { autoTimer = setInterval(() => goTo(current + 1), 5000); }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function startAuto() { if (prefersReducedMotion) return; autoTimer = setInterval(() => goTo(current + 1), 5000); }
     function stopAuto()  { clearInterval(autoTimer); }
 
     container.querySelector('.gf-next').addEventListener('click', () => { stopAuto(); goTo(current + 1); startAuto(); });
@@ -694,7 +695,7 @@ function buildGrid(container, games) {
             return `
                 <div class="game-card saga-card" data-id="${g.id}" style="--i: ${i}">
                     <div class="game-cover">
-                        <img src="${g.cover}" alt="${g.title}" loading="lazy">
+                        <img src="${g.cover}" alt="${g.title}" width="300" height="400" loading="lazy" decoding="async">
                         <div class="game-cover-overlay"></div>
                         <div class="saga-badge">${g.games.length} games</div>
                     </div>
@@ -718,7 +719,7 @@ function buildGrid(container, games) {
         return `
             <div class="game-card" data-id="${g.id}" style="--i: ${i}">
                 <div class="game-cover">
-                    <img src="${g.cover}" alt="${g.title}" loading="lazy">
+                    <img src="${g.cover}" alt="${g.title}" width="300" height="400" loading="lazy" decoding="async">
                     <div class="game-cover-overlay"></div>
                 </div>
                 <div class="game-meta">
@@ -750,4 +751,14 @@ function buildGrid(container, games) {
 document.addEventListener('DOMContentLoaded', function() {
     loadTravelPhotos('all');
     travelDataLoaded = true;    document.getElementById('categorySubtitle').textContent = CATEGORY_SUBTITLES.travel;
+
+    // Sync category tabs when find-in-page reveals hidden sections
+    document.addEventListener('beforematch', (e) => {
+        const section = e.target.closest('.category-section');
+        if (!section) return;
+        const category = section.id.replace('-section', '');
+        if (category && category !== currentCategory) {
+            switchCategory(category);
+        }
+    });
 });

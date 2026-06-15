@@ -438,29 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
             text.appendChild(container);
         });
     });
-    
-    // ===================================
-    // ACCORDION — Other Projects
-    // ===================================
-    
-    const accordionTrigger = document.getElementById('accordionTrigger');
-    const accordionContent = document.getElementById('accordionContent');
-    
-    if (accordionTrigger) {
-        accordionTrigger.addEventListener('click', function() {
-            const isOpen = accordionContent.classList.contains('open');
-            if (isOpen) {
-                accordionContent.classList.remove('open');
-                accordionTrigger.classList.remove('active');
-                accordionTrigger.setAttribute('aria-expanded', 'false');
-            } else {
-                accordionContent.classList.add('open');
-                accordionTrigger.classList.add('active');
-                accordionTrigger.setAttribute('aria-expanded', 'true');
-            }
-        });
-    }
-    
+
     // ===================================
     // PROJECT CARDS FADE IN ON SCROLL
     // ===================================

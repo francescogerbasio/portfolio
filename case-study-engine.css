@@ -26,37 +26,41 @@
 /* ── Components Layer ── */
 @layer components {
 
-/* ── Overlay shell ── */
-.cs-overlay {
+/* ── Dialog overlay ── */
+dialog.cs-overlay {
   position: fixed;
   inset: 0;
   z-index: 500;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
   overflow: hidden;
   isolation: isolate;
-  visibility: hidden;
 }
 
-.cs-overlay.cs-open {
-  pointer-events: auto;
-  visibility: visible;
-}
-
-/* ── Backdrop ── */
-.cs-backdrop {
-  position: absolute;
-  inset: 0;
+/* Native dialog backdrop */
+dialog.cs-overlay::backdrop {
   background: rgba(8,8,8,0);
   backdrop-filter: blur(0px) saturate(100%);
-  will-change: transform;
-}
-
-.cs-overlay.cs-open .cs-backdrop {
-  background: rgba(8,8,8,.72);
-  backdrop-filter: blur(12px) saturate(140%);
   transition:
+    display         var(--cs-dur-slow) allow-discrete,
+    overlay         var(--cs-dur-slow) allow-discrete,
     background      var(--cs-dur-slow) var(--cs-ease-out),
     backdrop-filter var(--cs-dur-slow) var(--cs-ease-out);
+}
+
+dialog.cs-overlay[open]::backdrop {
+  background: rgba(8,8,8,.72);
+  backdrop-filter: blur(12px) saturate(140%);
+
+  @starting-style {
+    background: rgba(8,8,8,0);
+    backdrop-filter: blur(0px) saturate(100%);
+  }
 }
 
 /* ── Panel — iOS modal sheet ── */
@@ -70,58 +74,37 @@
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scrollbar-width: thin;
-  scrollbar-color: rgba(0,0,0,.14) transparent;
-  /* Start below the viewport */
+  scrollbar-color: light-dark(rgba(0,0,0,.14), rgba(255,255,255,.14)) transparent;
   transform: translateY(100%);
   border-radius: 20px 20px 0 0;
   pointer-events: none;
   transition:
-    transform     0.62s cubic-bezier(0.32, 0.94, 0.60, 1.18),
-    border-radius 0.62s cubic-bezier(0.32, 0.94, 0.60, 1.18);
+    display         var(--cs-dur-med) allow-discrete,
+    overlay         var(--cs-dur-med) allow-discrete,
+    transform       0.62s cubic-bezier(0.32, 0.94, 0.60, 1.18),
+    border-radius   0.62s cubic-bezier(0.32, 0.94, 0.60, 1.18);
 }
 
 /* Open — spring up into place */
-.cs-overlay.cs-open .cs-panel {
+dialog.cs-overlay[open] .cs-panel {
   transform: translateY(0);
   border-radius: 0;
   pointer-events: auto;
+
+  @starting-style {
+    transform: translateY(100%);
+    border-radius: 20px 20px 0 0;
+  }
 }
 
-/* Close — snap back down */
-.cs-overlay.cs-closing .cs-panel {
-  transform: translateY(100%);
-  border-radius: 20px 20px 0 0;
-  transition:
-    transform     0.38s cubic-bezier(0.4, 0, 0.8, 0.6),
-    border-radius 0.38s cubic-bezier(0.4, 0, 0.8, 0.6);
-  pointer-events: none;
-}
+/* Exit uses the base transition in reverse — no extra class needed */
 
-.cs-panel::-webkit-scrollbar { width: 3px; }
-.cs-panel::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,.14);
-  border-radius: 3px;
-}
+/* ── Progress bar — removed, replaced by native dialog::backdrop ── */
 
-/* ── Progress bar ── */
-.cs-progress-bar {
-  position: fixed;
-  top: 0; left: 0;
-  height: 2px;
-  width: 0%;
-  z-index: 510;
-  transition: width .08s linear, opacity .3s ease;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.cs-overlay.cs-open ~ .cs-progress-bar { opacity: 1; }
-
-/* ── Close button ──
-   position: absolute inside .cs-overlay (which is fixed, inset:0).
-   This means the button is naturally clipped by the overlay boundary —
-   when the overlay loses cs-open it fades out in place, fully contained,
-   never overlapping the hamburger or page chrome.
+/* ── Close button
+   position: absolute inside the overlay.
+   The dialog IS the overlay, so the button is naturally
+   clipped by the viewport boundary when not open.
 ── */
 .cs-close-btn {
   position: absolute;
@@ -149,14 +132,14 @@
   pointer-events: none;
 }
 
-.cs-overlay.cs-open .cs-close-btn {
+dialog.cs-overlay[open] .cs-close-btn {
   opacity: 1;
   transform: scale(1) rotate(0deg);
   pointer-events: auto;
 }
 
 /* When closing: fade out immediately, don't wait */
-.cs-overlay:not(.cs-open) .cs-close-btn {
+dialog.cs-overlay:not([open]) .cs-close-btn {
   opacity: 0;
   transform: scale(.6) rotate(90deg);
   transition:
@@ -296,7 +279,7 @@
   transform: translateY(12px);
 }
 
-.cs-overlay.cs-open .cs-eyebrow {
+dialog.cs-overlay[open] .cs-eyebrow {
   animation: cs-slide-up .5s var(--cs-ease-spring) .55s forwards;
 }
 
@@ -306,6 +289,7 @@
   font-weight: 700;
   letter-spacing: -.04em;
   line-height: .95;
+  text-wrap: balance;
   color: #fff;
   margin-bottom: 28px;
   opacity: 0;
@@ -313,7 +297,7 @@
   transform: translateY(20px);
 }
 
-.cs-overlay.cs-open .cs-title {
+dialog.cs-overlay[open] .cs-title {
   animation: cs-slide-up .65s var(--cs-ease-spring) .65s forwards;
 }
 
@@ -325,7 +309,7 @@
   transform: translateY(14px);
 }
 
-.cs-overlay.cs-open .cs-hero-meta {
+dialog.cs-overlay[open] .cs-hero-meta {
   animation: cs-slide-up .5s var(--cs-ease-spring) .82s forwards;
 }
 
@@ -359,7 +343,7 @@
   opacity: 0;
 }
 
-.cs-overlay.cs-open .cs-scroll-cue {
+dialog.cs-overlay[open] .cs-scroll-cue {
   animation: cs-fade-in .5s ease 1.3s forwards;
 }
 
@@ -464,6 +448,7 @@
   margin-bottom: 28px;
   color: var(--color-text, #0a0a0a);
   font-size-adjust: from-font;
+}
 
 .cs-body {
   font-size: clamp(15px,1.4vw,17px);
@@ -652,13 +637,9 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .06em;
-  color: rgba(0,0,0,.35);
+  color: light-dark(rgba(0,0,0,.35), rgba(255,255,255,.35));
   text-align: center;
   margin-top: 14px;
-}
-
-[data-theme="dark"] .cs-showcase-caption {
-  color: rgba(255,255,255,.35);
 }
 
 /* ══════════════════════════════════════
@@ -750,6 +731,7 @@
   font-weight: 700;
   letter-spacing: -.03em;
   font-size-adjust: from-font;
+}
 
 .cs-proto-sub {
   font-size: 15px;
@@ -1054,9 +1036,6 @@ body.cs-is-open .mobile-menu {
 [data-theme="dark"] .cs-next-arrow:hover {
     background: var(--color-text);
     color: var(--color-bg);
-}
-[data-theme="dark"] .cs-progress-bar-track {
-    background: rgba(255,255,255,0.08);
 }
 
 /* ── Dark mode: case study hero and results keep their dark bg (they look fine) ── */
