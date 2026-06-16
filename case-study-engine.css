@@ -72,7 +72,6 @@ dialog.cs-overlay[open]::backdrop {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
   scrollbar-width: thin;
   scrollbar-color: light-dark(rgba(0,0,0,.14), rgba(255,255,255,.14)) transparent;
   transform: translateY(100%);
@@ -235,10 +234,6 @@ dialog.cs-overlay:not([open]) .cs-close-btn {
   flex-shrink: 0;
   position: relative;
   transition: transform .45s var(--cs-ease-spring);
-  /* Subpixel antialiasing — prevents jagged edges on rotated/transformed phones */
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-  isolation: isolate;
 }
 
 .cs-phone img {
@@ -247,9 +242,7 @@ dialog.cs-overlay:not([open]) .cs-close-btn {
   object-fit: cover;
   object-position: top center;
   display: block;
-  /* Force GPU layer for crisp image rendering inside transformed container */
   transform: translateZ(0);
-  image-rendering: crisp-edges;
 }
 
 /* 3-phone layout tilt */
@@ -609,9 +602,6 @@ dialog.cs-overlay[open] .cs-scroll-cue {
     inset 0 1px 0 rgba(255,255,255,.06);
   flex-shrink: 0;
   transition: transform .4s var(--cs-ease-spring);
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-  isolation: isolate;
 }
 
 .cs-showcase-phone:hover { transform: translateY(-6px) scale(1.03); }
@@ -623,7 +613,6 @@ dialog.cs-overlay[open] .cs-scroll-cue {
   object-position: top center;
   display: block;
   transform: translateZ(0);
-  image-rendering: crisp-edges;
 }
 
 .cs-showcase-phone:nth-child(1) { transform: rotate(-5deg) translateY(16px); opacity: .75; }
@@ -920,8 +909,6 @@ body.cs-is-open .mobile-menu {
   align-items: center;
   padding: 0 10px;
   z-index: 2;
-  display: flex;
-  align-items: center;
 }
 
 .cs-tablet img {

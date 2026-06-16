@@ -422,7 +422,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const container = document.createElement('div');
             container.className = 'particle-container';
             container.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;';
-            container.innerHTML = buildParticleHTML(numParticles).replace(/3 \+ 2/g, '2 + 1.5'); // smaller for list items
             // Use smaller particles for list items
             let html = '';
             for (let j = 0; j < numParticles; j++) {
@@ -478,8 +477,3 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('%c👋 Hello! Thanks for checking out my portfolio!', 'font-size: 20px; color: #888;');
     console.log('%c🎵 Still choosing music...', 'font-size: 16px; color: #888;');
 });
-
-function scrollToSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}

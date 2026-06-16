@@ -74,9 +74,9 @@
 }
 
 .project-badge.cs-badge {
-    font-size: 11px !important;
-    padding: 3px 10px !important;
-    background: transparent !important;
+    font-size: 11px;
+    padding: 3px 10px;
+    background: transparent;
 }
 
 } /* end @layer components */

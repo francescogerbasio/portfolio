@@ -11,15 +11,13 @@
 }
 
 /* Defer rendering of below-fold sections */
-.certifications-section,
-.career-timeline-section {
+.certifications-section {
     content-visibility: auto;
     contain-intrinsic-size: auto 500px;
 }
 
 @supports not (content-visibility: auto) {
-    .certifications-section,
-    .career-timeline-section {
+    .certifications-section {
         contain: layout style;
     }
 }
@@ -70,39 +68,6 @@
     animation: lineGrow 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* ── SKILLS SECTION ── */
-.career-skills {
-    margin-bottom: 80px;
-}
-
-.career-skill-group-title {
-    font-family: var(--font-heading);
-    font-size: clamp(15px, 1.2vw, 17px);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--color-text);
-    margin: 0 0 12px 0;
-    font-size-adjust: from-font;
-}
-
-.career-skill-tag {
-    display: inline-block;
-    padding: 5px 12px;
-    background: light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.06));
-    border: 1px solid light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.1));
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-text);
-    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s var(--ease-spring);
-}
-
-.career-skill-tag:hover {
-    background: light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.1));
-    border-color: light-dark(rgba(0,0,0,0.14), rgba(255,255,255,0.16));
-    transform: translateY(-1px);
-}
-
 /* ── "What I bring" body text ── */
 .career-body-text {
     font-size: clamp(15px,1.3vw,18px);
@@ -114,77 +79,6 @@
 
 .career-body-text:last-child {
     margin-bottom: 0;
-}
-
-/* ── TIMELINE ── */
-.career-timeline {
-    position: relative;
-    padding-left: 24px;
-}
-
-.career-timeline::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 8px;
-    bottom: 8px;
-    width: 1px;
-    background: linear-gradient(180deg, light-dark(rgba(0,0,0,0.2), rgba(255,255,255,0.2)) 0%, light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.06)) 100%);
-}
-
-.career-timeline-item {
-    position: relative;
-    padding-bottom: 40px;
-}
-
-.career-timeline-item:last-child { padding-bottom: 0; }
-
-.career-timeline-item::before {
-    content: '';
-    position: absolute;
-    left: -28px;
-    top: 8px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--color-text);
-    opacity: 0.25;
-}
-
-.career-timeline-year {
-    font-family: var(--font-heading);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-text-light);
-    margin-bottom: 8px;
-    font-size-adjust: from-font;
-}
-
-.career-timeline-role {
-    font-family: var(--font-heading);
-    font-size: clamp(17px, 1.5vw, 22px);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--color-text);
-    margin: 0 0 4px 0;
-}
-
-.career-timeline-company {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-text-light);
-    margin: 0 0 8px 0;
-}
-
-.career-timeline-desc {
-    font-size: 14px;
-    line-height: 1.65;
-    color: var(--color-text);
-    opacity: 0.75;
-    margin: 0;
-    max-width: 600px;
 }
 
 /* ── CERTIFICATIONS ── */
@@ -283,10 +177,5 @@
 }
 
 .cert-link:hover { opacity: 0.6; }
-
-/* ── CTA ── */
-.career-cta {
-    margin-top: 80px;
-}
 
 } /* end @layer components */

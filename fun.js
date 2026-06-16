@@ -125,7 +125,8 @@ async function loadTravelPhotos(country = 'all') {
 
 function generateFlagButtons() {
     const flagNav = document.getElementById('flagNavigation');
-    const isWindows = navigator.platform.toLowerCase().includes('win');
+    const platform = navigator.userAgentData?.platform || navigator.platform || '';
+    const isWindows = platform.toLowerCase().includes('win');
     const countries = {};
     const travelConfig = window.travelConfig;
     if (!travelConfig || !travelConfig.destinations) return;
