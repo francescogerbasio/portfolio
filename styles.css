@@ -432,7 +432,6 @@ p, blockquote, li {
     border: 1px solid transparent;
     transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
                 background-color 0.25s ease, color 0.15s ease;
-    view-transition-name: nav-bar;
 }
 
 /* Glass layer - animates independently from nav text */
@@ -445,26 +444,19 @@ p, blockquote, li {
     backdrop-filter: blur(28px) saturate(140%);
     -webkit-backdrop-filter: blur(28px) saturate(140%);
     box-shadow: 0 14px 36px rgba(15, 15, 15, 0.08);
-    visibility: hidden;
     opacity: 0;
     transform: scaleX(0.92);
     transform-origin: center;
     z-index: -1;
     pointer-events: none;
-    transition: visibility 0s linear 0.4s,
-                opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                 transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
                 box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1) 0.08s;
 }
 
 .navigation.scrolled::before {
-    visibility: visible;
     opacity: 1;
     transform: scaleX(1);
-    transition: visibility 0s linear 0s,
-                opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1) 0.08s;
 }
 
 /* Frosted glass effect when scrolled */
@@ -3694,29 +3686,6 @@ html[data-vt-direction="back"] ::view-transition-new(root) {
 }
 
 /* ── Nav bar: stays in place, new fades in over old ── */
-::view-transition-group(nav-bar) {
-    animation-duration: 300ms;
-    /* Solid backdrop so the glass blur has something to work with */
-    background: var(--color-bg);
-    border-radius: 50px;
-}
-::view-transition-old(nav-bar) {
-    animation: 300ms ease both vt-nav-stay;
-    mix-blend-mode: normal;
-}
-::view-transition-new(nav-bar) {
-    animation: 300ms ease both vt-nav-appear;
-    mix-blend-mode: normal;
-}
-@keyframes vt-nav-stay {
-    from { opacity: 1; }
-    to   { opacity: 1; }
-}
-@keyframes vt-nav-appear {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
     ::view-transition-group(*),
