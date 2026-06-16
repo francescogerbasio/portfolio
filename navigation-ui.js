@@ -46,7 +46,7 @@
                 if (scrollScheduled) return;
                 scrollScheduled = true;
                 requestAnimationFrame(() => {
-                    navigation.classList.toggle('scrolled', window.scrollY > 80);
+                    navigation.classList.toggle('scrolled', window.scrollY > 20);
                     scrollScheduled = false;
                 });
             }

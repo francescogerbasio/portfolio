@@ -482,7 +482,8 @@ button.nav-link {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0;
+    padding: 0 0 4px 0;
+    line-height: inherit;
 }
 
 .nav-link.active {
@@ -562,13 +563,13 @@ button.nav-link {
     .navigation.scrolled {
         animation: navGlass linear both;
         animation-timeline: scroll(root);
-        animation-range: 0px 80px;
+        animation-range: 0px 20px;
     }
 
     .navigation.scrolled::before {
         animation: navGlassBefore linear both;
         animation-timeline: scroll(root);
-        animation-range: 0px 80px;
+        animation-range: 0px 20px;
     }
 
     /* Animation takes precedence — unset class-based fallbacks */
