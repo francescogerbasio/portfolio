@@ -24,14 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-    
-    // nav-ready added on first user scroll — gates the dot animation so it never fires on load
-    const navigation = document.querySelector('.navigation');
-    if (navigation) {
-        window.addEventListener('scroll', function onFirstScroll() {
-            navigation.classList.add('nav-ready');
-        }, { passive: true, once: true });
-    }
 
 
     // ===================================
