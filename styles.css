@@ -445,20 +445,26 @@ p, blockquote, li {
     backdrop-filter: blur(28px) saturate(140%);
     -webkit-backdrop-filter: blur(28px) saturate(140%);
     box-shadow: 0 14px 36px rgba(15, 15, 15, 0.08);
+    visibility: hidden;
     opacity: 0;
     transform: scaleX(0.92);
     transform-origin: center;
     z-index: -1;
     pointer-events: none;
-    will-change: opacity;
-    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+    transition: visibility 0s linear 0.4s,
+                opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
                 transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
                 box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1) 0.08s;
 }
 
 .navigation.scrolled::before {
+    visibility: visible;
     opacity: 1;
     transform: scaleX(1);
+    transition: visibility 0s linear 0s,
+                opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1) 0.08s;
 }
 
 /* Frosted glass effect when scrolled */
