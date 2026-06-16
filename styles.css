@@ -347,7 +347,7 @@ dialog.nda-modal::backdrop {
 /* Smooth theme transitions scoped to elements that actually change with the theme */
 body, h1, h2, h3, h4, h5, h6, p, a, span, li, label, button, input, textarea,
 select, nav, header, main, section, article, aside, footer, figure, figcaption,
-.navigation, .bento-card, .project-card, .project-list-item, .accordion-trigger,
+.bento-card, .project-card, .project-list-item, .accordion-trigger,
 .accordion-content, .accordion-icon, .accordion-count, .skill-tag, .lang-pill,
 .btn-primary, .btn-secondary, .cert-card, .value-item,
 .stat-item, .values-header, .about-cta, .about-divider, .timeline-item,
@@ -433,7 +433,8 @@ p, blockquote, li {
     backdrop-filter: none;
     
     transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                backdrop-filter 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+                backdrop-filter 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                background-color 0.25s ease, color 0.15s ease;
     view-transition-name: nav-bar;
 }
 
@@ -474,6 +475,14 @@ p, blockquote, li {
     transition: font-weight 0.3s ease;
     position: relative;
     padding-bottom: 4px;
+}
+
+button.nav-link {
+    font-family: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
 }
 
 .nav-link.active {
@@ -527,13 +536,11 @@ p, blockquote, li {
         from {
             border-color: transparent;
             backdrop-filter: none;
-            
             transform: none;
         }
         to {
-            border-color: rgba(255, 255, 255, 0.5);
+            border-color: light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08));
             backdrop-filter: var(--blur-glass);
-            
             transform: translateY(-2px);
         }
     }
@@ -542,66 +549,38 @@ p, blockquote, li {
         from {
             opacity: 0;
             transform: scaleX(0.92);
+            box-shadow: none;
         }
         to {
             opacity: 1;
             transform: scaleX(1);
-            background: linear-gradient(180deg, rgba(253, 245, 246, 0.84) 0%, rgba(253, 245, 246, 0.68) 100%);
             box-shadow: 0 14px 36px rgba(15, 15, 15, 0.08);
         }
     }
 
-    /* Light mode: animate nav + ::before together */
+    /* Animate nav + ::before together */
     .navigation.scrolled {
         animation: navGlass linear both;
         animation-timeline: scroll(root);
-        animation-range: 0px 20px;
+        animation-range: 0px 80px;
     }
 
     .navigation.scrolled::before {
         animation: navGlassBefore linear both;
         animation-timeline: scroll(root);
-        animation-range: 0px 20px;
-    }
-
-    /* Dark mode: override only the colors that differ */
-    @keyframes navGlassDark {
-        to {
-            border-color: rgba(255, 255, 255, 0.08);
-        }
-    }
-
-    @keyframes navGlassBeforeDark {
-        to {
-            background: linear-gradient(180deg, rgba(48, 48, 48, 0.88) 0%, rgba(37, 37, 37, 0.82) 100%);
-        }
-    }
-
-    [data-theme="dark"] .navigation.scrolled {
-        animation: navGlass linear both, navGlassDark linear both;
-        animation-timeline: scroll(root);
-        animation-range: 0px 20px, 0px 20px;
-    }
-
-    [data-theme="dark"] .navigation.scrolled::before {
-        animation: navGlassBefore linear both, navGlassBeforeDark linear both;
-        animation-timeline: scroll(root);
-        animation-range: 0px 20px, 0px 20px;
+        animation-range: 0px 80px;
     }
 
     /* Animation takes precedence — unset class-based fallbacks */
     .navigation.scrolled::before {
         opacity: unset;
         transform: unset;
-        transition: none;
     }
 
     .navigation.scrolled {
         border-color: unset;
         transform: unset;
         backdrop-filter: unset;
-        
-        transition: none;
     }
 
     /* Nav dots still use .scrolled class (no animation needed) */
@@ -1102,20 +1081,12 @@ dialog.nda-modal:open::backdrop {
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
         .navigation.scrolled {
-            border-color: rgba(255, 255, 255, 0.5);
+            border-color: light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08));
             backdrop-filter: var(--blur-glass);
-            
             transform: translateY(-2px);
         }
-        [data-theme="dark"] .navigation.scrolled {
-            animation: none;
-        }
         [data-theme="dark"] .navigation.scrolled::before {
-            animation: none;
             background: linear-gradient(180deg, rgba(48, 48, 48, 0.88) 0%, rgba(37, 37, 37, 0.82) 100%);
-        }
-        [data-theme="dark"] .navigation.scrolled {
-            border-color: rgba(255, 255, 255, 0.08);
         }
     }
 }
