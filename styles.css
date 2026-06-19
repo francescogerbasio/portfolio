@@ -222,7 +222,6 @@ details[open] summary .accordion-icon {
 .nda-overlay {
     [data-theme="dark"] & {
         background: rgba(37,37,37,0.96);
-        box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08);
     }
     [data-theme="dark"] &:hover {
         background: rgba(37,37,37,1);
@@ -791,6 +790,7 @@ dialog.nda-modal {
     align-items: center;
     justify-content: center;
     border: none;
+    background: transparent;
     padding: 0;
     max-width: 100vw;
     max-height: 100vh;
@@ -840,7 +840,7 @@ dialog.nda-modal:open::backdrop {
     background: var(--color-bg);
     padding: 40px;
     border-radius: 16px;
-    max-width: 400px;
+    max-width: 440px;
     width: 90%;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
@@ -914,6 +914,7 @@ dialog.nda-modal:open::backdrop {
 
 .nda-password-input:focus-visible {
     border-color: var(--color-text);
+    outline: none;
 }
 
 .nda-password-input.error {
@@ -1604,12 +1605,10 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
     transition: background 0.3s ease;
     z-index: 10;
     pointer-events: auto;
-    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.08);
 }
 
 .nda-overlay:hover {
     background: rgba(253, 245, 246, 1);
-    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
 }
 
 .nda-overlay.hidden {
