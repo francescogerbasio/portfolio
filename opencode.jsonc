@@ -10,5 +10,9 @@
       ],
       "enabled": true
     }
+  },
+  "agent": {
+    "plan":  { "model": "opencode-go/glm-5.2" },
+    "build": { "model": "opencode-go/kimi-2.7-code" }
   }
 }
