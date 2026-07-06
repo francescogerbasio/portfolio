@@ -46,5 +46,31 @@ Test on `localhost:8000`, never `file://`.
 - Prefer targeted fixes over restructuring.
 - If reverting code, verify `window.*` exports are preserved in data files.
 
+## Modern Web Guidance
+**Mandatory — consult before implementing anything.**
+
+This project targets **Baseline 2025** and uses [Modern Web Guidance](https://developer.chrome.com/docs/modern-web-guidance) for all web platform decisions.
+
+### Before any change, you must:
+1. Search: `npx modern-web-guidance@latest search "<topic>"`
+2. Retrieve: `npx modern-web-guidance@latest retrieve "<guide-id>"`
+3. Verify Baseline 2025 support
+4. Implement using the recommended modern approach
+5. Add progressive enhancement fallbacks where needed
+
+### Common topics to search
+| Change Type | Search |
+|-------------|--------|
+| CSS | `light-dark()`, `cascade layers`, `container queries`, `@layer` |
+| HTML | `dialog element`, `popover`, `details`, `invoker commands` |
+| JS | `ResizeObserver`, `IntersectionObserver`, `visibilitychange` |
+| Performance | `compositing`, `rendering performance`, `CSS animations` |
+
+### Rules
+- **Prefer** modern CSS/HTML APIs over JavaScript solutions
+- **Never** implement without checking guidance first
+- **Document** the guide ID in commit messages: `MWG-2025/css-layering`
+- **Provide** fallbacks for limited browser support
+
 ## Validation
 Always end with `python3 validate.py`. Both link check and image alt check must pass. If either fails, fix before considering the task done.

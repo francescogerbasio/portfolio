@@ -70,8 +70,3 @@ const travelConfig = {
 };
 
 window.travelConfig = travelConfig;
-
-// Export for use in fun.js
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = travelConfig;
-}

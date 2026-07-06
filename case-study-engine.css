@@ -3,6 +3,12 @@
    Depends on: styles.css (portfolio tokens)
    ============================================================ */
 
+/* ── CSS Cascade Layers (must match styles.css order) ── */
+@layer base, components;
+
+/* ── Base Layer: Case Study Tokens ── */
+@layer base {
+
 /* ── Tokens ── */
 :root {
   --cs-ease-spring: cubic-bezier(.34,1.18,.64,1);
@@ -15,39 +21,46 @@
   --cs-accent-rgb: 136,136,136;
 }
 
-/* ── Overlay shell ── */
-.cs-overlay {
+} /* end @layer base */
+
+/* ── Components Layer ── */
+@layer components {
+
+/* ── Dialog overlay ── */
+dialog.cs-overlay {
   position: fixed;
   inset: 0;
   z-index: 500;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
   overflow: hidden;
   isolation: isolate;
-  visibility: hidden;
 }
 
-.cs-overlay.cs-open {
-  pointer-events: auto;
-  visibility: visible;
-}
-
-/* ── Backdrop ── */
-.cs-backdrop {
-  position: absolute;
-  inset: 0;
+/* Native dialog backdrop */
+dialog.cs-overlay::backdrop {
   background: rgba(8,8,8,0);
   backdrop-filter: blur(0px) saturate(100%);
-  -webkit-backdrop-filter: blur(0px) saturate(100%);
-  will-change: backdrop-filter;
-}
-
-.cs-overlay.cs-open .cs-backdrop {
-  background: rgba(8,8,8,.72);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
   transition:
+    display         var(--cs-dur-slow) allow-discrete,
+    overlay         var(--cs-dur-slow) allow-discrete,
     background      var(--cs-dur-slow) var(--cs-ease-out),
     backdrop-filter var(--cs-dur-slow) var(--cs-ease-out);
+}
+
+dialog.cs-overlay[open]::backdrop {
+  background: rgba(8,8,8,.72);
+  backdrop-filter: blur(12px) saturate(140%);
+
+  @starting-style {
+    background: rgba(8,8,8,0);
+    backdrop-filter: blur(0px) saturate(100%);
+  }
 }
 
 /* ── Panel — iOS modal sheet ── */
@@ -59,60 +72,38 @@
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
   scrollbar-width: thin;
-  scrollbar-color: rgba(0,0,0,.14) transparent;
-  /* Start below the viewport */
+  scrollbar-color: light-dark(rgba(0,0,0,.14), rgba(255,255,255,.14)) transparent;
   transform: translateY(100%);
   border-radius: 20px 20px 0 0;
   pointer-events: none;
   transition:
-    transform     0.62s cubic-bezier(0.32, 0.94, 0.60, 1.18),
-    border-radius 0.62s cubic-bezier(0.32, 0.94, 0.60, 1.18);
+    display         var(--cs-dur-med) allow-discrete,
+    overlay         var(--cs-dur-med) allow-discrete,
+    transform       0.62s cubic-bezier(0.32, 0.94, 0.60, 1.18),
+    border-radius   0.62s cubic-bezier(0.32, 0.94, 0.60, 1.18);
 }
 
 /* Open — spring up into place */
-.cs-overlay.cs-open .cs-panel {
+dialog.cs-overlay[open] .cs-panel {
   transform: translateY(0);
   border-radius: 0;
   pointer-events: auto;
+
+  @starting-style {
+    transform: translateY(100%);
+    border-radius: 20px 20px 0 0;
+  }
 }
 
-/* Close — snap back down */
-.cs-overlay.cs-closing .cs-panel {
-  transform: translateY(100%);
-  border-radius: 20px 20px 0 0;
-  transition:
-    transform     0.38s cubic-bezier(0.4, 0, 0.8, 0.6),
-    border-radius 0.38s cubic-bezier(0.4, 0, 0.8, 0.6);
-  pointer-events: none;
-}
+/* Exit uses the base transition in reverse — no extra class needed */
 
-.cs-panel::-webkit-scrollbar { width: 3px; }
-.cs-panel::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,.14);
-  border-radius: 3px;
-}
+/* ── Progress bar — removed, replaced by native dialog::backdrop ── */
 
-/* ── Progress bar ── */
-.cs-progress-bar {
-  position: fixed;
-  top: 0; left: 0;
-  height: 2px;
-  width: 0%;
-  z-index: 510;
-  transition: width .08s linear, opacity .3s ease;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.cs-overlay.cs-open ~ .cs-progress-bar { opacity: 1; }
-
-/* ── Close button ──
-   position: absolute inside .cs-overlay (which is fixed, inset:0).
-   This means the button is naturally clipped by the overlay boundary —
-   when the overlay loses cs-open it fades out in place, fully contained,
-   never overlapping the hamburger or page chrome.
+/* ── Close button
+   position: absolute inside the overlay.
+   The dialog IS the overlay, so the button is naturally
+   clipped by the viewport boundary when not open.
 ── */
 .cs-close-btn {
   position: absolute;
@@ -123,7 +114,6 @@
   border-radius: 50%;
   background: rgba(10,10,10,.55);
   backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255,255,255,.12);
   color: rgba(255,255,255,.9);
   font-size: 17px;
@@ -141,14 +131,14 @@
   pointer-events: none;
 }
 
-.cs-overlay.cs-open .cs-close-btn {
+dialog.cs-overlay[open] .cs-close-btn {
   opacity: 1;
   transform: scale(1) rotate(0deg);
   pointer-events: auto;
 }
 
 /* When closing: fade out immediately, don't wait */
-.cs-overlay:not(.cs-open) .cs-close-btn {
+dialog.cs-overlay:not([open]) .cs-close-btn {
   opacity: 0;
   transform: scale(.6) rotate(90deg);
   transition:
@@ -244,11 +234,6 @@
   flex-shrink: 0;
   position: relative;
   transition: transform .45s var(--cs-ease-spring);
-  /* Subpixel antialiasing — prevents jagged edges on rotated/transformed phones */
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-  isolation: isolate;
 }
 
 .cs-phone img {
@@ -257,10 +242,7 @@
   object-fit: cover;
   object-position: top center;
   display: block;
-  /* Force GPU layer for crisp image rendering inside transformed container */
   transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  image-rendering: -webkit-optimize-contrast;
 }
 
 /* 3-phone layout tilt */
@@ -290,7 +272,7 @@
   transform: translateY(12px);
 }
 
-.cs-overlay.cs-open .cs-eyebrow {
+dialog.cs-overlay[open] .cs-eyebrow {
   animation: cs-slide-up .5s var(--cs-ease-spring) .55s forwards;
 }
 
@@ -300,13 +282,15 @@
   font-weight: 700;
   letter-spacing: -.04em;
   line-height: .95;
+  text-wrap: balance;
   color: #fff;
   margin-bottom: 28px;
   opacity: 0;
+  font-size-adjust: from-font;
   transform: translateY(20px);
 }
 
-.cs-overlay.cs-open .cs-title {
+dialog.cs-overlay[open] .cs-title {
   animation: cs-slide-up .65s var(--cs-ease-spring) .65s forwards;
 }
 
@@ -318,7 +302,7 @@
   transform: translateY(14px);
 }
 
-.cs-overlay.cs-open .cs-hero-meta {
+dialog.cs-overlay[open] .cs-hero-meta {
   animation: cs-slide-up .5s var(--cs-ease-spring) .82s forwards;
 }
 
@@ -352,7 +336,7 @@
   opacity: 0;
 }
 
-.cs-overlay.cs-open .cs-scroll-cue {
+dialog.cs-overlay[open] .cs-scroll-cue {
   animation: cs-fade-in .5s ease 1.3s forwards;
 }
 
@@ -404,6 +388,7 @@
   color: var(--cs-accent);
   margin-bottom: 8px;
   font-family: var(--font-heading);
+  font-size-adjust: from-font;
 }
 
 .cs-stat-desc {
@@ -455,6 +440,7 @@
   line-height: 1.05;
   margin-bottom: 28px;
   color: var(--color-text, #0a0a0a);
+  font-size-adjust: from-font;
 }
 
 .cs-body {
@@ -489,7 +475,7 @@
 
 .cs-insight {
   background: rgba(0,0,0,.04);
-  border-radius: 18px;
+  border-radius: var(--radius-md);
   padding: 26px 22px;
   transition: background .2s ease;
 }
@@ -616,10 +602,6 @@
     inset 0 1px 0 rgba(255,255,255,.06);
   flex-shrink: 0;
   transition: transform .4s var(--cs-ease-spring);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-  isolation: isolate;
 }
 
 .cs-showcase-phone:hover { transform: translateY(-6px) scale(1.03); }
@@ -631,8 +613,6 @@
   object-position: top center;
   display: block;
   transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  image-rendering: -webkit-optimize-contrast;
 }
 
 .cs-showcase-phone:nth-child(1) { transform: rotate(-5deg) translateY(16px); opacity: .75; }
@@ -646,13 +626,9 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .06em;
-  color: rgba(0,0,0,.35);
+  color: light-dark(rgba(0,0,0,.35), rgba(255,255,255,.35));
   text-align: center;
   margin-top: 14px;
-}
-
-[data-theme="dark"] .cs-showcase-caption {
-  color: rgba(255,255,255,.35);
 }
 
 /* ══════════════════════════════════════
@@ -687,6 +663,7 @@
   color: #fff;
   max-width: 580px;
   margin-bottom: 48px;
+  font-size-adjust: from-font;
 }
 
 .cs-results-headline em {
@@ -742,6 +719,7 @@
   font-size: clamp(22px,3.5vw,38px);
   font-weight: 700;
   letter-spacing: -.03em;
+  font-size-adjust: from-font;
 }
 
 .cs-proto-sub {
@@ -931,8 +909,6 @@ body.cs-is-open .mobile-menu {
   align-items: center;
   padding: 0 10px;
   z-index: 2;
-  display: flex;
-  align-items: center;
 }
 
 .cs-tablet img {
@@ -1024,6 +1000,7 @@ body.cs-is-open .mobile-menu {
 .num {
   font-family: var(--font-heading, sans-serif);
   font-weight: 700;
+  font-size-adjust: from-font;
 }
 
 /* ── Dark mode overrides ── */
@@ -1046,9 +1023,6 @@ body.cs-is-open .mobile-menu {
 [data-theme="dark"] .cs-next-arrow:hover {
     background: var(--color-text);
     color: var(--color-bg);
-}
-[data-theme="dark"] .cs-progress-bar-track {
-    background: rgba(255,255,255,0.08);
 }
 
 /* ── Dark mode: case study hero and results keep their dark bg (they look fine) ── */
@@ -1112,3 +1086,5 @@ body.cs-is-open .mobile-menu {
 [data-theme="dark"] .cs-showcase-tablet {
   background: #2a2c32;
 }
+
+} /* end @layer components */

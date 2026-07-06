@@ -11,6 +11,16 @@ const CATEGORY_SUBTITLES = {
 let currentCategory = 'travel';
 let switching = false;
 
+function makeKeyboardClickable(el, handler) {
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        handler(el);
+    });
+}
+
 function switchCategory(category) {
     if (switching) return;
     switching = true;
@@ -61,6 +71,12 @@ function switchCategory(category) {
     }, 500);
 }
 
+function srcset(path, widths, originalWidth) {
+    const parts = widths.map(w => `${path.replace(/\.webp$/, `-${w}w.webp`)} ${w}w`);
+    if (originalWidth) parts.push(`${path} ${originalWidth}w`);
+    return parts.join(', ');
+}
+
 let travelDataLoaded = false;
 let musicDataLoaded  = false;
 let gamingDataLoaded = false;
@@ -109,7 +125,8 @@ async function loadTravelPhotos(country = 'all') {
 
 function generateFlagButtons() {
     const flagNav = document.getElementById('flagNavigation');
-    const isWindows = navigator.platform.toLowerCase().includes('win');
+    const platform = navigator.userAgentData?.platform || navigator.platform || '';
+    const isWindows = platform.toLowerCase().includes('win');
     const countries = {};
     const travelConfig = window.travelConfig;
     if (!travelConfig || !travelConfig.destinations) return;
@@ -186,7 +203,8 @@ function displayEditorial(grid) {
 
     grid.innerHTML = photos.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" loading="lazy" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" width="800" height="1067" loading="lazy" decoding="async"
+                 srcset="${srcset(photo.image, [315], 630)}" sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -195,12 +213,14 @@ function displayEditorial(grid) {
     `).join('');
 
     grid.querySelectorAll('.travel-card').forEach(card => {
-        card.addEventListener('click', () => {
+        const handler = () => {
             const c = card.getAttribute('data-country');
             activateCountryFilter(c);
             displayMasonry(grid, c);
             document.getElementById('travel-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+        };
+        card.addEventListener('click', handler);
+        makeKeyboardClickable(card, handler);
     });
 
     layoutMasonry();
@@ -246,7 +266,8 @@ function displayMasonry(grid, country) {
 
     grid.innerHTML = filtered.map((photo, i) => `
         <div class="travel-card" data-country="${photo.country}" data-ar="${photo.ar || 1.25}" style="--card-i:${i}">
-            <img src="${photo.image}" alt="${photo.location}" loading="lazy" decoding="async">
+            <img src="${photo.image}" alt="${photo.location}" width="800" height="1067" loading="lazy" decoding="async"
+                 srcset="${srcset(photo.image, [315], 630)}" sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
             <div class="travel-card-location">
                 <span class="flag">${photo.flag}</span>
                 <span class="location-name">${photo.location}</span>
@@ -255,12 +276,14 @@ function displayMasonry(grid, country) {
     `).join('');
 
     grid.querySelectorAll('.travel-card').forEach(card => {
-        card.addEventListener('click', () => {
+        const handler = () => {
             const c = card.getAttribute('data-country');
             activateCountryFilter(c);
             displayMasonry(grid, c);
             document.getElementById('travel-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+        };
+        card.addEventListener('click', handler);
+        makeKeyboardClickable(card, handler);
     });
 
     layoutMasonry();
@@ -268,13 +291,22 @@ function displayMasonry(grid, country) {
 
 function shuffleArray(array) {
     const shuffled = [...array];
-    let seed = 12345;
+    const seedBuffer = new Uint32Array(1);
+    crypto.getRandomValues(seedBuffer);
+    let seed = seedBuffer[0];
     for (let i = shuffled.length - 1; i > 0; i--) {
         seed = (seed * 9301 + 49297) % 233280;
         const j = Math.floor((seed / 233280) * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
+}
+
+let masonryObserver = null;
+
+function revealCard(card) {
+    if (card.dataset.animDone) return;
+    card.dataset.animDone = '1';
 }
 
 function layoutMasonry() {
@@ -305,34 +337,28 @@ function layoutMasonry() {
         colHeights[col] += h + gap;
     });
 
-    grid.style.height = Math.max(...colHeights) + 'px';
-    grid.style.transition = 'opacity 0.25s ease';
-    grid.style.opacity = '1';
-
+    // Batch read: collect viewport positions of all cards first
     const viewH = window.innerHeight;
-
-    function revealCard(card, instant) {
-        if (card.dataset.animDone) return;
-        if (instant) {
-            card.dataset.animDone = '1';
-        } else {
-            card.dataset.animDone = '1';
-        }
-    }
+    const cardRects = cards.map(card => card.getBoundingClientRect().top);
 
     // Cards already visible on load: show instantly, no animation
-    cards.forEach(card => {
-        if (card.getBoundingClientRect().top < viewH) revealCard(card, true);
+    cards.forEach((card, i) => {
+        if (cardRects[i] < viewH) revealCard(card);
     });
 
+    // Disconnect previous observer before creating a new one
+    if (masonryObserver) {
+        masonryObserver.disconnect();
+    }
+
     // Cards below fold: animate in just before they enter viewport
-    const observer = new IntersectionObserver((entries) => {
+    masonryObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
             const card = entry.target;
-            observer.unobserve(card);
+            masonryObserver.unobserve(card);
             const img = card.querySelector('img');
-            const doReveal = () => revealCard(card, false);
+            const doReveal = () => revealCard(card);
             if (img && !img.complete) {
                 img.decode().catch(() => {}).then(doReveal);
             } else {
@@ -341,19 +367,27 @@ function layoutMasonry() {
         });
     }, { threshold: 0, rootMargin: '0px 0px 2000px 0px' });
 
-    cards.forEach(card => { if (!card.dataset.animDone) observer.observe(card); });
+    cards.forEach(card => { if (!card.dataset.animDone) masonryObserver.observe(card); });
 }
 
 let resizeTimer;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-        const grid = document.getElementById('travelGrid');
-        if (!grid || !grid.querySelector('.travel-card')) return;
-        grid.style.opacity = '0';
-        layoutMasonry();
-    }, 250);
-});
+let masonryResizeObserver;
+function observeGridResize() {
+    const grid = document.getElementById('travelGrid');
+    if (!grid) return;
+    if (masonryResizeObserver) masonryResizeObserver.disconnect();
+    masonryResizeObserver = new ResizeObserver(() => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (!grid.querySelector('.travel-card')) return;
+            grid.style.opacity = '0';
+            layoutMasonry();
+        }, 250);
+    });
+    masonryResizeObserver.observe(grid);
+}
+
+observeGridResize();
 
 // ===================================
 // MUSIC — Apple-grade flipping card
@@ -376,7 +410,8 @@ async function loadMySong() {
 
                     <div class="song-card-front">
                         <div class="song-card-artwork">
-                            <img src="${artworkSrc}" alt="${song.title}"
+                            <img src="${artworkSrc}" alt="${song.title}" width="340" height="340" loading="lazy" fetchpriority="low" decoding="async"
+                                 srcset="${srcset(artworkSrc, [340, 680])}" sizes="340px"
                                  onerror="this.src='https://i.ytimg.com/vi/${videoId}/hqdefault.jpg'">
                         </div>
                         <div class="song-card-info">
@@ -483,7 +518,7 @@ async function loadMySong() {
                         </div>
                     </div>
                     <div class="song-card-back">
-                        <img src="https://i.ytimg.com/vi/d2nUN5jcyfE/hqdefault.jpg" alt="BRONX"
+                        <img src="https://i.ytimg.com/vi/d2nUN5jcyfE/hqdefault.jpg" alt="BRONX" width="480" height="270"
                              style="width:100%;height:100%;object-fit:cover;">
                         <div class="song-card-back-overlay">
                             <p class="song-card-back-title">BRONX</p>
@@ -512,7 +547,7 @@ async function loadFavoriteArtists() {
             <div class="artist-card" data-index="${i}" style="--i: ${i}">
                 <div class="artist-image">
                     ${artist.image
-                        ? `<img src="${artist.image}" alt="${artist.name}" onerror="this.style.display='none'">`
+                        ? `<img src="${artist.image}" alt="${artist.name}" width="300" height="400" loading="lazy" decoding="async" srcset="${srcset(artist.image, [300, 600])}" sizes="(max-width: 600px) 33vw, 200px" onerror="this.style.display='none'">`
                         : ''
                     }
                 </div>
@@ -527,9 +562,11 @@ async function loadFavoriteArtists() {
 
         // Click opens Spotify search
         grid.querySelectorAll('.artist-card').forEach((card, i) => {
-            card.addEventListener('click', () => {
+            const handler = () => {
                 window.open(`https://open.spotify.com/search/${encodeURIComponent(artists[i].name)}`, '_blank');
-            });
+            };
+            card.addEventListener('click', handler);
+            makeKeyboardClickable(card, handler);
         });
 
     } catch (error) {
@@ -588,11 +625,12 @@ function buildFeatured(games) {
     let autoTimer;
 
     container.innerHTML = `
-        <div class="gf-track" id="gfTrack">
+        <div class="gf-track" id="gfTrack" role="region" aria-roledescription="carousel" aria-label="Featured games">
             ${games.map((g, i) => `
-                <div class="gf-slide" data-index="${i}">
+                <div class="gf-slide" data-index="${i}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${games.length}">
                     <div class="gf-bg">
-                        <img src="${g.cover}" alt="${g.title}" class="gf-bg-img">
+                        <img src="${g.cover}" alt="${g.title}" class="gf-bg-img" width="2100" height="900" loading="lazy" fetchpriority="low" decoding="async"
+                             srcset="${srcset(g.cover, [800, 1600])}" sizes="100vw">
                         <div class="gf-bg-overlay"></div>
                     </div>
                     <div class="gf-content">
@@ -603,13 +641,13 @@ function buildFeatured(games) {
                 </div>
             `).join('')}
         </div>
-        <div class="gf-dots">
+        <div class="gf-dots" role="tablist" aria-label="Featured game slides">
             ${games.map((_, i) => `
-                <button class="gf-dot" data-i="${i}"></button>
+                <button class="gf-dot" data-i="${i}" role="tab" aria-label="Go to slide ${i + 1}" aria-selected="${i === 0 ? 'true' : 'false'}" tabindex="${i === 0 ? '0' : '-1'}"></button>
             `).join('')}
         </div>
-        <button class="gf-arrow gf-prev" aria-label="Previous">‹</button>
-        <button class="gf-arrow gf-next" aria-label="Next">›</button>
+        <button class="gf-arrow gf-prev" aria-label="Previous slide">‹</button>
+        <button class="gf-arrow gf-next" aria-label="Next slide">›</button>
     `;
 
     const slides = container.querySelectorAll('.gf-slide');
@@ -626,19 +664,39 @@ function buildFeatured(games) {
     function goTo(n) {
         slides[current].classList.remove('active');
         dots[current].classList.remove('active');
+        dots[current].setAttribute('aria-selected', 'false');
+        dots[current].setAttribute('tabindex', '-1');
         current = (n + games.length) % games.length;
         slides[current].classList.add('active');
         dots[current].classList.add('active');
+        dots[current].setAttribute('aria-selected', 'true');
+        dots[current].setAttribute('tabindex', '0');
     }
 
-    function startAuto() { autoTimer = setInterval(() => goTo(current + 1), 5000); }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function startAuto() { if (prefersReducedMotion) return; autoTimer = setInterval(() => goTo(current + 1), 5000); }
     function stopAuto()  { clearInterval(autoTimer); }
 
     container.querySelector('.gf-next').addEventListener('click', () => { stopAuto(); goTo(current + 1); startAuto(); });
     container.querySelector('.gf-prev').addEventListener('click', () => { stopAuto(); goTo(current - 1); startAuto(); });
     dots.forEach(d => d.addEventListener('click', () => { stopAuto(); goTo(+d.dataset.i); startAuto(); }));
 
+    // Keyboard navigation: left/right arrow keys
+    container.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); stopAuto(); goTo(current - 1); startAuto(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); stopAuto(); goTo(current + 1); startAuto(); }
+    });
+
     startAuto();
+
+    // Pause/resume carousel auto-advance on tab visibility
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopAuto();
+        } else {
+            startAuto();
+        }
+    });
 }
 
 // ── Game grid ──────────────────────────────────────────────
@@ -648,7 +706,8 @@ function buildGrid(container, games) {
             return `
                 <div class="game-card saga-card" data-id="${g.id}" style="--i: ${i}">
                     <div class="game-cover">
-                        <img src="${g.cover}" alt="${g.title}" loading="lazy">
+                        <img src="${g.cover}" alt="${g.title}" width="300" height="400" loading="lazy" decoding="async"
+                             srcset="${srcset(g.cover, [300, 600])}" sizes="(max-width: 600px) 33vw, 180px">
                         <div class="game-cover-overlay"></div>
                         <div class="saga-badge">${g.games.length} games</div>
                     </div>
@@ -672,7 +731,7 @@ function buildGrid(container, games) {
         return `
             <div class="game-card" data-id="${g.id}" style="--i: ${i}">
                 <div class="game-cover">
-                    <img src="${g.cover}" alt="${g.title}" loading="lazy">
+                    <img src="${g.cover}" alt="${g.title}" width="300" height="400" loading="lazy" decoding="async">
                     <div class="game-cover-overlay"></div>
                 </div>
                 <div class="game-meta">
@@ -686,12 +745,14 @@ function buildGrid(container, games) {
 
     // Saga expand/collapse
     container.querySelectorAll('.saga-card').forEach(card => {
-        card.addEventListener('click', () => {
+        const handler = () => {
             const isOpen = card.classList.contains('open');
             // Close all open sagas in this grid first
             container.querySelectorAll('.saga-card.open').forEach(c => c.classList.remove('open'));
             if (!isOpen) card.classList.add('open');
-        });
+        };
+        card.addEventListener('click', handler);
+        makeKeyboardClickable(card, handler);
     });
 }
 
@@ -702,4 +763,14 @@ function buildGrid(container, games) {
 document.addEventListener('DOMContentLoaded', function() {
     loadTravelPhotos('all');
     travelDataLoaded = true;    document.getElementById('categorySubtitle').textContent = CATEGORY_SUBTITLES.travel;
+
+    // Sync category tabs when find-in-page reveals hidden sections
+    document.addEventListener('beforematch', (e) => {
+        const section = e.target.closest('.category-section');
+        if (!section) return;
+        const category = section.id.replace('-section', '');
+        if (category && category !== currentCategory) {
+            switchCategory(category);
+        }
+    });
 });

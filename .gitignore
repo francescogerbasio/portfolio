@@ -1,0 +1,7 @@
+# Dev-only files — never track on main/production
+*.md
+# Exception for README which may be the repo's main readme
+!README.md
+
+# Unlighthouse reports
+.unlighthouse/

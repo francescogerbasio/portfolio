@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /cs-*.html
+Disallow: /case-study-overlays.html
 
 Sitemap: https://gerbas.io/sitemap.xml
