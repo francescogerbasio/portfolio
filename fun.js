@@ -368,6 +368,8 @@ function layoutMasonry() {
     }, { threshold: 0, rootMargin: '0px 0px 2000px 0px' });
 
     cards.forEach(card => { if (!card.dataset.animDone) masonryObserver.observe(card); });
+
+    requestAnimationFrame(() => { grid.style.opacity = '1'; });
 }
 
 let resizeTimer;
