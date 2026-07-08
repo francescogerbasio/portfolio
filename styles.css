@@ -108,6 +108,14 @@
     }
 
     accent-color: var(--color-accent);
+
+    /* Animation timing: expo-out easing from theme-toggle.rdsx.dev */
+    --expo-out: linear(
+        0 0%, 0.1684 2.66%, 0.3165 5.49%, 0.446 8.52%, 0.5581 11.78%,
+        0.6535 15.29%, 0.7341 19.11%, 0.8011 23.3%, 0.8557 27.93%,
+        0.8962 32.68%, 0.9283 38.01%, 0.9529 44.08%, 0.9711 51.14%,
+        0.9833 59.06%, 0.9915 68.74%, 1 100%
+    );
 }
 
 @view-transition {
@@ -3843,6 +3851,28 @@ html[data-vt-direction="back"] ::view-transition-new(root) {
     .category-section:not(.active) {
         display: none;
     }
+}
+
+/* ═══════════════════════════════════════════════════════
+   THEME TOGGLE — Polygon-Gradient View Transition
+   Scoped via html[data-vt-theme] to avoid clashing with
+   page-nav slide VT above.
+   MWG-2025/same-document-transitions
+═══════════════════════════════════════════════════════ */
+html[data-vt-theme] ::view-transition-group(root) {
+    animation-timing-function: var(--expo-out);
+}
+html[data-vt-theme] ::view-transition-new(root) {
+    mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="M0 0H40L0 40V0Z" fill="url(%23g)"/><defs><linearGradient id="g" x1="0" y1="0" x2="20.5" y2="20.5" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="0.85" stop-color="white" stop-opacity="0.99"/><stop offset="0.95" stop-color="white" stop-opacity="0"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs></svg>') top left / 0 no-repeat;
+    mask-origin: top left;
+    animation: theme-reveal 1.5s var(--expo-out) both;
+}
+html[data-vt-theme] ::view-transition-old(root) {
+    z-index: -1;
+    transform-origin: top left;
+}
+@keyframes theme-reveal {
+    to { mask-size: 200vmax; }
 }
 
 /* ── Fallback: manual JS transitions for non-VT browsers ── */
