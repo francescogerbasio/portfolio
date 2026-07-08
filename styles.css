@@ -2351,11 +2351,7 @@ html {
     position: relative;
     width: 100%;
     transition: opacity 0.3s ease;
-}
-
-/* Fallback: CSS multi-column (no JS layout needed) */
-.masonry-grid {
-    columns: 2 280px;
+    columns: 280px;
     column-gap: 12px;
 }
 
@@ -2365,6 +2361,10 @@ html {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 12px;
         columns: unset;
+    }
+
+    .travel-card {
+        margin-bottom: 0;
     }
 
     /* Scroll-driven reveal animation — browsers handle it natively */
@@ -2389,7 +2389,7 @@ html {
                 animation-range: entry 0% entry 100%;
             }
 
-            /* JS reveal fallback — no-op in supporting browsers, still fires */
+            /* JS reveal skipped when scroll-driven animation runs — data-anim-done never set */
             .travel-card[data-anim-done] {
                 animation: none;
                 opacity: 1;

@@ -318,7 +318,13 @@ function layoutMasonry() {
         cards.forEach((card, i) => {
             card.style.setProperty('--card-i', i);
         });
-        setupRevealObserver(cards);
+
+        // Skip JS observer when scroll-driven CSS animation handles reveal
+        const hasScrollDriven = CSS.supports('(animation-timeline: view()) and (animation-range: entry)');
+        if (!hasScrollDriven) {
+            setupRevealObserver(cards);
+        }
+
         requestAnimationFrame(() => { grid.style.opacity = '1'; });
         return;
     }
@@ -395,6 +401,8 @@ function observeGridResize() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             if (!grid.querySelector('.travel-card')) return;
+            // CSS handles resize layout natively — no opacity flash needed
+            if (CSS.supports('display', 'grid-lanes')) return;
             grid.style.opacity = '0';
             layoutMasonry();
         }, 250);
