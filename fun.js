@@ -312,6 +312,18 @@ function revealCard(card) {
 function layoutMasonry() {
     const grid = document.getElementById('travelGrid');
     const cards = Array.from(grid.querySelectorAll('.travel-card'));
+
+    // CSS grid-lanes handles layout natively — JS only manages reveal animation
+    if (CSS.supports('display', 'grid-lanes')) {
+        cards.forEach((card, i) => {
+            card.style.setProperty('--card-i', i);
+        });
+        setupRevealObserver(cards);
+        requestAnimationFrame(() => { grid.style.opacity = '1'; });
+        return;
+    }
+
+    // JS masonry fallback — absolute positioning
     const gap = 12;
     const w = window.innerWidth;
     const columns = w > 1400 ? 4 : w > 1024 ? 3 : w > 600 ? 2 : 1;
@@ -319,7 +331,6 @@ function layoutMasonry() {
     const colW = (gridWidth - gap * (columns - 1)) / columns;
     const colHeights = Array(columns).fill(0);
 
-    // All photos are 800×1067 — AR always exact, layout instant and final
     cards.forEach((card, i) => {
         const ar  = 1.3337;
         const h   = colW * ar;
@@ -337,11 +348,15 @@ function layoutMasonry() {
         colHeights[col] += h + gap;
     });
 
-    // Batch read: collect viewport positions of all cards first
+    setupRevealObserver(cards);
+    requestAnimationFrame(() => { grid.style.opacity = '1'; });
+}
+
+function setupRevealObserver(cards) {
     const viewH = window.innerHeight;
     const cardRects = cards.map(card => card.getBoundingClientRect().top);
 
-    // Cards already visible on load: show instantly, no animation
+    // Cards already visible on load: reveal instantly
     cards.forEach((card, i) => {
         if (cardRects[i] < viewH) revealCard(card);
     });
@@ -351,7 +366,7 @@ function layoutMasonry() {
         masonryObserver.disconnect();
     }
 
-    // Cards below fold: animate in just before they enter viewport
+    // Cards below fold: animate in just before viewport
     masonryObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
@@ -368,8 +383,6 @@ function layoutMasonry() {
     }, { threshold: 0, rootMargin: '0px 0px 2000px 0px' });
 
     cards.forEach(card => { if (!card.dataset.animDone) masonryObserver.observe(card); });
-
-    requestAnimationFrame(() => { grid.style.opacity = '1'; });
 }
 
 let resizeTimer;
