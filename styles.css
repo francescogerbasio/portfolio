@@ -2367,6 +2367,12 @@ html {
         margin-bottom: 0;
     }
 
+    /* Every 5th card: wide feature card — creates masonry stagger */
+    .travel-card:nth-child(5n) {
+        grid-column: span 2;
+        aspect-ratio: 1.0;
+    }
+
     /* Scroll-driven reveal animation — browsers handle it natively */
     @supports ((animation-timeline: view()) and (animation-range: entry)) {
         @media (prefers-reduced-motion: no-preference) {
@@ -2409,6 +2415,11 @@ html {
     cursor: pointer;
     opacity: 0;
     transform: scale(0.92) translateY(12px);
+    aspect-ratio: 0.75; /* 800/1067 portrait */
+}
+/* Every 5th card: square — shorter, creates masonry stagger in column fallback */
+.travel-card:nth-child(5n) {
+    aspect-ratio: 1.0;
 }
 .travel-card[data-anim-done] {
     opacity: 1;
@@ -2425,7 +2436,8 @@ html {
 
 .travel-card img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     display: block;
     vertical-align: bottom;
     transition: transform 0.3s ease;

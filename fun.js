@@ -338,8 +338,9 @@ function layoutMasonry() {
     const colHeights = Array(columns).fill(0);
 
     cards.forEach((card, i) => {
-        const ar  = 1.3337;
-        const h   = colW * ar;
+        const isWide = (i + 1) % 5 === 0;
+        const ar = isWide ? 1.0 : 1.3337; // square vs portrait
+        const h = colW * ar;
         const col = colHeights.indexOf(Math.min(...colHeights));
         card.style.cssText = `
             position: absolute;
