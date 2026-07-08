@@ -2358,7 +2358,7 @@ html {
 @supports (display: grid-lanes) {
     .masonry-grid {
         display: grid-lanes;
-        grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr) minmax(14rem, 2fr)) minmax(8rem, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
         gap: 1rem;
         flow-tolerance: 1rem;
         columns: unset;
@@ -2370,13 +2370,13 @@ html {
 
     @media (max-width: 768px) {
         .masonry-grid {
-            grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr) minmax(10rem, 2fr)) minmax(6rem, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
         }
     }
 
     @media (max-width: 500px) {
         .masonry-grid {
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: repeat(2, 1fr);
         }
     }
 
