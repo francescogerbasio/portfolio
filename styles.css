@@ -1413,14 +1413,7 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
 
 .work-section {
     margin-bottom: 100px;
-    content-visibility: auto;
-    contain-intrinsic-size: auto none 600px;
-}
-
-@supports not (content-visibility: auto) {
-    .work-section {
-        contain: layout style;
-    }
+    contain: layout style;
 }
 
 .section-title {
