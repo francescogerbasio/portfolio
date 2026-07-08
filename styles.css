@@ -3794,10 +3794,10 @@ html {
 }
 
 /* ── Backward transition ── */
-html[data-vt-direction="back"] ::view-transition-old(root) {
+html[data-vt-direction="back"]::view-transition-old(root) {
     animation: 250ms cubic-bezier(0.4, 0, 1, 1) both vt-slide-out-right;
 }
-html[data-vt-direction="back"] ::view-transition-new(root) {
+html[data-vt-direction="back"]::view-transition-new(root) {
     animation: 350ms cubic-bezier(0, 0, 0.2, 1) 80ms both vt-slide-in-left;
 }
 
@@ -3859,15 +3859,16 @@ html[data-vt-direction="back"] ::view-transition-new(root) {
    page-nav slide VT above.
    MWG-2025/same-document-transitions
 ═══════════════════════════════════════════════════════ */
-html[data-vt-theme] ::view-transition-group(root) {
+html[data-vt-theme]::view-transition-group(root) {
     animation-timing-function: var(--expo-out);
 }
-html[data-vt-theme] ::view-transition-new(root) {
+html[data-vt-theme]::view-transition-new(root) {
     mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="M0 0H40L0 40V0Z" fill="url(%23g)"/><defs><linearGradient id="g" x1="0" y1="0" x2="20.5" y2="20.5" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="0.85" stop-color="white" stop-opacity="0.99"/><stop offset="0.95" stop-color="white" stop-opacity="0"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs></svg>') top left / 0 no-repeat;
     mask-origin: top left;
     animation: theme-reveal 1.5s var(--expo-out) both;
 }
-html[data-vt-theme] ::view-transition-old(root) {
+html[data-vt-theme]::view-transition-old(root) {
+    animation: none;
     z-index: -1;
     transform-origin: top left;
 }
