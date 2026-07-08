@@ -2358,7 +2358,7 @@ html {
 @supports (display: grid-lanes) {
     .masonry-grid {
         display: grid-lanes;
-        grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr) minmax(14rem, 2fr)) minmax(8rem, 1fr);
         gap: 1rem;
         flow-tolerance: 1rem;
         columns: unset;
@@ -2368,21 +2368,15 @@ html {
         margin-bottom: 0;
     }
 
-    /* Every 5th card: wide feature card — creates masonry stagger */
-    .travel-card:nth-child(5n) {
-        grid-column: span 2;
-        aspect-ratio: 1.0;
-    }
-
     @media (max-width: 768px) {
         .masonry-grid {
-            grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr) minmax(10rem, 2fr)) minmax(6rem, 1fr);
         }
     }
 
     @media (max-width: 500px) {
         .masonry-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 2fr;
         }
     }
 
