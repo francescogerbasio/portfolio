@@ -3,6 +3,9 @@
     const STORAGE_KEY = 'theme';
     const html = document.documentElement;
 
+    // Prevent browser auto-scroll-restore from fighting our scroll preservation
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
     function applyThemeCore(theme) {
         html.setAttribute('data-theme', theme);
         html.style.colorScheme = theme;
@@ -28,7 +31,12 @@
     function toggleTheme() {
         const next = (html.getAttribute('data-theme') || 'light') === 'dark' ? 'light' : 'dark';
         localStorage.setItem(STORAGE_KEY, next);
-        // ponytail: data-vt-theme scopes mask CSS so it won't clash with page-nav VT
+        // ponytail: iOS Safari caches theme-color meta; only a reload repaints the status bar.
+        if (window.innerWidth <= 768) {
+            sessionStorage.setItem('themeScrollY', String(window.scrollY));
+            location.reload();
+            return;
+        }
         html.setAttribute('data-vt-theme', '');
         if (!document.startViewTransition) {
             applyTheme(next);
@@ -55,5 +63,11 @@
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
             if (!localStorage.getItem(STORAGE_KEY)) applyTheme(e.matches ? 'dark' : 'light');
         });
+        // Restore scroll position after reload on mobile toggle
+        const sy = sessionStorage.getItem('themeScrollY');
+        if (sy !== null) {
+            sessionStorage.removeItem('themeScrollY');
+            window.scrollTo(0, Number(sy));
+        }
     });
 })();
