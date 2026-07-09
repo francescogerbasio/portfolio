@@ -35,11 +35,11 @@
             html.removeAttribute('data-vt-theme');
             return;
         }
-        const t = document.startViewTransition(() => applyThemeCore(next));
-        t.finished.finally(() => {
+        const t = document.startViewTransition(() => {
+            applyThemeCore(next);
             applyThemeChrome(next);
-            html.removeAttribute('data-vt-theme');
         });
+        t.finished.finally(() => html.removeAttribute('data-vt-theme'));
     }
 
     applyTheme(getSavedTheme());
