@@ -12,13 +12,13 @@
 
     function applyThemeChrome(theme) {
         const color = theme === 'dark' ? '#252525' : '#fdf5f6';
-        let m = document.querySelector('meta[name="theme-color"]');
-        if (!m) {
-            m = document.createElement('meta');
-            m.name = 'theme-color'; m.id = 'themeColorMeta';
-            document.head.appendChild(m);
-        }
+        const old = document.querySelector('meta[name="theme-color"]');
+        if (old) old.remove();
+        const m = document.createElement('meta');
+        m.name = 'theme-color';
+        m.id = 'themeColorMeta';
         m.content = color;
+        document.head.appendChild(m);
     }
 
     function applyTheme(theme) { applyThemeCore(theme); applyThemeChrome(theme); }
