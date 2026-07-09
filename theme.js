@@ -34,6 +34,13 @@
         // ponytail: iOS Safari caches theme-color meta; only a reload repaints the status bar.
         if (window.innerWidth <= 768) {
             sessionStorage.setItem('themeScrollY', String(window.scrollY));
+            // Opt out of cross-document VT so iOS Safari re-reads theme-color meta on reload.
+            // The @view-transition { navigation: auto } in styles.css intercepts same-origin
+            // navigations including reload; an unlayered @view-transition { navigation: none }
+            // overrides it in the cascade before the reload fires.
+            const s = document.createElement('style');
+            s.textContent = '@view-transition { navigation: none; }';
+            document.head.appendChild(s);
             location.reload();
             return;
         }
