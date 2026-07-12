@@ -31,15 +31,16 @@ const {
   structuredDataType = 'webpage'
 } = Astro.props;
 
+const base = import.meta.env.BASE_URL;
 const siteUrl = 'https://gerbas.io';
 const pageUrl = `${siteUrl}${canonical}`;
 const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
 
 const speculationTargets: Record<string, string[]> = {
-  work: ['/career.html', '/fun.html', '/about.html'],
-  about: ['/career.html', '/fun.html'],
-  career: ['/fun.html', '/about.html'],
-  fun: ['/career.html', '/about.html']
+  work: [`${base}career.html`, `${base}fun.html`, `${base}about.html`],
+  about: [`${base}career.html`, `${base}fun.html`],
+  career: [`${base}fun.html`, `${base}about.html`],
+  fun: [`${base}career.html`, `${base}about.html`]
 };
 
 const profileLd = {
@@ -196,9 +197,9 @@ const breadcrumbLd = {
   </script>
   <meta charset="UTF-8">
   <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="/Assets/Images/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="/Assets/Images/favicon.ico" sizes="any">
-  <link rel="apple-touch-icon" href="/Assets/Images/apple-touch-icon.png">
+  <link rel="icon" href={`${base}Assets/Images/favicon.svg`} type="image/svg+xml">
+  <link rel="icon" href={`${base}Assets/Images/favicon.ico`} sizes="any">
+  <link rel="apple-touch-icon" href={`${base}Assets/Images/apple-touch-icon.png`}>
   <meta name="theme-color" id="themeColorMeta" content="#fdf5f6">
   <link rel="canonical" href={pageUrl}>
   <meta name="description" content={description}>
@@ -219,8 +220,8 @@ const breadcrumbLd = {
   {dnsPrefetch.map(href => <link rel="dns-prefetch" href={href} />)}
   <link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
   {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
-  <link rel="preload" href="/Assets/Fonts/Qurova/Qurova-Bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/Assets/Fonts/BrittiSans/BrittiSans-Semibold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href={`${base}Assets/Fonts/Qurova/Qurova-Bold.woff2`} as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href={`${base}Assets/Fonts/BrittiSans/BrittiSans-Semibold.woff2`} as="font" type="font/woff2" crossorigin>
   <script is:inline type="speculationrules" set:html={JSON.stringify({
     prerender: speculationTargets[page].map(href => ({ where: { href_matches: href }, eagerness: 'moderate' })),
     prefetch: speculationTargets[page].map(href => ({ where: { href_matches: href }, eagerness: 'conservative' }))

@@ -19,6 +19,8 @@
     ar: number;
   };
 
+  const base = import.meta.env.BASE_URL;
+
   let currentCategory = $state('travel');
   let switching = $state(false);
   let currentCountry = $state('all');
@@ -79,7 +81,7 @@
   function loadTravel() {
     const allPhotos: TravelPhoto[] = [];
     travelConfig.destinations.forEach(destination => {
-      const folderPath = `/Assets/Images/Travel/${destination.folder}`;
+      const folderPath = `${base}Assets/Images/Travel/${destination.folder}`;
       for (let i = 1; i <= (destination.photoCount || 0); i++) {
         allPhotos.push({
           id: `${destination.folder}-${i}`,

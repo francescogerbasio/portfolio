@@ -18,7 +18,24 @@ def is_external(url: str) -> bool:
 
 def resolve_target(html_dir: Path, path: str) -> Path:
     if path.startswith("/"):
-        return DIST / path.lstrip("/")
+        normalized = path.lstrip("/")
+        direct = DIST / normalized
+        if direct.exists():
+            return direct
+        parts = normalized.split("/", 1)
+        if len(parts) == 2:
+            rebased = DIST / parts[1]
+            if rebased.exists():
+                return rebased
+            if path.endswith("/"):
+                rebased_index = rebased / "index.html"
+                if rebased_index.exists():
+                    return rebased_index
+        if path.endswith("/"):
+            direct_index = direct / "index.html"
+            if direct_index.exists():
+                return direct_index
+        return direct
     return (html_dir / path).resolve()
 
 

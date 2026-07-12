@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/pages/about.css';
 import ScrollReveal from '../islands/ScrollReveal.svelte';
+const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout
   title="About — Francesco Gerbasio"
@@ -35,9 +36,9 @@ import ScrollReveal from '../islands/ScrollReveal.svelte';
       </div>
       <div>
         <div class="about-photo">
-          <img src="/Assets/Images/Spiderman.webp" alt="Francesco Gerbasio as Spiderman"
+          <img src={`${base}Assets/Images/Spiderman.webp`} alt="Francesco Gerbasio as Spiderman"
                width="600" height="600" loading="lazy" decoding="async"
-               srcset="/Assets/Images/Spiderman-400w.webp 400w, /Assets/Images/Spiderman-800w.webp 800w, /Assets/Images/Spiderman.webp 900w"
+               srcset={`${base}Assets/Images/Spiderman-400w.webp 400w, ${base}Assets/Images/Spiderman-800w.webp 800w, ${base}Assets/Images/Spiderman.webp 900w`}
                sizes="(max-width: 768px) 90vw, 600px"
                onerror="this.style.display='none'">
         </div>

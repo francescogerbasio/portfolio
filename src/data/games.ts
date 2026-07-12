@@ -19,24 +19,27 @@ export interface GamesData {
   favorites: Game[];
 }
 
+const base = import.meta.env.BASE_URL;
+const img = (path: string) => `${base}${path.slice(1)}`;
+
 export const gamesData: GamesData = {
   featured: [
-    { id: 'ac-brotherhood', title: "Assassin's Creed Black Flag", cover: '/Assets/Images/Games/ac-black-flag.webp', genre: 'Action RPG', year: '2013' },
-    { id: 'godfather', title: 'The Godfather', cover: '/Assets/Images/Games/godfather.webp', genre: 'Action', year: '2006' },
-    { id: 'halo4', title: 'Halo 4', cover: '/Assets/Images/Games/halo4.webp', genre: 'FPS', year: '2012' },
-    { id: 'witcher3', title: 'The Witcher 3', cover: '/Assets/Images/Games/witcher3.webp', genre: 'RPG', year: '2015' },
-    { id: 'skyrim', title: 'The Elder Scrolls V: Skyrim', cover: '/Assets/Images/Games/skyrim.webp', genre: 'RPG', year: '2011' },
-    { id: 'destiny2', title: 'Destiny 2', cover: '/Assets/Images/Games/destiny2.webp', genre: 'FPS / MMO', year: '2017' }
+    { id: 'ac-brotherhood', title: "Assassin's Creed Black Flag", cover: img('/Assets/Images/Games/ac-black-flag.webp'), genre: 'Action RPG', year: '2013' },
+    { id: 'godfather', title: 'The Godfather', cover: img('/Assets/Images/Games/godfather.webp'), genre: 'Action', year: '2006' },
+    { id: 'halo4', title: 'Halo 4', cover: img('/Assets/Images/Games/halo4.webp'), genre: 'FPS', year: '2012' },
+    { id: 'witcher3', title: 'The Witcher 3', cover: img('/Assets/Images/Games/witcher3.webp'), genre: 'RPG', year: '2015' },
+    { id: 'skyrim', title: 'The Elder Scrolls V: Skyrim', cover: img('/Assets/Images/Games/skyrim.webp'), genre: 'RPG', year: '2011' },
+    { id: 'destiny2', title: 'Destiny 2', cover: img('/Assets/Images/Games/destiny2.webp'), genre: 'FPS / MMO', year: '2017' }
   ],
   currentlyPlaying: [
-    { id: 'stray', title: 'Stray', cover: '/Assets/Images/Games/stray.webp', genre: 'Adventure' },
-    { id: 'pokemon-za', title: 'Pokémon Legends: Z-A', cover: '/Assets/Images/Games/pokemon-za.webp', genre: 'RPG' }
+    { id: 'stray', title: 'Stray', cover: img('/Assets/Images/Games/stray.webp'), genre: 'Adventure' },
+    { id: 'pokemon-za', title: 'Pokémon Legends: Z-A', cover: img('/Assets/Images/Games/pokemon-za.webp'), genre: 'RPG' }
   ],
   favorites: [
     {
       id: 'ac-saga',
       title: "Assassin's Creed",
-      cover: '/Assets/Images/Games/ac-saga.webp',
+      cover: img('/Assets/Images/Games/ac-saga.webp'),
       genre: 'Action RPG',
       isSaga: true,
       games: [
@@ -56,11 +59,11 @@ export const gamesData: GamesData = {
         { title: 'AC: Shadows', year: '2025' }
       ]
     },
-    { id: 'oblivion', title: 'Oblivion', cover: '/Assets/Images/Games/oblivion.webp', genre: 'RPG', isSaga: false },
+    { id: 'oblivion', title: 'Oblivion', cover: img('/Assets/Images/Games/oblivion.webp'), genre: 'RPG', isSaga: false },
     {
       id: 'rac-saga',
       title: 'Ratchet & Clank',
-      cover: '/Assets/Images/Games/rac-saga.webp',
+      cover: img('/Assets/Images/Games/rac-saga.webp'),
       genre: 'Platformer',
       isSaga: true,
       games: [
@@ -82,7 +85,7 @@ export const gamesData: GamesData = {
     {
       id: 'nfs-saga',
       title: 'Need for Speed',
-      cover: '/Assets/Images/Games/nfs-saga.webp',
+      cover: img('/Assets/Images/Games/nfs-saga.webp'),
       genre: 'Racing',
       isSaga: true,
       games: [
@@ -103,7 +106,7 @@ export const gamesData: GamesData = {
     {
       id: 'f1-games',
       title: 'F1 Series',
-      cover: '/Assets/Images/Games/f1-games.webp',
+      cover: img('/Assets/Images/Games/f1-games.webp'),
       genre: 'Racing',
       isSaga: true,
       games: [

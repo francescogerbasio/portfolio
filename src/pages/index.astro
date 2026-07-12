@@ -3,14 +3,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/pages/work.css';
 import '../styles/case-study.css';
 import WorkManager from '../islands/WorkManager.svelte';
+const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout
   title="Work — Francesco Gerbasio"
   description="UX/UI Designer and LQA Specialist based in Madrid. Case studies in product design, accessibility, and interaction design."
   canonical="/"
   page="work"
-  ogImage="/Assets/Images/og-image.webp"
-  preloadImage="/Assets/Images/Francesco_Gerbasio.webp"
+  ogImage={`${base}Assets/Images/og-image.webp`}
+  preloadImage={`${base}Assets/Images/Francesco_Gerbasio.webp`}
   dnsPrefetch={['https://www.linkedin.com', 'https://www.instagram.com']}
   breadcrumbName="Work"
   structuredDataType="person"
@@ -37,9 +38,9 @@ import WorkManager from '../islands/WorkManager.svelte';
       <div class="sidebar">
         <div class="profile-map-row">
           <div class="profile-image">
-            <img src="/Assets/Images/Francesco_Gerbasio.webp" alt="Francesco Gerbasio"
+            <img src={`${base}Assets/Images/Francesco_Gerbasio.webp`} alt="Francesco Gerbasio"
                  width="110" height="110" fetchpriority="high" loading="eager" decoding="sync"
-                 srcset="/Assets/Images/Francesco_Gerbasio-110w.webp 110w, /Assets/Images/Francesco_Gerbasio.webp 220w" sizes="110px">
+                 srcset={`${base}Assets/Images/Francesco_Gerbasio-110w.webp 110w, ${base}Assets/Images/Francesco_Gerbasio.webp 220w`} sizes="110px">
           </div>
           <div class="location-widget-compact" role="region" aria-label="Location and weather">
             <div class="location-mini">
@@ -58,10 +59,10 @@ import WorkManager from '../islands/WorkManager.svelte';
         <p class="sidebar-bio">UX/UI designer by day, quality-obsessed by habit. <br>Turning early ideas into polished interfaces and catching the details that shouldn't ship.</p>
         <div class="social-links">
           <a href="https://www.linkedin.com/in/francesco-gerbasio" target="_blank" rel="noopener noreferrer" class="social-icon">
-            <img src="/Assets/Images/LinkedIn.svg" alt="LinkedIn" width="24" height="24" loading="lazy" decoding="async">
+            <img src={`${base}Assets/Images/LinkedIn.svg`} alt="LinkedIn" width="24" height="24" loading="lazy" decoding="async">
           </a>
           <a href="https://www.instagram.com/gerbasio_francesco/" target="_blank" rel="noopener noreferrer" class="social-icon">
-            <img src="/Assets/Images/Instagram.svg" alt="Instagram" width="24" height="24" loading="lazy" decoding="async">
+            <img src={`${base}Assets/Images/Instagram.svg`} alt="Instagram" width="24" height="24" loading="lazy" decoding="async">
           </a>
         </div>
       </div>
@@ -73,8 +74,8 @@ import WorkManager from '../islands/WorkManager.svelte';
         <div class="project-card featured-release-card clickable-card nda-protected" data-project-id="red-dead" role="button" tabindex="0" aria-label="Open protected Red Dead Redemption project">
           <a href="#" data-href="https://www.rockstargames.com/reddeadredemption" target="_blank" rel="noopener noreferrer" class="project-image-link nda-link">
             <div class="project-image lqa-card-thumb">
-              <img src="/Assets/Images/RedDeadRedemption.webp" alt="Red Dead Redemption" width="744" height="418" loading="lazy" decoding="async"
-                   srcset="/Assets/Images/RedDeadRedemption-400w.webp 400w, /Assets/Images/RedDeadRedemption.webp 800w" sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+              <img src={`${base}Assets/Images/RedDeadRedemption.webp`} alt="Red Dead Redemption" width="744" height="418" loading="lazy" decoding="async"
+                   srcset={`${base}Assets/Images/RedDeadRedemption-400w.webp 400w, ${base}Assets/Images/RedDeadRedemption.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
               <div class="lqa-card-overlay red-dead-lqa-overlay" aria-hidden="true">
                 <span class="cs-card-tag">LQA · Italian · 2025</span>
                 <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
@@ -98,8 +99,8 @@ import WorkManager from '../islands/WorkManager.svelte';
 
         <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" rel="noopener noreferrer" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Dead Take project page">
           <div class="project-image lqa-card-thumb">
-            <img src="/Assets/Images/DeadTake.webp" alt="Dead Take" width="744" height="418" loading="lazy" decoding="async"
-                 srcset="/Assets/Images/DeadTake-400w.webp 400w, /Assets/Images/DeadTake.webp 800w" sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <img src={`${base}Assets/Images/DeadTake.webp`} alt="Dead Take" width="744" height="418" loading="lazy" decoding="async"
+                 srcset={`${base}Assets/Images/DeadTake-400w.webp 400w, ${base}Assets/Images/DeadTake.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
             <div class="lqa-card-overlay">
               <span class="cs-card-tag">LQA · Italian · 2025</span>
               <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
@@ -117,8 +118,8 @@ import WorkManager from '../islands/WorkManager.svelte';
 
         <a href="https://www.doublefine.com/games/kiln" target="_blank" rel="noopener noreferrer" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Kiln project page">
           <div class="project-image lqa-card-thumb">
-            <img src="/Assets/Images/Kiln.webp" alt="Kiln" width="744" height="418" loading="lazy" decoding="async"
-                 srcset="/Assets/Images/Kiln-400w.webp 400w, /Assets/Images/Kiln.webp 800w" sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <img src={`${base}Assets/Images/Kiln.webp`} alt="Kiln" width="744" height="418" loading="lazy" decoding="async"
+                 srcset={`${base}Assets/Images/Kiln-400w.webp 400w, ${base}Assets/Images/Kiln.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
             <div class="lqa-card-overlay">
               <span class="cs-card-tag">LQA · Italian · 2026</span>
               <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
@@ -172,8 +173,8 @@ import WorkManager from '../islands/WorkManager.svelte';
       <div class="projects-grid">
         <div class="project-card cs-card featured-release-card clickable-card" id="card-callao" role="button" tabindex="0" aria-label="Open Cines Callao case study">
           <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#1a0a0c 0%,#2d0a0e 100%);">
-            <img src="/Assets/Images/CinesCallao.webp" alt="Cines Callao" width="744" height="418" loading="eager" fetchpriority="low" decoding="async"
-                 srcset="/Assets/Images/CinesCallao-400w.webp 400w, /Assets/Images/CinesCallao.webp 800w" sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <img src={`${base}Assets/Images/CinesCallao.webp`} alt="Cines Callao" width="744" height="418" loading="eager" fetchpriority="low" decoding="async"
+                 srcset={`${base}Assets/Images/CinesCallao-400w.webp 400w, ${base}Assets/Images/CinesCallao.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
             <div class="cs-card-overlay">
               <span class="cs-card-tag">UX/UI · iOS · 2025</span>
               <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
@@ -191,8 +192,8 @@ import WorkManager from '../islands/WorkManager.svelte';
 
         <div class="project-card cs-card featured-release-card clickable-card" id="card-abruzzo" role="button" tabindex="0" aria-label="Open Abruzzo Experience case study">
           <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#0a1a0f 0%,#0d2416 100%);">
-            <img src="/Assets/Images/AbruzzoExperience.webp" alt="Abruzzo Experience" width="744" height="418" loading="eager" fetchpriority="low" decoding="async"
-                 srcset="/Assets/Images/AbruzzoExperience-400w.webp 400w, /Assets/Images/AbruzzoExperience.webp 800w" sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <img src={`${base}Assets/Images/AbruzzoExperience.webp`} alt="Abruzzo Experience" width="744" height="418" loading="eager" fetchpriority="low" decoding="async"
+                 srcset={`${base}Assets/Images/AbruzzoExperience-400w.webp 400w, ${base}Assets/Images/AbruzzoExperience.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
             <div class="cs-card-overlay">
               <span class="cs-card-tag">UX/UI · Travel App · 2024</span>
               <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
@@ -210,8 +211,8 @@ import WorkManager from '../islands/WorkManager.svelte';
 
         <div class="project-card cs-card featured-release-card clickable-card" id="card-dicarlobus" role="button" tabindex="0" aria-label="Open Dicarlobus case study">
           <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#1a0e00 0%,#261500 100%);">
-            <img src="/Assets/Images/DicarlobusRedesign.webp" alt="Dicarlobus Redesign" width="744" height="418" loading="eager" fetchpriority="low" decoding="async"
-                 srcset="/Assets/Images/DicarlobusRedesign-400w.webp 400w, /Assets/Images/DicarlobusRedesign.webp 800w" sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <img src={`${base}Assets/Images/DicarlobusRedesign.webp`} alt="Dicarlobus Redesign" width="744" height="418" loading="eager" fetchpriority="low" decoding="async"
+                 srcset={`${base}Assets/Images/DicarlobusRedesign-400w.webp 400w, ${base}Assets/Images/DicarlobusRedesign.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
             <div class="cs-card-overlay">
               <span class="cs-card-tag">UX/UI · Transport · 2024</span>
               <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
@@ -229,8 +230,8 @@ import WorkManager from '../islands/WorkManager.svelte';
 
         <div class="project-card cs-card featured-release-card clickable-card" id="card-quickcheckout" role="button" tabindex="0" aria-label="Open QuickCheckout case study">
           <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#040c1a 0%,#0a1a2e 100%);">
-            <img src="/Assets/Images/QuickCheckout.webp" alt="QuickCheckout" width="744" height="418" loading="eager" fetchpriority="low" decoding="async"
-                 srcset="/Assets/Images/QuickCheckout-400w.webp 400w, /Assets/Images/QuickCheckout.webp 800w" sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <img src={`${base}Assets/Images/QuickCheckout.webp`} alt="QuickCheckout" width="744" height="418" loading="eager" fetchpriority="low" decoding="async"
+                 srcset={`${base}Assets/Images/QuickCheckout-400w.webp 400w, ${base}Assets/Images/QuickCheckout.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
             <div class="cs-card-overlay">
               <span class="cs-card-tag">UX/UI · E-Commerce · 2024</span>
               <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>

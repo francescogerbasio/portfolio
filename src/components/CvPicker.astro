@@ -1,11 +1,12 @@
 ---
+const base = import.meta.env.BASE_URL;
 ---
 <div class="cv-picker" id="cvPicker" popover="auto" aria-label="Choose CV language">
   <div class="cv-picker-handle"></div>
   <p class="cv-picker-label">Open CV in</p>
   <div class="cv-picker-options">
     <a class="cv-picker-option" id="cvOptEn"
-       href="/Assets/CV/Francesco_Gerbasio_CV_EN.pdf"
+       href={`${base}Assets/CV/Francesco_Gerbasio_CV_EN.pdf`}
        target="_blank" rel="noopener noreferrer">
       <span class="cv-picker-flag">🇬🇧</span>
       <span class="cv-picker-info">
@@ -15,7 +16,7 @@
       <span class="cv-picker-arrow"><svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
     </a>
     <a class="cv-picker-option" id="cvOptEs"
-       href="/Assets/CV/Francesco_Gerbasio_CV_ES.pdf"
+       href={`${base}Assets/CV/Francesco_Gerbasio_CV_ES.pdf`}
        target="_blank" rel="noopener noreferrer">
       <span class="cv-picker-flag">🇪🇸</span>
       <span class="cv-picker-info">

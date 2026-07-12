@@ -3,7 +3,8 @@ interface Props {
   page: 'work' | 'about' | 'career' | 'fun';
 }
 const { page } = Astro.props;
-const workHref = page === 'work' ? '#work' : '/';
+const base = import.meta.env.BASE_URL;
+const workHref = page === 'work' ? '#work' : base;
 ---
 <button class="hamburger-menu" id="hamburgerBtn"
         aria-label="Open navigation menu"
@@ -18,9 +19,9 @@ const workHref = page === 'work' ? '#work' : '/';
 
 <div class="mobile-menu" id="mobileMenu" aria-hidden="true" aria-label="Navigation menu">
   <a href={workHref} class={`nav-link${page === 'work' ? ' active' : ''}`}>Work</a>
-  <a href="/career.html" class={`nav-link${page === 'career' ? ' active' : ''}`}>Career</a>
-  <a href="/fun.html" class={`nav-link${page === 'fun' ? ' active' : ''}`}>Fun</a>
-  <a href="/about.html" class={`nav-link${page === 'about' ? ' active' : ''}`}>About</a>
+  <a href={`${base}career.html`} class={`nav-link${page === 'career' ? ' active' : ''}`}>Career</a>
+  <a href={`${base}fun.html`} class={`nav-link${page === 'fun' ? ' active' : ''}`}>Fun</a>
+  <a href={`${base}about.html`} class={`nav-link${page === 'about' ? ' active' : ''}`}>About</a>
   <button type="button" class="nav-link" commandfor="cvPicker" command="toggle-popover">Resume</button>
   <button class="theme-toggle theme-toggle-mobile" id="themeToggleMobile" aria-label="Toggle dark mode">
     <span class="theme-toggle-label">

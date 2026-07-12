@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/pages/about.css';
 import '../styles/pages/career.css';
 import ScrollReveal from '../islands/ScrollReveal.svelte';
+const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout
   title="Career — Francesco Gerbasio"
@@ -178,7 +179,7 @@ import ScrollReveal from '../islands/ScrollReveal.svelte';
           <div class="cert-year">2021</div>
           <div class="cert-name">Certificate in Urban Music Production</div>
           <div class="cert-org">SAE Institute Milan</div>
-          <a class="cert-link" href="/Assets/Certificates/SAE-Urban-Music-Production.pdf" target="_blank" rel="noopener noreferrer">View Certificate <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></a>
+          <a class="cert-link" href={`${base}Assets/Certificates/SAE-Urban-Music-Production.pdf`} target="_blank" rel="noopener noreferrer">View Certificate <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></a>
         </div>
       </div>
     </section>
