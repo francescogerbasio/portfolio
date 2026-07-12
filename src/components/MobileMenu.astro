@@ -1,0 +1,31 @@
+---
+interface Props {
+  page: 'work' | 'about' | 'career' | 'fun';
+}
+const { page } = Astro.props;
+const workHref = page === 'work' ? '#work' : '/';
+---
+<button class="hamburger-menu" id="hamburgerBtn"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<div class="hamburger-fade-zone" aria-hidden="true"></div>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true" aria-label="Navigation menu">
+  <a href={workHref} class={`nav-link${page === 'work' ? ' active' : ''}`}>Work</a>
+  <a href="/career.html" class={`nav-link${page === 'career' ? ' active' : ''}`}>Career</a>
+  <a href="/fun.html" class={`nav-link${page === 'fun' ? ' active' : ''}`}>Fun</a>
+  <a href="/about.html" class={`nav-link${page === 'about' ? ' active' : ''}`}>About</a>
+  <button type="button" class="nav-link" commandfor="cvPicker" command="toggle-popover">Resume</button>
+  <button class="theme-toggle theme-toggle-mobile" id="themeToggleMobile" aria-label="Toggle dark mode">
+    <span class="theme-toggle-label">
+      <span class="label-light">Light mode</span>
+      <span class="label-dark">Dark mode</span>
+    </span>
+  </button>
+</div>

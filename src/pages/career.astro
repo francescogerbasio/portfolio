@@ -1,0 +1,195 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/pages/about.css';
+import '../styles/pages/career.css';
+import ScrollReveal from '../islands/ScrollReveal.svelte';
+---
+<BaseLayout
+  title="Career — Francesco Gerbasio"
+  description="Career — Francesco Gerbasio. UX/UI Designer and LQA Specialist based in Madrid. Skills, experience, and certifications."
+  canonical="/career.html"
+  page="career"
+  dnsPrefetch={['https://www.linkedin.com', 'https://verify.skilljar.com', 'https://coursera.org', 'https://courses.edx.org', 'https://certificates.talentgarden.com']}
+  breadcrumbName="Career"
+  structuredDataType="profile"
+>
+  <main id="main-content" class="container">
+    <section class="career-hero" aria-label="Career overview">
+      <p class="career-eyebrow">Career</p>
+      <h1 class="career-headline">
+        Where precision<br>
+        <span class="highlight">meets craft.</span>
+      </h1>
+      <p class="career-intro-text">
+        A cross-disciplinary path spanning UX/UI design, Localization QA, and music production. Built on formal training, hands-on practice, and an obsession with detail.
+      </p>
+    </section>
+
+    <div class="career-divider" id="heroDivider" role="separator" aria-hidden="true"></div>
+
+    <dl class="about-stats" id="statsRow">
+      <div class="stat-item">
+        <dt class="stat-number">20+</dt>
+        <dd class="stat-label">Shipped titles across LQA &amp; UX</dd>
+      </div>
+      <div class="stat-item">
+        <dt class="stat-number">3</dt>
+        <dd class="stat-label">Languages spoken fluently</dd>
+      </div>
+      <div class="stat-item">
+        <dt class="stat-number">2+</dt>
+        <dd class="stat-label">Years of design practice</dd>
+      </div>
+    </dl>
+
+    <div class="about-grid scroll-reveal" id="skillsGrid" style="margin-bottom:100px;">
+      <div class="skills-block" id="skillsBlock">
+        <div>
+          <p class="skill-group-title">Design</p>
+          <div class="skill-tags">
+            <span class="skill-tag">UX Research</span>
+            <span class="skill-tag">Wireframing</span>
+            <span class="skill-tag">Prototyping</span>
+            <span class="skill-tag">Design Systems</span>
+            <span class="skill-tag">Figma</span>
+            <span class="skill-tag">Interaction Design</span>
+            <span class="skill-tag">Accessibility · WCAG</span>
+          </div>
+        </div>
+        <div>
+          <p class="skill-group-title">Quality &amp; Localization</p>
+          <div class="skill-tags">
+            <span class="skill-tag">LQA</span>
+            <span class="skill-tag">Functional QA</span>
+            <span class="skill-tag">JIRA · Bonsai</span>
+            <span class="skill-tag">Italian ↔ English</span>
+            <span class="skill-tag">Spanish</span>
+            <span class="skill-tag">Regression Testing</span>
+          </div>
+        </div>
+        <div>
+          <p class="skill-group-title">Development &amp; Tools</p>
+          <div class="skill-tags">
+            <span class="skill-tag">HTML / CSS</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">Framer</span>
+            <span class="skill-tag">Adobe Creative Suite</span>
+            <span class="skill-tag">Web Animation</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2 class="section-label">What I bring</h2>
+        <p class="career-body-text">
+          I don't just make things look good — I make them make sense. My background in both design and QA gives me a rare lens: I build interfaces with an eye for what breaks, what confuses, and what quietly delights.
+        </p>
+        <p class="career-body-text">
+          Working across Italian, English, Spanish, and design-systems language means I also think in multiple registers — understanding how tone, context, and culture shift a user experience before it ever reaches a screen.
+        </p>
+      </div>
+    </div>
+
+    <section class="timeline-section scroll-reveal" id="timelineSection" aria-label="Timeline">
+      <h2 class="timeline-title">Journey so far</h2>
+      <div class="timeline" id="timeline">
+        <div class="timeline-item">
+          <div class="timeline-year">2025 <svg width="12" height="12" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-out"/></svg></div>
+          <div>
+            <p class="timeline-role">Localization QA Tester</p>
+            <p class="timeline-company">Universally Speaking · Madrid</p>
+            <p class="timeline-desc">End-to-end Italian LQA for major titles across multiple platforms. Identifying, documenting, and validating linguistic and functional issues using Bonsai and JIRA, with full regression testing to ensure consistent, accurate releases.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2024</div>
+          <div>
+            <p class="timeline-role">UX/UI Designer</p>
+            <p class="timeline-company">Freelance · Italy</p>
+            <p class="timeline-desc">End-to-end design across entertainment, transport, and lifestyle clients. User interviews and usability testing translated into wireframes, high-fidelity prototypes, and accessible UI — one project cut navigation time by 30% through restructured information architecture.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2024</div>
+          <div>
+            <p class="timeline-role">UX/UI Design</p>
+            <p class="timeline-company">Talent Garden</p>
+            <p class="timeline-desc">Formal training in UX process, design systems, and Figma prototyping — the structured foundation that gave shape to years of self-taught practice. Backed by Google UX and W3C Accessibility certifications.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2019–22</div>
+          <div>
+            <p class="timeline-role">Music Producer</p>
+            <p class="timeline-company">BeatStars · Independent</p>
+            <p class="timeline-desc">Produced and released original tracks independently, including a certification in Urban Music Production from SAE Institute. Where the obsession with craft, detail, and feeling first took hold — long before it had a design name.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2014–19</div>
+          <div>
+            <p class="timeline-role">Computer Science &amp; Telecommunications</p>
+            <p class="timeline-company">I.I.S E. Alessandrini · Abruzzo</p>
+            <p class="timeline-desc">Five years of IT that taught me to think in systems, debug obsessively, and never trust something just because it compiles.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="certifications-section scroll-reveal" id="certificationsSection" aria-label="Certifications">
+      <h2 class="certifications-title">Certifications</h2>
+      <div class="certifications-grid">
+        <div class="cert-card">
+          <div class="cert-year">2026</div>
+          <div class="cert-name">Claude Code in Action</div>
+          <div class="cert-org">Anthropic</div>
+          <a class="cert-link" href="https://verify.skilljar.com/c/ofmedfi8drx2" target="_blank" rel="noopener noreferrer">View Credential <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></a>
+        </div>
+        <div class="cert-card">
+          <div class="cert-year">2026</div>
+          <div class="cert-name">AI Fluency Framework &amp; Foundations</div>
+          <div class="cert-org">Anthropic</div>
+          <a class="cert-link" href="https://verify.skilljar.com/c/6xugt8e5ypmg" target="_blank" rel="noopener noreferrer">View Credential <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></a>
+        </div>
+        <div class="cert-card">
+          <div class="cert-year">2026</div>
+          <div class="cert-name">Claude 101</div>
+          <div class="cert-org">Anthropic</div>
+          <a class="cert-link" href="https://verify.skilljar.com/c/xtz5jmetku9d" target="_blank" rel="noopener noreferrer">View Credential <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></a>
+        </div>
+        <div class="cert-card">
+          <div class="cert-year">2026</div>
+          <div class="cert-name">Introduction to Web Accessibility</div>
+          <div class="cert-org">edX</div>
+          <a class="cert-link" href="https://courses.edx.org/certificates/527babc16eb744c2862a58c73f4c6267" target="_blank" rel="noopener noreferrer">View Credential <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></a>
+        </div>
+        <div class="cert-card">
+          <div class="cert-year">2025</div>
+          <div class="cert-name">Google UX Design</div>
+          <div class="cert-org">Google</div>
+          <a class="cert-link" href="https://coursera.org/share/88ca0ac7c867b3ec6d35d9daf85cefdd" target="_blank" rel="noopener noreferrer">View Credential <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></a>
+        </div>
+        <div class="cert-card">
+          <div class="cert-year">2024</div>
+          <div class="cert-name">Introduction to UX/UI Design</div>
+          <div class="cert-org">Talent Garden</div>
+          <a class="cert-link" href="https://certificates.talentgarden.com/30a9f83b-e966-417a-a7a3-563c1a39467f#acc.Fom4xjda" target="_blank" rel="noopener noreferrer">View Credential <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></a>
+        </div>
+        <div class="cert-card">
+          <div class="cert-year">2021</div>
+          <div class="cert-name">Certificate in Urban Music Production</div>
+          <div class="cert-org">SAE Institute Milan</div>
+          <a class="cert-link" href="/Assets/Certificates/SAE-Urban-Music-Production.pdf" target="_blank" rel="noopener noreferrer">View Certificate <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <div class="about-cta scroll-reveal" id="ctaSection">
+      <p class="cta-text">Want to work together?<br><span>Let's talk.</span></p>
+      <div class="cta-buttons">
+        <a href="https://www.linkedin.com/in/francesco-gerbasio" target="_blank" rel="noopener noreferrer" class="btn-primary">LinkedIn <svg width="14" height="14" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:2px"><use href="#icon-arrow-out"/></svg></a>
+        <a href="mailto:francesco.gerbasio00@gmail.com" class="btn-secondary">Email me</a>
+      </div>
+    </div>
+  </main>
+  <ScrollReveal client:load />
+</BaseLayout>

@@ -1,0 +1,376 @@
+---
+import '../styles/global.css';
+import SvgSprite from '../components/SvgSprite.astro';
+import Nav from '../components/Nav.astro';
+import MobileMenu from '../components/MobileMenu.astro';
+import CvPicker from '../components/CvPicker.astro';
+import ScrollToTop from '../components/ScrollToTop.astro';
+import NavScroll from '../islands/NavScroll.svelte';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  page: 'work' | 'about' | 'career' | 'fun';
+  ogImage?: string;
+  preloadImage?: string;
+  dnsPrefetch?: string[];
+  breadcrumbName: string;
+  structuredDataType?: 'person' | 'profile' | 'webpage';
+}
+
+const {
+  title,
+  description,
+  canonical,
+  page,
+  ogImage = '/Assets/Images/og-image.webp',
+  preloadImage,
+  dnsPrefetch = [],
+  breadcrumbName,
+  structuredDataType = 'webpage'
+} = Astro.props;
+
+const siteUrl = 'https://gerbas.io';
+const pageUrl = `${siteUrl}${canonical}`;
+const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
+
+const speculationTargets: Record<string, string[]> = {
+  work: ['/career.html', '/fun.html', '/about.html'],
+  about: ['/career.html', '/fun.html'],
+  career: ['/fun.html', '/about.html'],
+  fun: ['/career.html', '/about.html']
+};
+
+const profileLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    name: 'Francesco Gerbasio',
+    url: siteUrl,
+    image: `${siteUrl}/Assets/Images/Francesco_Gerbasio.webp`,
+    sameAs: [
+      'https://www.linkedin.com/in/francesco-gerbasio',
+      'https://www.instagram.com/gerbasio_francesco/'
+    ],
+    jobTitle: 'UX/UI Designer & LQA Specialist',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Madrid',
+      addressCountry: 'ES'
+    },
+    knowsLanguage: ['it', 'en', 'es'],
+    description: 'UX/UI Designer and Localization QA Specialist based in Madrid. Expert in product design, accessibility, and interaction design.'
+  }
+};
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Francesco Gerbasio',
+  url: siteUrl,
+  image: `${siteUrl}/Assets/Images/og-image.webp`,
+  sameAs: [
+    'https://www.linkedin.com/in/francesco-gerbasio',
+    'https://www.instagram.com/gerbasio_francesco/'
+  ],
+  jobTitle: 'UX/UI Designer & LQA Specialist',
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Universally Speaking'
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Madrid',
+    addressCountry: 'ES'
+  },
+  knowsLanguage: ['it', 'en', 'es'],
+  description
+};
+
+const webpageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: title,
+  url: pageUrl,
+  author: {
+    '@type': 'Person',
+    name: 'Francesco Gerbasio',
+    url: siteUrl
+  },
+  description
+};
+
+const structuredData =
+  structuredDataType === 'profile' ? profileLd :
+  structuredDataType === 'person' ? personLd :
+  webpageLd;
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Work', item: `${siteUrl}/` },
+    { '@type': 'ListItem', position: 2, name: breadcrumbName, item: pageUrl }
+  ]
+};
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script is:inline>
+    (function () {
+      'use strict';
+      const STORAGE_KEY = 'theme';
+      const html = document.documentElement;
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      function applyThemeCore(theme) {
+        html.setAttribute('data-theme', theme);
+        html.style.colorScheme = theme;
+        const csm = document.querySelector('meta[name="color-scheme"]');
+        if (csm) csm.content = theme;
+      }
+      function applyThemeChrome(theme) {
+        const color = theme === 'dark' ? '#252525' : '#fdf5f6';
+        const old = document.querySelector('meta[name="theme-color"]');
+        if (old) old.remove();
+        const m = document.createElement('meta');
+        m.name = 'theme-color';
+        m.id = 'themeColorMeta';
+        m.content = color;
+        document.head.appendChild(m);
+      }
+      function applyTheme(theme) { applyThemeCore(theme); applyThemeChrome(theme); }
+      function getSavedTheme() { return localStorage.getItem(STORAGE_KEY) || 'light'; }
+      function toggleTheme() {
+        const next = (html.getAttribute('data-theme') || 'light') === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(STORAGE_KEY, next);
+        if (window.innerWidth <= 768) {
+          sessionStorage.setItem('themeScrollY', String(window.scrollY));
+          const s = document.createElement('style');
+          s.textContent = '@view-transition { navigation: none; }';
+          document.head.appendChild(s);
+          location.reload();
+          return;
+        }
+        html.setAttribute('data-vt-theme', '');
+        if (!document.startViewTransition) {
+          applyTheme(next);
+          html.removeAttribute('data-vt-theme');
+          return;
+        }
+        const t = document.startViewTransition(() => {
+          applyThemeCore(next);
+          applyThemeChrome(next);
+        });
+        t.finished.finally(() => html.removeAttribute('data-vt-theme'));
+      }
+      applyTheme(getSavedTheme());
+      document.addEventListener('DOMContentLoaded', function () {
+        const m = document.getElementById('themeColorMeta');
+        if (m) m.content = getSavedTheme() === 'dark' ? '#252525' : '#fdf5f6';
+        ['themeToggle', 'themeToggleMobile'].forEach(function (id) {
+          var b = document.getElementById(id);
+          if (b) b.addEventListener('click', toggleTheme);
+        });
+        window.addEventListener('storage', function (e) { if (e.key === STORAGE_KEY && e.newValue) applyTheme(e.newValue); });
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+          if (!localStorage.getItem(STORAGE_KEY)) applyTheme(e.matches ? 'dark' : 'light');
+        });
+        const sy = sessionStorage.getItem('themeScrollY');
+        if (sy !== null) {
+          sessionStorage.removeItem('themeScrollY');
+          window.scrollTo(0, Number(sy));
+        }
+      });
+    })();
+  </script>
+  <script is:inline>
+    window.addEventListener('pagereveal', (event) => {
+      if (event.viewTransition && sessionStorage.getItem('vt-is-back') === '1') {
+        document.documentElement.setAttribute('data-vt-direction', 'back');
+        sessionStorage.removeItem('vt-is-back');
+      }
+    });
+  </script>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="/Assets/Images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/Assets/Images/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/Assets/Images/apple-touch-icon.png">
+  <meta name="theme-color" id="themeColorMeta" content="#fdf5f6">
+  <link rel="canonical" href={pageUrl}>
+  <meta name="description" content={description}>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={pageUrl}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImageUrl}>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImageUrl}>
+  <meta property="og:site_name" content="Francesco Gerbasio">
+  <meta property="og:locale" content="en_US">
+  <meta name="author" content="Francesco Gerbasio">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{title}</title>
+  {dnsPrefetch.map(href => <link rel="dns-prefetch" href={href} />)}
+  <link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
+  {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
+  <link rel="preload" href="/Assets/Fonts/Qurova/Qurova-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/Assets/Fonts/BrittiSans/BrittiSans-Semibold.woff2" as="font" type="font/woff2" crossorigin>
+  <script is:inline type="speculationrules" set:html={JSON.stringify({
+    prerender: speculationTargets[page].map(href => ({ where: { href_matches: href }, eagerness: 'moderate' })),
+    prefetch: speculationTargets[page].map(href => ({ where: { href_matches: href }, eagerness: 'conservative' }))
+  })} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  <script is:inline>
+    /* Page transitions: native cross-document VT with JS fallback */
+    (function () {
+      'use strict';
+      const DURATION_OUT = 260;
+      const DURATION_IN = 520;
+      function getTarget() { return document.querySelector('main') || document.querySelector('.container'); }
+      function animateIn() {
+        const el = getTarget();
+        if (!el) return;
+        el.classList.add('pt-enter');
+        setTimeout(() => el.classList.remove('pt-enter'), DURATION_IN + 60);
+      }
+      function animateOut(href) {
+        const el = getTarget();
+        if (!el) return;
+        if (el.classList.contains('pt-leave')) return;
+        el.classList.add('pt-leave');
+        setTimeout(() => { window.location.href = href; }, DURATION_OUT);
+      }
+      function isInternalLink(anchor, e) {
+        const href = anchor.getAttribute('href');
+        if (!href) return false;
+        return (
+          !anchor.target &&
+          !href.startsWith('http') &&
+          !href.startsWith('//') &&
+          !href.startsWith('mailto:') &&
+          !href.startsWith('#') &&
+          !anchor.hasAttribute('data-cv-trigger') &&
+          !e.ctrlKey && !e.metaKey && !e.shiftKey
+        );
+      }
+      const supportsCrossDocumentVT = (() => {
+        try {
+          const sheet = new CSSStyleSheet();
+          sheet.replaceSync('@view-transition { navigation: auto; }');
+          return sheet.cssRules.length > 0;
+        } catch (e) { return false; }
+      })();
+      if (supportsCrossDocumentVT) {
+        window.addEventListener('pageswap', (event) => {
+          if (!event.viewTransition) return;
+          const navType = event.activation?.entry?.navigationType;
+          sessionStorage.setItem('vt-is-back', navType === 'traverse' ? '1' : '0');
+        });
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', animateIn);
+        } else {
+          requestAnimationFrame(() => requestAnimationFrame(animateIn));
+        }
+        window.addEventListener('pageshow', function (e) {
+          if (e.persisted) {
+            const el = getTarget();
+            if (el) el.classList.remove('pt-leave');
+            animateIn();
+          }
+        });
+        return;
+      }
+      document.addEventListener('click', function (e) {
+        const anchor = e.target.closest('a');
+        if (!anchor) return;
+        if (!isInternalLink(anchor, e)) return;
+        if (document.body.classList.contains('cs-is-open')) return;
+        e.preventDefault();
+        animateOut(anchor.getAttribute('href'));
+      });
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', animateIn);
+      } else {
+        requestAnimationFrame(() => requestAnimationFrame(animateIn));
+      }
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+          const el = getTarget();
+          if (el) el.classList.remove('pt-leave');
+          animateIn();
+        }
+      });
+    })();
+  </script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link visually-hidden">Skip to main content</a>
+  <SvgSprite />
+  <Nav page={page} />
+  <MobileMenu page={page} />
+  <slot />
+  <CvPicker />
+  <ScrollToTop />
+  <NavScroll client:load />
+  <script is:inline>
+    /* CV Language Picker — Invoker Commands + Popover API fallback */
+    (function () {
+      'use strict';
+      document.addEventListener('DOMContentLoaded', function () {
+        const picker = document.getElementById('cvPicker');
+        if (!picker) return;
+        const triggers = document.querySelectorAll('[commandfor="cvPicker"]');
+        let lastTrigger = null;
+
+        function positionBelow(trigger) {
+          if (window.innerWidth <= 768) return;
+          const rect = trigger.getBoundingClientRect();
+          picker.style.setProperty('--cv-picker-top', (rect.bottom + 10) + 'px');
+          picker.style.setProperty('--cv-picker-left', (rect.left + rect.width / 2) + 'px');
+        }
+
+        triggers.forEach(trigger => {
+          trigger.addEventListener('click', function () { lastTrigger = this; });
+        });
+
+        picker.addEventListener('beforetoggle', function (e) {
+          if (e.newState === 'open' && lastTrigger) positionBelow(lastTrigger);
+        });
+
+        picker.addEventListener('toggle', function (e) {
+          const isOpen = e.newState === 'open';
+          triggers.forEach(t => t.setAttribute('aria-expanded', isOpen ? 'true' : 'false'));
+        });
+
+        picker.querySelectorAll('.cv-picker-option').forEach(function (link) {
+          link.addEventListener('click', function () {
+            setTimeout(() => picker.hidePopover(), 220);
+          });
+        });
+
+        window.addEventListener('resize', function () {
+          if (picker.matches(':popover-open') && lastTrigger) positionBelow(lastTrigger);
+        });
+
+        if (!('commandForElement' in HTMLButtonElement.prototype)) {
+          triggers.forEach(trigger => {
+            trigger.setAttribute('aria-haspopup', 'popover');
+            trigger.addEventListener('click', function (e) {
+              e.preventDefault();
+              if (picker.matches(':popover-open')) picker.hidePopover();
+              else picker.showPopover();
+            });
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
