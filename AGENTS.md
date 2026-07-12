@@ -1,98 +1,50 @@
-# AGENTS.md — Master
-
-## Baseline target
-This project's Baseline target is **Baseline 2025**.
-
-## Modern Web Guidance
-This project uses [Modern Web Guidance](https://developer.chrome.com/docs/modern-web-guidance) for **all** web platform decisions.
-
-### Mandatory Workflow
-Before implementing **any** change — CSS, JavaScript, HTML, or performance optimization — you **must**:
-
-1. **Search** for relevant guidance: `npx modern-web-guidance@latest search "<topic>"`
-2. **Retrieve** and read the guide: `npx modern-web-guidance@latest retrieve "<guide-id>"`
-3. **Verify** Baseline 2025 support for the feature
-4. **Implement** using the recommended modern approach
-5. **Add** progressive enhancement fallbacks where feature support is limited
-
-### When to Search
-| Change Type | Example Topics |
-|-------------|----------------|
-| CSS changes | `light-dark()`, cascade layers, logical properties, container queries, @layer |
-| HTML changes | `<dialog>`, `<popover>`, `<details>`, invoker commands |
-| JavaScript changes | ResizeObserver, IntersectionObserver, visibilitychange, Web Animations |
-| Performance | compositing, rendering performance, critical CSS, resource hints |
-| Accessibility | focus management, ARIA, semantic HTML |
-
-### Rules
-- **Prefer** modern CSS/HTML APIs over JavaScript solutions
-- **Provide** progressive enhancement fallbacks for limited-availability features
-- **Never** implement a feature without checking if Modern Web Guidance has specific recommendations
-- **Document** the guide ID in commit messages: `MWG-2025/CSS-layering`
-
-### Quick Reference Commands
-```sh
-npx modern-web-guidance@latest search "CSS cascade layers"
-npx modern-web-guidance@latest search "dialog element"
-npx modern-web-guidance@latest search "resize observer"
-npx modern-web-guidance@latest retrieve "css-layering"
-```
+# AGENTS.md
 
 ## Project shape
-- Static multi-page portfolio (no package manager, no build system).
-- Pages: `index.html` (Work), `fun.html` (Fun), `about.html` (About).
-- Global assets under `Assets/`.
+- Static multi-page portfolio. No build system, no package manager, no framework — vanilla HTML/CSS/JS only.
+- Pages: `index.html` (Work), `fun.html` (Fun), `about.html` (About), `career.html` (Career).
+- Global assets under `Assets/`. Hosted on Netlify; caching controlled by `_headers` and `htaccess` — keep both in sync when changing asset naming or cache strategy.
+- Targets **Baseline 2025**.
+
+## Markdown files are local-only
+- `.gitignore` ignores all `*.md` except `README.md`. `AGENTS.md`, `OPTIMIZATIONS.md`, and other `.md` files are local working docs, not committed.
+- `scripts/safe-merge-test-to-main.sh` also strips every `.md` from merges into `main`.
+- Do not commit `.md` files or expect them to survive a clone.
 
 ## Run locally
 ```sh
-python3 -m http.server 8000
-python3 validate.py
+python3 -m http.server 8000   # required — file:// breaks fetch() and the weather widget
+python3 validate.py           # checks all *.html for broken local links + alt text on cs-*.html images
 ```
-Do **not** open via `file://` — `fetch()` and weather APIs break.
+`validate.py` exits 1 only on broken links; missing alt text is a warning, not a failure.
 
-## Sub-agent files
-Load the appropriate file for your task type:
+## Modern Web Guidance (mandatory)
+One-time setup (if the skill is not present): `npx modern-web-guidance@latest install`  
+Update occasionally: `npx modern-web-guidance@latest update`
 
-| Task | File | Models |
-|---|---|---|
-| **Plan** | `.opencode/agents/plan.md` | qwen3.7-max |
-| **Build** | `.opencode/agents/build.md` | kimi-k2.7-code |
-| **Build-Codex** | `.opencode/agents/build-codex.md` | GPT-5.3 Codex (xhigh) |
-| **Refactor / Debug** | `.opencode/agents/refactor.md` | DeepSeek V4 Flash, GLM-5.1 |
+Before any CSS/HTML/JS change: search → retrieve → verify Baseline 2025 support → implement → add progressive-enhancement fallbacks.
+```sh
+npx modern-web-guidance@latest search "<topic>"      # e.g. "dialog element", "container queries"
+npx modern-web-guidance@latest retrieve "<guide-id>"
+```
+Prefer modern CSS/HTML APIs over JS. Document guide IDs in commits: `MWG-2025/<topic>`.  
+The full optimization audit (item IDs + DONE/TODO/PARTIAL status) lives in `OPTIMIZATIONS.md` (local, gitignored) — consult it before optimization work.
 
-Use `@plan`, `@build`, `@build-codex`, or `@refactor` to manually invoke a subagent, or rely on the primary agent to auto-select via the Task tool.
+## Runtime wiring (easy to break)
+- `theme.js` loads first in `<head>` (blocking) — applies `data-theme` pre-paint. Do not move or defer it.
+- `transitions.js` (defer) intercepts internal `<a>` links for page transitions — do not break its internal-link assumptions.
+- `cv-picker.js` requires `#cvPicker` + `#cvPickerBackdrop` in page markup; it no-ops if either is missing.
+- Case studies: register in `index.html` via `CaseStudy.register('card-id', 'cs-id')`. The engine `fetch()`es `cs-id.html` (filename must match the overlay ID exactly) and injects it into a native `<dialog>`.
 
-## Session Progress (this session)
+## Data files (fun.html)
+- `data-travel.js` → `window.travelConfig`, `data-music.js` → `window.musicData`, `data-games.js` → `window.gamesData`. Each file must end with `window.X = X`.
+- Load order before `fun.js`: `data-travel.js` → `data-music.js` → `data-games.js` → `fun.js`.
+- Travel photos are inferred from `photoCount` only — files must exist as `Assets/Images/Travel/<folder>/<N>.webp`, starting at `1`.
+- `location-config.js` → `window.myLocation`; the weather widget falls back to Madrid if undefined.
 
-### #26 SVG sprite — COMPLETED
-- **25 inline SVGs replaced** with `<use href="#icon-arrow-right">` / `<use href="#icon-arrow-out">` across all pages
-- Sprite added to index.html (both `icon-arrow-right` + `icon-arrow-out`), about.html (both symbols), career.html (both symbols)
-- Replaced: 8 card arrows in index.html, 1 LinkedIn button arrow in about.html, 7 cert links + 1 LinkedIn + 2 CV-picker arrows + 1 timeline year in career.html, 4 SVGs each in cs-callao/abruzzo/dicarlobus, 2 SVGs in cs-quickcheckout
-- Kept (intentionally): moon/sun theme toggle icons, QuickCheckout back-arrow (upward), eye-open icon in index.html (all unique, non-reusable)
+## Slash commands (`.opencode/commands/`)
+- `/add-certification`, `/add-lqa-project` — edit `career.html` / `index.html` and keep counts in sync (see the command files for exact HTML + count rules).
+- `/clavix-*` — requirements → PRD → plan → implement workflow.
 
-### #27 CSS nesting for dark mode — COMPLETED
-- Replaced 17 standalone `[data-theme="dark"] .selector` rules with CSS nesting inside their parent selectors
-- Groups: `.navigation` (scrolled + ::before), `.bento-card`, `.accordion-trigger`, `.project-list-item`, `.projects-list`, `.accordion-icon`, `.accordion-trigger.active .accordion-icon` (+ ::after), `.accordion-count`
-- `@media (hover: hover)` block nested under `body::before`
-- Net reduction: from 17 separate `[data-theme="dark"]` rules to ~12 nested groups
-
-### #28 @media consolidation — COMPLETED
-- Reduced `@media (max-width: 768px)` blocks from 18 to 14 (consolidated 4 CV picker blocks into 1)
-- CV picker section: merged `.cv-picker-label`, `.cv-picker-options`, `.cv-picker-option`, `.cv-picker-option:hover`, `.cv-picker-arrow`, `.cv-picker:popover-open .cv-picker-option:hover` into single `@media (max-width: 768px)` block
-
-### #29 Container queries — COMPLETED
-- Added `container-type: inline-size` to: `.projects-grid`, `.artists-grid`, `.games-grid`, `.games-grid.small`
-- Added `@container (max-width: 800px)` for `.projects-grid` single-column layout
-- Added `@supports not (container-type: inline-size)` fallback for `@media (max-width: 1200px)` for `.projects-grid`
-- Added `@container (max-width: 320px)` for `.artists-grid` mobile layout
-- Added `@supports not (container-type: inline-size)` fallback for `@media (max-width: 600px)` artists-grid
-- Added `@supports not (container-type: inline-size)` fallback for `@media (max-width: 768px)` games-grid
-- Added `@container (max-width: 500px)` for `.games-grid` (3-column at tablet)
-- Added `@container (max-width: 300px)` for `.games-grid.small` (2-column at small tablet)
-- Added `@supports not (container-type: inline-size)` + `@container (max-width: 320px)` for `.games-grid` + `.games-grid.small` at 600px breakpoint
-
-### #30 visibilitychange — COMPLETED
-- Refactored `setInterval(rotatePhrase, 5000)` in script.js to be pause/resume capable
-- Added `visibilitychange` listener: pauses interval when `document.hidden`, resumes when visible
-- Wrapped initial start in `if (!document.hidden)` check
-- Created `startPhraseRotation()` and `stopPhraseRotation()` helper functions
+## Agent files
+- `.opencode/agents/plan.md` (read-only planning) and `.opencode/agents/build.md` (implementation) hold agent-specific detail and repeat the MWG workflow. OpenCode auto-selects via the Task tool; invoke manually with `@plan` / `@build`.
