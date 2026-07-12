@@ -6,6 +6,7 @@ import MobileMenu from '../components/MobileMenu.astro';
 import CvPicker from '../components/CvPicker.astro';
 import ScrollToTop from '../components/ScrollToTop.astro';
 import NavScroll from '../islands/NavScroll.svelte';
+import Lenis from '../islands/Lenis.svelte';
 
 interface Props {
   title: string;
@@ -319,6 +320,7 @@ const breadcrumbLd = {
   <slot />
   <CvPicker />
   <ScrollToTop />
+  <Lenis client:load />
   <NavScroll client:load />
   <script is:inline>
     /* CV Language Picker — Invoker Commands + Popover API fallback */

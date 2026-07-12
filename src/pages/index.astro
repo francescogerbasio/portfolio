@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/pages/work.css';
 import '../styles/case-study.css';
 import WorkManager from '../islands/WorkManager.svelte';
+import WorkMotion from '../islands/WorkMotion.svelte';
 const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout
@@ -273,4 +274,5 @@ const base = import.meta.env.BASE_URL;
   </dialog>
 
   <WorkManager client:load />
+  <WorkMotion client:load />
 </BaseLayout>

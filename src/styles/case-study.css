@@ -70,6 +70,7 @@ dialog.cs-overlay[open]::backdrop {
   background: var(--color-bg, #fdf5f6);
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scrollbar-width: thin;
@@ -98,7 +99,25 @@ dialog.cs-overlay[open] .cs-panel {
 
 /* Exit uses the base transition in reverse — no extra class needed */
 
-/* ── Progress bar — removed, replaced by native dialog::backdrop ── */
+.cs-progress {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 12;
+  height: 3px;
+  background: rgba(255,255,255,.08);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.cs-progress-bar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--cs-accent), color-mix(in oklab, var(--cs-accent) 64%, white 36%));
+  transform-origin: left center;
+  transform: scaleX(var(--cs-progress, 0));
+  will-change: transform;
+}
 
 /* ── Close button
    position: absolute inside the overlay.
@@ -745,6 +764,7 @@ dialog.cs-overlay[open] .cs-scroll-cue {
   transition:
     transform var(--cs-dur-fast) var(--cs-ease-spring),
     box-shadow var(--cs-dur-fast) ease;
+  will-change: transform;
 }
 
 .cs-proto-link:hover {
@@ -788,6 +808,7 @@ dialog.cs-overlay[open] .cs-scroll-cue {
   letter-spacing: -.02em;
   cursor: pointer;
   transition: opacity .2s ease;
+  will-change: transform;
 }
 
 .cs-next-title:hover { opacity: .55; }
@@ -804,6 +825,7 @@ dialog.cs-overlay[open] .cs-scroll-cue {
   transition:
     background var(--cs-dur-fast) ease,
     transform  var(--cs-dur-fast) var(--cs-ease-spring);
+  will-change: transform;
 }
 
 .cs-next-arrow:hover {
@@ -1085,6 +1107,23 @@ body.cs-is-open .mobile-menu {
 [data-theme="dark"] .cs-showcase-phone,
 [data-theme="dark"] .cs-showcase-tablet {
   background: #2a2c32;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-phone,
+  .cs-section,
+  .cs-stat,
+  .cs-insight,
+  .cs-step,
+  .cs-showcase-phone,
+  .cs-results,
+  .cs-proto,
+  .cs-bottom-nav {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
 }
 
 } /* end @layer components */

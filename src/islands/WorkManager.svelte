@@ -1,6 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { myLocation } from '../data/location';
+
+  declare global {
+    interface Window {
+      lenis?: {
+        stop?: () => void;
+        start?: () => void;
+      };
+    }
+  }
 
   onMount(() => {
     initNavActiveState();
@@ -9,7 +20,6 @@
     initLocationWidget();
     initNdaProtection();
     initCardGlow();
-    initProjectCards();
     initCaseStudies();
   });
 
@@ -405,8 +415,9 @@
   }
 
   function initCaseStudies() {
+    gsap.registerPlugin(ScrollTrigger);
     const registry: Record<string, { cardId: string; overlayId: string; _pendingOpen?: boolean }> = {};
-    const studyMap: Record<string, { card: HTMLElement; dialog: HTMLDialogElement; panel: HTMLElement; closeBtn: HTMLButtonElement | null; overlayId: string; _closing?: boolean }> = {};
+    const studyMap: Record<string, { card: HTMLElement; dialog: HTMLDialogElement; panel: HTMLElement; closeBtn: HTMLButtonElement | null; overlayId: string; _closing?: boolean; motionCleanup?: () => void }> = {};
     const loaded: Record<string, boolean> = {};
 
     async function loadOverlay(overlayId: string) {
@@ -433,17 +444,30 @@
       panel.querySelectorAll('.cs-section').forEach(s => s.classList.remove('cs-visible'));
       panel.scrollTop = 0;
       (panel as HTMLElement).style.cssText = '';
-      dialog.showModal();
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('cs-is-open');
-      if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
-      setTimeout(() => setupReveal(panel), 600);
+      const open = () => {
+        window.lenis?.stop?.();
+        dialog.showModal();
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('cs-is-open');
+        if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
+        setTimeout(() => setupReveal(study), 600);
+      };
+      if (document.startViewTransition) {
+        document.documentElement.setAttribute('data-vt-case-study', '');
+        document.startViewTransition(open).finished.finally(() => {
+          document.documentElement.removeAttribute('data-vt-case-study');
+        });
+        return;
+      }
+      open();
     }
 
     function animateClose(study: typeof studyMap[string]) {
       const { dialog, panel, card } = study;
       if (!dialog.open || study._closing) return;
       study._closing = true;
+      study.motionCleanup?.();
+      study.motionCleanup = undefined;
       panel.querySelectorAll('.cs-section').forEach(s => s.classList.remove('cs-visible'));
       let handled = false;
       const done = (e?: TransitionEvent) => {
@@ -455,20 +479,152 @@
         panel.scrollTop = 0;
         document.body.style.overflow = '';
         document.body.classList.remove('cs-is-open');
+        window.lenis?.start?.();
         if (card) (card as HTMLElement).focus();
       };
       panel.addEventListener('transitionend', done);
-      const timer = setTimeout(done, 700);
-      dialog.close();
+      setTimeout(done, 700);
+      const close = () => dialog.close();
+      if (document.startViewTransition) {
+        document.documentElement.setAttribute('data-vt-case-study', '');
+        document.startViewTransition(close).finished.finally(() => {
+          document.documentElement.removeAttribute('data-vt-case-study');
+        });
+        return;
+      }
+      close();
     }
 
-    function setupReveal(panel: HTMLElement) {
-      const obs = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) { e.target.classList.add('cs-visible'); obs.unobserve(e.target); }
+    function setupReveal(study: typeof studyMap[string]) {
+      const { dialog, panel } = study;
+      study.motionCleanup?.();
+      panel.querySelectorAll('.cs-section').forEach(s => s.classList.add('cs-visible'));
+      const progress = ensureProgress(dialog, panel);
+      const sections = gsap.utils.toArray<HTMLElement>('.cs-section', panel);
+      const heroPhones = gsap.utils.toArray<HTMLElement>('.cs-phone', panel);
+      const showcasePhones = gsap.utils.toArray<HTMLElement>('.cs-showcase-phone', panel);
+      const stats = gsap.utils.toArray<HTMLElement>('.cs-stat', panel);
+      const insights = gsap.utils.toArray<HTMLElement>('.cs-insight', panel);
+      const steps = gsap.utils.toArray<HTMLElement>('.cs-step', panel);
+      const results = panel.querySelector('.cs-results');
+      const proto = panel.querySelector('.cs-proto');
+      const bottomNav = panel.querySelector('.cs-bottom-nav');
+      const onPanelScroll = () => {
+        const max = panel.scrollHeight - panel.clientHeight;
+        const ratio = max > 0 ? Math.min(1, Math.max(0, panel.scrollTop / max)) : 0;
+        progress.style.setProperty('--cs-progress', String(ratio));
+      };
+      panel.addEventListener('scroll', onPanelScroll, { passive: true });
+      onPanelScroll();
+
+      const ctx = gsap.context(() => {
+        if (heroPhones.length) {
+          gsap.to(heroPhones, {
+            yPercent: (_, target) => target === heroPhones[1] ? -12 : -20,
+            rotate: (index) => index === 1 ? 0 : index === 0 ? -3 : 3,
+            ease: 'none',
+            stagger: 0.04,
+            scrollTrigger: {
+              trigger: panel.querySelector('.cs-hero'),
+              scroller: panel,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: true
+            }
+          });
+        }
+
+        const revealGroups = [stats, insights, steps, showcasePhones].filter(group => group.length);
+        revealGroups.forEach((group) => {
+          gsap.fromTo(group,
+            { opacity: 0, y: 34 },
+            {
+              opacity: 1,
+              y: 0,
+              stagger: 0.08,
+              duration: 0.8,
+              scrollTrigger: {
+                trigger: group[0],
+                scroller: panel,
+                start: 'top bottom-=12%'
+              }
+            }
+          );
         });
-      }, { root: panel, threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-      panel.querySelectorAll('.cs-section').forEach(s => obs.observe(s));
+
+        sections.forEach((section) => {
+          const heading = section.querySelector('.cs-section-heading');
+          const body = section.querySelectorAll('.cs-body, .cs-step, .cs-insight, .cs-showcase-phone');
+          if (heading) {
+            gsap.fromTo(heading,
+              { opacity: 0, y: 28 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                scrollTrigger: {
+                  trigger: section,
+                  scroller: panel,
+                  start: 'top bottom-=18%'
+                }
+              }
+            );
+          }
+          if (body.length) {
+            gsap.fromTo(body,
+              { opacity: 0, y: 26 },
+              {
+                opacity: 1,
+                y: 0,
+                stagger: 0.07,
+                duration: 0.75,
+                scrollTrigger: {
+                  trigger: section,
+                  scroller: panel,
+                  start: 'top bottom-=10%'
+                }
+              }
+            );
+          }
+        });
+
+        [results, proto, bottomNav].forEach((block) => {
+          if (!block) return;
+          gsap.fromTo(block,
+            { opacity: 0, y: 40 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              scrollTrigger: {
+                trigger: block,
+                scroller: panel,
+                start: 'top bottom-=10%'
+              }
+            }
+          );
+        });
+      }, panel);
+
+      ScrollTrigger.refresh();
+      study.motionCleanup = () => {
+        panel.removeEventListener('scroll', onPanelScroll);
+        progress.remove();
+        ctx.revert();
+      };
+    }
+
+    function ensureProgress(dialog: HTMLDialogElement, panel: HTMLElement) {
+      let progress = dialog.querySelector('.cs-progress') as HTMLDivElement | null;
+      if (!progress) {
+        progress = document.createElement('div');
+        progress.className = 'cs-progress';
+        progress.setAttribute('aria-hidden', 'true');
+        progress.innerHTML = '<span class="cs-progress-bar"></span>';
+        dialog.appendChild(progress);
+      }
+      progress.style.setProperty('--cs-progress', '0');
+      return progress;
     }
 
     function _register(cardId: string, overlayId: string) {
@@ -483,9 +639,12 @@
       dialog.addEventListener('cancel', (e) => { e.preventDefault(); animateClose(study); });
       dialog.addEventListener('close', () => {
         if (study._closing) return;
+        study.motionCleanup?.();
+        study.motionCleanup = undefined;
         panel.scrollTop = 0;
         document.body.style.overflow = '';
         document.body.classList.remove('cs-is-open');
+        window.lenis?.start?.();
       });
       if (closeBtn) closeBtn.addEventListener('click', () => animateClose(study));
 
