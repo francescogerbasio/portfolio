@@ -238,7 +238,7 @@
 
 {#snippet musicCard()}
   {@const song = musicData.mySong}
-  {@const canPreview = navigator.onLine && song.youtubeEmbedId}
+  {@const canPreview = typeof navigator !== 'undefined' && navigator.onLine && song.youtubeEmbedId}
   {@const artworkSrc = song.artwork || `https://i.ytimg.com/vi/${song.youtubeEmbedId}/maxresdefault.jpg`}
   <div class="song-card{flipped ? ' flipped' : ''}" id="songCard" onmouseleave={unflipSongCard}>
     <div class="song-card-inner">
