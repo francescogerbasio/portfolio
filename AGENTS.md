@@ -1,50 +1,49 @@
 # AGENTS.md
 
 ## Project shape
-- Static multi-page portfolio. No build system, no package manager, no framework — vanilla HTML/CSS/JS only.
-- Pages: `index.html` (Work), `fun.html` (Fun), `about.html` (About), `career.html` (Career).
-- Global assets under `Assets/`. Hosted on Netlify; caching controlled by `_headers` and `htaccess` — keep both in sync when changing asset naming or cache strategy.
-- Targets **Baseline 2025**.
+- Astro 5 static portfolio with Svelte islands. Entry pages: `src/pages/index.astro`, `about.astro`, `career.astro`, `fun.astro`.
+- Shared shell lives in `src/layouts/BaseLayout.astro`; global CSS in `src/styles/global.css`; page CSS in `src/styles/pages/`.
+- Public static files live under `public/`; deployed paths omit `public/` (`public/Assets/x` becomes `/Assets/x`).
 
-## Markdown files are local-only
-- `.gitignore` ignores all `*.md` except `README.md`. `AGENTS.md`, `OPTIMIZATIONS.md`, and other `.md` files are local working docs, not committed.
-- `scripts/safe-merge-test-to-main.sh` also strips every `.md` from merges into `main`.
-- Do not commit `.md` files or expect them to survive a clone.
-
-## Run locally
+## Commands
 ```sh
-python3 -m http.server 8000   # required — file:// breaks fetch() and the weather widget
-python3 validate.py           # checks all *.html for broken local links + alt text on cs-*.html images
+npm ci
+npm run dev
+npm run build
+python3 validate.py
 ```
-`validate.py` exits 1 only on broken links; missing alt text is a warning, not a failure.
+- `validate.py` reads `dist/*.html`; run `npm run build` first.
+- `validate.py` exits 1 only for broken local links; missing alt text in `dist/cs-*.html` is a warning.
+- Local preview must use Astro/dev server, not `file://`; fetch-based case studies and widgets break from files.
 
-## Modern Web Guidance (mandatory)
-One-time setup (if the skill is not present): `npx modern-web-guidance@latest install`  
-Update occasionally: `npx modern-web-guidance@latest update`
+## Runtime wiring
+- `BaseLayout.astro` owns SEO, structured data, nav, mobile menu, CV picker, scroll-to-top, theme bootstrap, view-transition setup.
+- Theme bootstrap is inline in `<head>` before paint; do not move it into deferred/client code.
+- `CvPicker.astro` markup must stay compatible with its Svelte/client handlers: `#cvPicker` and `#cvPickerBackdrop`.
+- Case-study cards in `src/pages/index.astro` lazy-load fragments from `public/cs-*.html`; overlay ID and filename must match (`cs-foo` → `cs-foo.html`).
 
-Before any CSS/HTML/JS change: search → retrieve → verify Baseline 2025 support → implement → add progressive-enhancement fallbacks.
+## Data/content
+- Fun page data lives in `src/data/travel.ts`, `music.ts`, `games.ts`, `location.ts`; UI is `src/islands/FunManager.svelte`.
+- Travel photos are inferred from `photoCount`; files must exist as `/Assets/Images/Travel/<folder>/<N>.webp`, starting at `1`.
+- When changing LQA/certification lists, keep visible counts in sync; `/add-lqa-project` and `/add-certification` document exact rules.
+
+## Build/deploy quirks
+- `astro.config.mjs` sets `base` to `/portfolio/` only when `GITHUB_ACTIONS=true`; local/Netlify base is `/`.
+- GitHub Pages workflow runs on branch `test`, Node `24`, `npm ci`, `npm run build`, deploys `dist`.
+- `_headers` and `htaccess` both control cache/security headers; update both when asset naming or cache policy changes.
+
+## Markdown/local docs
+- `.gitignore` ignores all `*.md` except `README.md`; `AGENTS.md`, `OPTIMIZATIONS.md`, and command docs are local-only.
+- `OPTIMIZATIONS.md` is the local audit source; consult before optimization work.
+
+## Modern Web Guidance
+- Before any HTML/CSS/client JS change:
 ```sh
-npx modern-web-guidance@latest search "<topic>"      # e.g. "dialog element", "container queries"
+npx modern-web-guidance@latest search "<topic>"
 npx modern-web-guidance@latest retrieve "<guide-id>"
 ```
-Prefer modern CSS/HTML APIs over JS. Document guide IDs in commits: `MWG-2025/<topic>`.  
-The full optimization audit (item IDs + DONE/TODO/PARTIAL status) lives in `OPTIMIZATIONS.md` (local, gitignored) — consult it before optimization work.
+- Verify Baseline 2025, prefer native CSS/HTML over JS, include progressive fallbacks, record guide IDs as `MWG-2025/<topic>`.
 
-## Runtime wiring (easy to break)
-- `theme.js` loads first in `<head>` (blocking) — applies `data-theme` pre-paint. Do not move or defer it.
-- `transitions.js` (defer) intercepts internal `<a>` links for page transitions — do not break its internal-link assumptions.
-- `cv-picker.js` requires `#cvPicker` + `#cvPickerBackdrop` in page markup; it no-ops if either is missing.
-- Case studies: register in `index.html` via `CaseStudy.register('card-id', 'cs-id')`. The engine `fetch()`es `cs-id.html` (filename must match the overlay ID exactly) and injects it into a native `<dialog>`.
-
-## Data files (fun.html)
-- `data-travel.js` → `window.travelConfig`, `data-music.js` → `window.musicData`, `data-games.js` → `window.gamesData`. Each file must end with `window.X = X`.
-- Load order before `fun.js`: `data-travel.js` → `data-music.js` → `data-games.js` → `fun.js`.
-- Travel photos are inferred from `photoCount` only — files must exist as `Assets/Images/Travel/<folder>/<N>.webp`, starting at `1`.
-- `location-config.js` → `window.myLocation`; the weather widget falls back to Madrid if undefined.
-
-## Slash commands (`.opencode/commands/`)
-- `/add-certification`, `/add-lqa-project` — edit `career.html` / `index.html` and keep counts in sync (see the command files for exact HTML + count rules).
-- `/clavix-*` — requirements → PRD → plan → implement workflow.
-
-## Agent files
-- `.opencode/agents/plan.md` (read-only planning) and `.opencode/agents/build.md` (implementation) hold agent-specific detail and repeat the MWG workflow. OpenCode auto-selects via the Task tool; invoke manually with `@plan` / `@build`.
+## OpenCode files
+- `.opencode/agents/plan.md` is read-only planning; `.opencode/agents/build.md` is implementation.
+- `.opencode/commands/` contains project workflows (`/clavix-*`, `/add-lqa-project`, `/add-certification`).

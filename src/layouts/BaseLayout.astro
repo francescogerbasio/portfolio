@@ -275,16 +275,10 @@ const breadcrumbLd = {
           const navType = event.activation?.entry?.navigationType;
           sessionStorage.setItem('vt-is-back', navType === 'traverse' ? '1' : '0');
         });
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', animateIn);
-        } else {
-          requestAnimationFrame(() => requestAnimationFrame(animateIn));
-        }
         window.addEventListener('pageshow', function (e) {
           if (e.persisted) {
             const el = getTarget();
             if (el) el.classList.remove('pt-leave');
-            animateIn();
           }
         });
         return;

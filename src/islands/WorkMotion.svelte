@@ -19,44 +19,57 @@
     gsap.registerPlugin(ScrollTrigger);
 
     const lenis = window.lenis;
-    const heroTitle = document.querySelector('.hero-title');
-    const heroSubtitle = document.querySelector('.hero-subtitle');
-    const heroInfo = document.querySelector('.hero-info');
-    const sidebar = document.querySelector('.sidebar');
+    const hero = document.querySelector<HTMLElement>('.hero');
+    const heroContent = document.querySelector<HTMLElement>('.hero-content');
+    const heroSubtitle = document.querySelector<HTMLElement>('.hero-subtitle');
+    const sidebar = document.querySelector<HTMLElement>('.sidebar');
     const sections = gsap.utils.toArray<HTMLElement>('.work-section');
     const cards = gsap.utils.toArray<HTMLElement>('.project-card');
     const magneticTargets = gsap.utils.toArray<HTMLElement>('.theme-toggle, .accordion-trigger, .project-list-item.clickable, .nda-btn, .cs-proto-link, .cs-next-arrow, .cs-next-title');
     const socialIcons = gsap.utils.toArray<HTMLElement>('.social-icon');
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const wideEnough = window.innerWidth >= 900;
+    const enableParallax = finePointer && wideEnough && Boolean(hero);
     const onLenisScroll = () => ScrollTrigger.update();
 
-    gsap.defaults({ ease: 'power2.out', duration: 0.9 });
+    gsap.defaults({ ease: 'power3.out' });
 
     if (lenis?.on) lenis.on('scroll', onLenisScroll);
 
     const ctx = gsap.context(() => {
-      const heroGroup = [heroTitle, heroSubtitle, heroInfo, sidebar].filter(Boolean);
-      if (heroGroup.length) {
-        gsap.fromTo(heroGroup,
-          { opacity: 0, y: 36 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: 'power2.out'
-          }
+      if (hero) {
+        gsap.fromTo(hero,
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.72, ease: 'power3.out' }
         );
       }
 
+      if (enableParallax && hero) {
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: hero,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true
+          }
+        })
+          .to(heroContent ?? hero, { y: -18, ease: 'none' }, 0)
+          .to(sidebar ?? hero, { y: -10, ease: 'none' }, 0)
+          .to(heroSubtitle ?? hero, { y: -26, ease: 'none' }, 0);
+      }
+
       sections.forEach((section) => {
-        const title = section.querySelector('.section-title');
+        const isFirst = section === sections[0];
+        const title = section.querySelector<HTMLElement>('.section-title');
         const sectionCards = gsap.utils.toArray<HTMLElement>('.project-card', section);
         if (title) {
           gsap.fromTo(title,
-            { opacity: 0, y: 32 },
+            { autoAlpha: 0, y: isFirst ? 22 : 32 },
             {
-              opacity: 1,
+              autoAlpha: 1,
               y: 0,
+              duration: isFirst ? 0.55 : 0.55,
+              delay: isFirst ? 0.6 : 0,
               scrollTrigger: {
                 trigger: section,
                 start: 'top bottom-=18%'
@@ -66,11 +79,13 @@
         }
         if (sectionCards.length) {
           gsap.fromTo(sectionCards,
-            { opacity: 0, y: 44 },
+            { autoAlpha: 0, y: isFirst ? 56 : 44 },
             {
-              opacity: 1,
+              autoAlpha: 1,
               y: 0,
-              stagger: 0.12,
+              stagger: isFirst ? { each: 0.22, from: 'start' } : 0.12,
+              duration: isFirst ? 0.78 : 0.55,
+              delay: isFirst ? 0.7 : 0,
               scrollTrigger: {
                 trigger: section,
                 start: 'top bottom-=10%'
@@ -185,7 +200,6 @@
       });
       ctx.revert();
       if (lenis?.off) lenis.off('scroll', onLenisScroll);
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   });
 </script>

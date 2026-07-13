@@ -42,10 +42,9 @@ dialog.cs-overlay {
   isolation: isolate;
 }
 
-/* Native dialog backdrop */
+/* Native dialog backdrop — blur only after panel finishes moving */
 dialog.cs-overlay::backdrop {
   background: rgba(8,8,8,0);
-  backdrop-filter: blur(0px) saturate(100%);
   transition:
     display         var(--cs-dur-slow) allow-discrete,
     overlay         var(--cs-dur-slow) allow-discrete,
@@ -54,13 +53,26 @@ dialog.cs-overlay::backdrop {
 }
 
 dialog.cs-overlay[open]::backdrop {
-  background: rgba(8,8,8,.72);
-  backdrop-filter: blur(12px) saturate(140%);
+  background: rgba(8,8,8,.7);
+  backdrop-filter: blur(10px) saturate(140%);
+  transition:
+    display         var(--cs-dur-slow) allow-discrete,
+    overlay         var(--cs-dur-slow) allow-discrete,
+    background      var(--cs-dur-med) var(--cs-ease-out) var(--cs-dur-med),
+    backdrop-filter var(--cs-dur-med) var(--cs-ease-out) var(--cs-dur-med);
 
   @starting-style {
     background: rgba(8,8,8,0);
     backdrop-filter: blur(0px) saturate(100%);
   }
+}
+
+dialog.cs-overlay.cs-closing::backdrop {
+  background: rgba(8,8,8,0);
+  backdrop-filter: blur(0px) saturate(100%);
+  transition:
+    background      var(--cs-dur-med) var(--cs-ease-out),
+    backdrop-filter var(--cs-dur-med) var(--cs-ease-out);
 }
 
 /* ── Panel — iOS modal sheet ── */
@@ -98,6 +110,21 @@ dialog.cs-overlay[open] .cs-panel {
 }
 
 /* Exit uses the base transition in reverse — no extra class needed */
+/* Apply closing state explicitly so transitions reverse predictably */
+dialog.cs-overlay.cs-closing .cs-panel {
+  transform: translateY(100%);
+  border-radius: 20px 20px 0 0;
+  pointer-events: none;
+}
+
+dialog.cs-overlay.cs-closing .cs-close-btn {
+  opacity: 0;
+  transform: scale(.6) rotate(90deg);
+  pointer-events: none;
+  transition:
+    opacity   var(--cs-dur-fast) ease,
+    transform var(--cs-dur-fast) ease;
+}
 
 .cs-progress {
   position: absolute;

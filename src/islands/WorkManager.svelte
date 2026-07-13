@@ -324,6 +324,10 @@
 
     const ndaCards = Array.from(document.querySelectorAll('.project-card.nda-protected')) as HTMLElement[];
     const ndaItems = Array.from(document.querySelectorAll('.project-list-item.nda-protected-item')) as HTMLElement[];
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      ndaCards.forEach(card => unlockProject(card));
+      return;
+    }
     const today = new Date();
 
     const cardData = ndaCards
@@ -352,7 +356,7 @@
     itemData.forEach(({ item, texts, widths, skip }) => {
       if (skip) { item.classList.add('unlocked'); return; }
       texts.forEach((text, i) => {
-        const numParticles = Math.max(Math.floor(widths[i] / 8), 15);
+        const numParticles = Math.max(Math.floor(widths[i] / 12), 12);
         const container = document.createElement('div');
         container.className = 'particle-container';
         container.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;';
@@ -373,18 +377,32 @@
   }
 
   function initCardGlow() {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    let frame = 0;
+    let lastX = 0;
+    let lastY = 0;
+    let current: HTMLElement | null = null;
+    const flush = () => {
+      frame = 0;
+      if (!current) return;
+      const rect = current.getBoundingClientRect();
+      current.style.setProperty('--glow-x', `${lastX - rect.left}px`);
+      current.style.setProperty('--glow-y', `${lastY - rect.top}px`);
+    };
     document.body.addEventListener('pointermove', (e) => {
-      const target = (e.target as Element).closest('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
-      if (!target) return;
-      const rect = target.getBoundingClientRect();
-      (target as HTMLElement).style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
-      (target as HTMLElement).style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
+      const t = (e.target as Element).closest('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable') as HTMLElement | null;
+      current = t;
+      if (!t) return;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      if (!frame) frame = requestAnimationFrame(flush);
     });
     document.body.addEventListener('pointerleave', (e) => {
-      const target = (e.target as Element).closest('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable');
-      if (!target) return;
-      (target as HTMLElement).style.removeProperty('--glow-x');
-      (target as HTMLElement).style.removeProperty('--glow-y');
+      const t = (e.target as Element).closest('.project-card.clickable-card, .accordion-trigger, .project-list-item.clickable') as HTMLElement | null;
+      if (!t) return;
+      t.style.removeProperty('--glow-x');
+      t.style.removeProperty('--glow-y');
+      current = null;
     });
   }
 
@@ -444,22 +462,12 @@
       panel.querySelectorAll('.cs-section').forEach(s => s.classList.remove('cs-visible'));
       panel.scrollTop = 0;
       (panel as HTMLElement).style.cssText = '';
-      const open = () => {
-        window.lenis?.stop?.();
-        dialog.showModal();
-        document.body.style.overflow = 'hidden';
-        document.body.classList.add('cs-is-open');
-        if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
-        setTimeout(() => setupReveal(study), 600);
-      };
-      if (document.startViewTransition) {
-        document.documentElement.setAttribute('data-vt-case-study', '');
-        document.startViewTransition(open).finished.finally(() => {
-          document.documentElement.removeAttribute('data-vt-case-study');
-        });
-        return;
-      }
-      open();
+      window.lenis?.stop?.();
+      dialog.showModal();
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('cs-is-open');
+      if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
+      setTimeout(() => setupReveal(study), 600);
     }
 
     function animateClose(study: typeof studyMap[string]) {
@@ -469,12 +477,15 @@
       study.motionCleanup?.();
       study.motionCleanup = undefined;
       panel.querySelectorAll('.cs-section').forEach(s => s.classList.remove('cs-visible'));
+      dialog.classList.add('cs-closing');
       let handled = false;
       const done = (e?: TransitionEvent) => {
         if (handled) return;
         if (e && e.target !== panel) return;
         handled = true;
         panel.removeEventListener('transitionend', done);
+        if (dialog.open) dialog.close();
+        dialog.classList.remove('cs-closing');
         study._closing = false;
         panel.scrollTop = 0;
         document.body.style.overflow = '';
@@ -484,15 +495,6 @@
       };
       panel.addEventListener('transitionend', done);
       setTimeout(done, 700);
-      const close = () => dialog.close();
-      if (document.startViewTransition) {
-        document.documentElement.setAttribute('data-vt-case-study', '');
-        document.startViewTransition(close).finished.finally(() => {
-          document.documentElement.removeAttribute('data-vt-case-study');
-        });
-        return;
-      }
-      close();
     }
 
     function setupReveal(study: typeof studyMap[string]) {

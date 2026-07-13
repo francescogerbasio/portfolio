@@ -508,11 +508,15 @@ p, blockquote, li {
     padding: 14px 28px;
     border-radius: 50px;
     border: 1px solid transparent;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                background-color 0.25s ease, color 0.15s ease;
+                background-color 0.25s ease, color 0.15s ease, backdrop-filter 0.4s ease,
+                -webkit-backdrop-filter 0.4s ease;
 }
 
-/* Glass layer - animates independently from nav text */
+/* Glass layer - starts invisible, grows into capsule on scroll */
 .navigation::before {
     content: '';
     position: absolute;
@@ -521,26 +525,46 @@ p, blockquote, li {
     background: linear-gradient(180deg, rgba(253, 245, 246, 0.84) 0%, rgba(253, 245, 246, 0.68) 100%);
     backdrop-filter: blur(28px) saturate(140%);
     -webkit-backdrop-filter: blur(28px) saturate(140%);
-    box-shadow: 0 14px 36px rgba(15, 15, 15, 0.08);
+    box-shadow: 0 0 0 rgba(15, 15, 15, 0);
     opacity: 0;
-    transform: scaleX(0.92);
+    transform: scaleX(0.72) scaleY(0.76);
     transform-origin: center;
     z-index: -1;
     pointer-events: none;
-    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1) 0.08s;
+    transition: opacity 260ms ease,
+                transform 620ms cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 520ms ease 90ms;
+}
+
+.navigation.scrolled {
+    background: rgba(253, 245, 246, 0.18);
+    -webkit-backdrop-filter: blur(8px) saturate(115%);
+    backdrop-filter: blur(8px) saturate(115%);
+    border-color: light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08));
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .navigation.scrolled {
+    background: rgba(37, 37, 37, 0.18);
 }
 
 .navigation.scrolled::before {
     opacity: 1;
-    transform: scaleX(1);
+    transform: scaleX(1) scaleY(1);
+    box-shadow: 0 14px 36px rgba(15, 15, 15, 0.08);
 }
 
-/* Frosted glass effect when scrolled */
-.navigation.scrolled {
-    border-color: light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08));
-    transform: translateY(-2px);
+@media (prefers-reduced-motion: no-preference) {
+    .navigation {
+        animation: nav-descend 0.6s cubic-bezier(0.34, 1.18, 0.64, 1) both;
+    }
+}
+
+@keyframes nav-descend {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.96);
+    }
 }
 
 .nav-link {
@@ -1088,6 +1112,11 @@ dialog.nda-modal:open::backdrop {
    OTHER PROJECTS ACCORDION
    =================================== */
 
+.other-projects-accordion {
+    width: 100%;
+}
+
+.other-projects-accordion > summary,
 .accordion-trigger {
     width: 100%;
     display: flex;
@@ -1104,13 +1133,19 @@ dialog.nda-modal:open::backdrop {
     -webkit-tap-highlight-color: transparent;
     transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
     list-style: none;
+    list-style-type: none;
     -webkit-appearance: none;
     appearance: none;
     will-change: transform;
 }
 
+.other-projects-accordion > summary::-webkit-details-marker,
 .accordion-trigger::-webkit-details-marker { display: none; }
-.accordion-trigger::marker { display: none; }
+.other-projects-accordion > summary::marker,
+.accordion-trigger::marker {
+    content: '';
+    display: none;
+}
 
 .accordion-trigger:hover {
     transform: translateY(-2px);
@@ -1149,6 +1184,9 @@ dialog.nda-modal:open::backdrop {
     align-items: center;
     justify-content: center;
     font-size: 0;
+    line-height: 0;
+    color: transparent;
+    overflow: hidden;
     transition:
         background  0.2s ease,
         transform   0.4s cubic-bezier(0.34, 1.20, 0.64, 1);
@@ -1177,6 +1215,7 @@ details[open] summary .accordion-icon::after {
 }
 
 .accordion-content {
+    width: 100%;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1188,6 +1227,7 @@ details[open] .accordion-content {
 }
 
 .projects-list {
+    width: 100%;
     display: flex;
     flex-direction: column;
     padding: 6px 0 18px;
@@ -1432,19 +1472,6 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
 .work-section {
     margin-bottom: 100px;
     contain: layout style;
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 960px;
-}
-
-.work-section:first-of-type {
-    content-visibility: visible;
-    contain-intrinsic-size: auto;
-}
-
-@supports not (content-visibility: auto) {
-    .work-section {
-        contain-intrinsic-size: auto;
-    }
 }
 
 .section-title {
@@ -1508,7 +1535,6 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
     flex-direction: column;
     gap: 28px;
     position: relative;
-    animation: fadeIn 0.6s ease-in;
     transform-style: preserve-3d;
     will-change: transform, opacity;
 }
@@ -3820,34 +3846,34 @@ html {
 
 /* ── Root transition: shared-axis slide ── */
 ::view-transition-old(root) {
-    animation: 250ms cubic-bezier(0.4, 0, 1, 1) both vt-slide-out-left;
+    animation: 180ms cubic-bezier(0.4, 0, 1, 1) both vt-slide-out-left;
 }
 ::view-transition-new(root) {
-    animation: 350ms cubic-bezier(0, 0, 0.2, 1) 80ms both vt-slide-in-right;
+    animation: 260ms cubic-bezier(0, 0, 0.2, 1) both vt-slide-in-right;
 }
 
 /* ── Backward transition ── */
 html[data-vt-direction="back"]::view-transition-old(root) {
-    animation: 250ms cubic-bezier(0.4, 0, 1, 1) both vt-slide-out-right;
+    animation: 180ms cubic-bezier(0.4, 0, 1, 1) both vt-slide-out-right;
 }
 html[data-vt-direction="back"]::view-transition-new(root) {
-    animation: 350ms cubic-bezier(0, 0, 0.2, 1) 80ms both vt-slide-in-left;
+    animation: 260ms cubic-bezier(0, 0, 0.2, 1) both vt-slide-in-left;
 }
 
 @keyframes vt-slide-out-left {
     from { opacity: 1; transform: translateX(0); }
-    to   { opacity: 0; transform: translateX(-60px); }
+    to   { opacity: 0; transform: translateX(-32px); }
 }
 @keyframes vt-slide-in-right {
-    from { opacity: 0; transform: translateX(60px); }
+    from { opacity: 0; transform: translateX(32px); }
     to   { opacity: 1; transform: translateX(0); }
 }
 @keyframes vt-slide-out-right {
     from { opacity: 1; transform: translateX(0); }
-    to   { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 0; transform: translateX(32px); }
 }
 @keyframes vt-slide-in-left {
-    from { opacity: 0; transform: translateX(-60px); }
+    from { opacity: 0; transform: translateX(-32px); }
     to   { opacity: 1; transform: translateX(0); }
 }
 
@@ -3910,21 +3936,11 @@ html[data-vt-theme]::view-transition-old(root) {
 }
 
 html[data-vt-case-study]::view-transition-old(root) {
-    animation: 180ms ease both vt-case-study-out;
+    animation: none;
 }
 
 html[data-vt-case-study]::view-transition-new(root) {
-    animation: 320ms cubic-bezier(0.22, 1, 0.36, 1) both vt-case-study-in;
-}
-
-@keyframes vt-case-study-out {
-    from { opacity: 1; filter: blur(0); }
-    to { opacity: 0.92; filter: blur(4px); }
-}
-
-@keyframes vt-case-study-in {
-    from { opacity: 0; transform: scale(0.985); }
-    to { opacity: 1; transform: scale(1); }
+    animation: none;
 }
 
 /* ── Fallback: manual JS transitions for non-VT browsers ── */
@@ -3941,6 +3957,7 @@ main.pt-enter,
 
 main.pt-leave,
 .container.pt-leave {
+    will-change: transform, opacity;
     animation: pt-float-out 260ms cubic-bezier(0.4, 0, 1, 1) both;
     pointer-events: none;
 }
@@ -3953,9 +3970,11 @@ main.pt-leave,
 @media (prefers-reduced-motion: reduce) {
     main.pt-enter, .container.pt-enter {
         animation: pt-fade-in 250ms ease both;
+        will-change: opacity;
     }
     main.pt-leave, .container.pt-leave {
         animation: pt-fade-out 200ms ease both;
+        will-change: opacity;
     }
     @keyframes pt-fade-in  { from { opacity: 0; } to { opacity: 1; } }
     @keyframes pt-fade-out { from { opacity: 1; } to { opacity: 0; } }
