@@ -156,12 +156,19 @@ const breadcrumbLd = {
           location.reload();
           return;
         }
+
+        const toggle = document.getElementById('themeToggle') || document.getElementById('themeToggleMobile');
+        const rect = toggle ? toggle.getBoundingClientRect() : null;
+        html.style.setProperty('--theme-x', rect ? `${rect.left + rect.width / 2}px` : '100vw');
+        html.style.setProperty('--theme-y', rect ? `${rect.top + rect.height / 2}px` : '0px');
         html.setAttribute('data-vt-theme', '');
+
         if (!document.startViewTransition) {
           applyTheme(next);
           html.removeAttribute('data-vt-theme');
           return;
         }
+
         const t = document.startViewTransition(() => {
           applyThemeCore(next);
           applyThemeChrome(next);

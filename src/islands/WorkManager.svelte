@@ -101,6 +101,9 @@
     const cityMobileElement = document.getElementById('locationCityMobile');
     if (cityMobileElement) cityMobileElement.textContent = location.city;
 
+    const cached = readCachedWeather();
+    if (cached) renderWeather(cached);
+
     const schedule = window.requestIdleCallback
       ? (cb: IdleRequestCallback) => requestIdleCallback(cb, { timeout: 4000 })
       : (cb: () => void) => setTimeout(cb, 1000);
@@ -108,14 +111,7 @@
     schedule(async () => {
       const CACHE_KEY = 'weather_cache';
       const CACHE_TTL = 30 * 60 * 1000;
-      let weatherData: any = null;
-      try {
-        const cached = sessionStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const { data, ts } = JSON.parse(cached);
-          if (Date.now() - ts < CACHE_TTL) weatherData = data;
-        }
-      } catch (_) {}
+      let weatherData: any = readCachedWeather(CACHE_TTL);
 
       if (!weatherData) {
         try {
@@ -130,21 +126,34 @@
         }
       }
 
-      if (weatherData) {
-        const temp = Math.round(weatherData.temperature);
-        const weatherInfo = getWeatherInfo(weatherData.weathercode);
-        const tempEl = document.getElementById('weatherTemp');
-        if (tempEl) tempEl.textContent = `${temp}°C`;
-        const iconEl = document.getElementById('weatherIcon');
-        if (iconEl) iconEl.textContent = weatherInfo.icon;
-        const descEl = document.getElementById('weatherDesc');
-        if (descEl) descEl.textContent = weatherInfo.desc;
-        const tempMobileEl = document.getElementById('weatherTempMobile');
-        if (tempMobileEl) tempMobileEl.textContent = `${temp}°`;
-        const iconMobileEl = document.getElementById('weatherIconMobile');
-        if (iconMobileEl) iconMobileEl.textContent = weatherInfo.icon;
-      }
+      if (weatherData) renderWeather(weatherData);
     });
+  }
+
+  function readCachedWeather(ttl = 30 * 60 * 1000): any | null {
+    try {
+      const cached = sessionStorage.getItem('weather_cache');
+      if (!cached) return null;
+      const { data, ts } = JSON.parse(cached);
+      return Date.now() - ts < ttl ? data : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function renderWeather(weatherData: any) {
+    const temp = Math.round(weatherData.temperature);
+    const weatherInfo = getWeatherInfo(weatherData.weathercode);
+    const tempEl = document.getElementById('weatherTemp');
+    if (tempEl) tempEl.textContent = `${temp}°C`;
+    const iconEl = document.getElementById('weatherIcon');
+    if (iconEl) iconEl.textContent = weatherInfo.icon;
+    const descEl = document.getElementById('weatherDesc');
+    if (descEl) descEl.textContent = weatherInfo.desc;
+    const tempMobileEl = document.getElementById('weatherTempMobile');
+    if (tempMobileEl) tempMobileEl.textContent = `${temp}°`;
+    const iconMobileEl = document.getElementById('weatherIconMobile');
+    if (iconMobileEl) iconMobileEl.textContent = weatherInfo.icon;
   }
 
   function getWeatherInfo(code: number): { icon: string; desc: string } {
@@ -448,11 +457,32 @@
         tmp.innerHTML = text;
         while (tmp.firstChild) document.body.appendChild(tmp.firstChild);
         const entry = registry[overlayId];
-        if (entry) _register(entry.cardId, overlayId);
+        if (entry) {
+          _register(entry.cardId, overlayId);
+          await decodeOverlayImages(document.getElementById(overlayId) as HTMLDialogElement);
+        }
       } catch (err) {
         console.error(`Failed to load ${overlayId}.html`, err);
         loaded[overlayId] = false;
       }
+    }
+
+    async function decodeOverlayImages(dialog: HTMLDialogElement | null) {
+      if (!dialog) return;
+      const imgs = dialog.querySelectorAll('img');
+      await Promise.allSettled(
+        Array.from(imgs).map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve) => {
+            if ('decode' in img && typeof (img as any).decode === 'function') {
+              (img as any).decode().then(resolve, resolve);
+            } else {
+              img.addEventListener('load', resolve, { once: true });
+              img.addEventListener('error', resolve, { once: true });
+            }
+          });
+        })
+      );
     }
 
     function openOverlay(overlayId: string) {
@@ -466,8 +496,8 @@
       dialog.showModal();
       document.body.style.overflow = 'hidden';
       document.body.classList.add('cs-is-open');
-      if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
-      setTimeout(() => setupReveal(study), 600);
+      if (closeBtn)       if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
+      requestAnimationFrame(() => setupReveal(study));
     }
 
     function animateClose(study: typeof studyMap[string]) {
@@ -502,117 +532,23 @@
       study.motionCleanup?.();
       panel.querySelectorAll('.cs-section').forEach(s => s.classList.add('cs-visible'));
       const progress = ensureProgress(dialog, panel);
-      const sections = gsap.utils.toArray<HTMLElement>('.cs-section', panel);
-      const heroPhones = gsap.utils.toArray<HTMLElement>('.cs-phone', panel);
-      const showcasePhones = gsap.utils.toArray<HTMLElement>('.cs-showcase-phone', panel);
-      const stats = gsap.utils.toArray<HTMLElement>('.cs-stat', panel);
-      const insights = gsap.utils.toArray<HTMLElement>('.cs-insight', panel);
-      const steps = gsap.utils.toArray<HTMLElement>('.cs-step', panel);
-      const results = panel.querySelector('.cs-results');
-      const proto = panel.querySelector('.cs-proto');
-      const bottomNav = panel.querySelector('.cs-bottom-nav');
+      let progressRaf = 0;
       const onPanelScroll = () => {
-        const max = panel.scrollHeight - panel.clientHeight;
-        const ratio = max > 0 ? Math.min(1, Math.max(0, panel.scrollTop / max)) : 0;
-        progress.style.setProperty('--cs-progress', String(ratio));
+        if (progressRaf) return;
+        progressRaf = requestAnimationFrame(() => {
+          progressRaf = 0;
+          const max = panel.scrollHeight - panel.clientHeight;
+          const ratio = max > 0 ? Math.min(1, Math.max(0, panel.scrollTop / max)) : 0;
+          progress.style.setProperty('--cs-progress', String(ratio));
+        });
       };
       panel.addEventListener('scroll', onPanelScroll, { passive: true });
       onPanelScroll();
 
-      const ctx = gsap.context(() => {
-        if (heroPhones.length) {
-          gsap.to(heroPhones, {
-            yPercent: (_, target) => target === heroPhones[1] ? -12 : -20,
-            rotate: (index) => index === 1 ? 0 : index === 0 ? -3 : 3,
-            ease: 'none',
-            stagger: 0.04,
-            scrollTrigger: {
-              trigger: panel.querySelector('.cs-hero'),
-              scroller: panel,
-              start: 'top top',
-              end: 'bottom top',
-              scrub: true
-            }
-          });
-        }
-
-        const revealGroups = [stats, insights, steps, showcasePhones].filter(group => group.length);
-        revealGroups.forEach((group) => {
-          gsap.fromTo(group,
-            { opacity: 0, y: 34 },
-            {
-              opacity: 1,
-              y: 0,
-              stagger: 0.08,
-              duration: 0.8,
-              scrollTrigger: {
-                trigger: group[0],
-                scroller: panel,
-                start: 'top bottom-=12%'
-              }
-            }
-          );
-        });
-
-        sections.forEach((section) => {
-          const heading = section.querySelector('.cs-section-heading');
-          const body = section.querySelectorAll('.cs-body, .cs-step, .cs-insight, .cs-showcase-phone');
-          if (heading) {
-            gsap.fromTo(heading,
-              { opacity: 0, y: 28 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                scrollTrigger: {
-                  trigger: section,
-                  scroller: panel,
-                  start: 'top bottom-=18%'
-                }
-              }
-            );
-          }
-          if (body.length) {
-            gsap.fromTo(body,
-              { opacity: 0, y: 26 },
-              {
-                opacity: 1,
-                y: 0,
-                stagger: 0.07,
-                duration: 0.75,
-                scrollTrigger: {
-                  trigger: section,
-                  scroller: panel,
-                  start: 'top bottom-=10%'
-                }
-              }
-            );
-          }
-        });
-
-        [results, proto, bottomNav].forEach((block) => {
-          if (!block) return;
-          gsap.fromTo(block,
-            { opacity: 0, y: 40 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.85,
-              scrollTrigger: {
-                trigger: block,
-                scroller: panel,
-                start: 'top bottom-=10%'
-              }
-            }
-          );
-        });
-      }, panel);
-
-      ScrollTrigger.refresh();
       study.motionCleanup = () => {
         panel.removeEventListener('scroll', onPanelScroll);
+        if (progressRaf) cancelAnimationFrame(progressRaf);
         progress.remove();
-        ctx.revert();
       };
     }
 

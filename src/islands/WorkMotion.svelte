@@ -25,7 +25,7 @@
     const sidebar = document.querySelector<HTMLElement>('.sidebar');
     const sections = gsap.utils.toArray<HTMLElement>('.work-section');
     const cards = gsap.utils.toArray<HTMLElement>('.project-card');
-    const magneticTargets = gsap.utils.toArray<HTMLElement>('.theme-toggle, .accordion-trigger, .project-list-item.clickable, .nda-btn, .cs-proto-link, .cs-next-arrow, .cs-next-title');
+    const magneticTargets = gsap.utils.toArray<HTMLElement>('.accordion-trigger, .project-list-item.clickable, .nda-btn, .cs-proto-link, .cs-next-arrow, .cs-next-title');
     const socialIcons = gsap.utils.toArray<HTMLElement>('.social-icon');
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const wideEnough = window.innerWidth >= 900;

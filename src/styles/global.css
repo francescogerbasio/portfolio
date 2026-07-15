@@ -330,6 +330,7 @@ dialog.nda-modal::backdrop {
     -webkit-tap-highlight-color: transparent;
     flex-shrink: 0;
     will-change: transform;
+    --theme-icon-x: calc(100% - 10px);
 }
 .theme-toggle::before {
     content: '';
@@ -339,23 +340,108 @@ dialog.nda-modal::backdrop {
     transform: translateY(-50%);
     height: 28px;
     width: 1px;
-    background: light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.12));
+    background: rgba(0, 0, 0, 0.16);
     transition: none !important;
+}
+[data-theme="dark"] .theme-toggle::before {
+    background: rgba(255, 255, 255, 0.14);
+}
+.theme-toggle::after {
+    content: '';
+    position: absolute;
+    left: var(--theme-icon-x);
+    top: 50%;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 214, 10, 0.22) 0%, rgba(255, 214, 10, 0) 70%);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+    pointer-events: none;
+}
+[data-theme="dark"] .theme-toggle::after {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
 }
 .theme-toggle:hover { opacity: 1; }
 .theme-toggle svg {
-    transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1);
+    transform-origin: center;
+    transform-box: fill-box;
 }
-.theme-toggle:hover svg { transform: scale(1.2); }
 .theme-toggle .icon-sun,
 .theme-toggle .icon-moon {
     position: absolute;
-    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34,1.4,0.64,1);
+    left: var(--theme-icon-x);
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    transition: opacity 0.35s ease, transform 0.55s cubic-bezier(0.34, 1.4, 0.64, 1), filter 0.35s ease;
 }
-.theme-toggle .icon-sun  { opacity: 0; transform: scale(0.4) rotate(90deg); }
-.theme-toggle .icon-moon { opacity: 1; transform: scale(1) rotate(0deg); }
-[data-theme="dark"] .theme-toggle .icon-sun  { opacity: 1; transform: scale(1) rotate(0deg); }
-[data-theme="dark"] .theme-toggle .icon-moon { opacity: 0; transform: scale(0.4) rotate(-90deg); }
+.theme-toggle .icon-sun {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4) rotate(90deg);
+    filter: drop-shadow(0 0 0 rgba(255, 214, 10, 0));
+}
+.theme-toggle .icon-moon {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+}
+[data-theme="dark"] .theme-toggle .icon-sun {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 6px rgba(255, 214, 10, 0.35));
+}
+[data-theme="dark"] .theme-toggle .icon-moon {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4) rotate(-90deg);
+    filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+}
+@supports (rotate: 0deg) {
+    .theme-toggle .icon-sun,
+    .theme-toggle .icon-moon {
+        transform: translate(-50%, -50%);
+        transition: opacity 0.35s ease, rotate 0.55s cubic-bezier(0.34, 1.4, 0.64, 1), scale 0.55s cubic-bezier(0.34, 1.4, 0.64, 1), filter 0.35s ease;
+        rotate: 0deg;
+        scale: 1;
+    }
+    .theme-toggle .icon-sun {
+        opacity: 0;
+        rotate: 90deg;
+        scale: 0.4;
+    }
+    .theme-toggle .icon-moon {
+        opacity: 1;
+        rotate: 0deg;
+        scale: 1;
+    }
+    [data-theme="dark"] .theme-toggle .icon-sun {
+        opacity: 1;
+        rotate: 0deg;
+        scale: 1;
+    }
+    [data-theme="dark"] .theme-toggle .icon-moon {
+        opacity: 0;
+        rotate: -90deg;
+        scale: 0.4;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .theme-toggle .icon-sun,
+    .theme-toggle .icon-moon {
+        transition: none;
+        transform: translate(-50%, -50%);
+        rotate: 0deg;
+        scale: 1;
+        filter: none;
+    }
+    .theme-toggle::after {
+        transition: none;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+    }
+}
 
 /* Smooth theme transitions scoped to elements that actually change with the theme */
 body, h1, h2, h3, h4, h5, h6, p, a, span, li, label, button, input, textarea,
@@ -862,12 +948,21 @@ button.nav-link {
 
 .weather-icon {
     font-size: 20px;
+    line-height: 1;
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.4em;
+    block-size: 1.4em;
+    flex: 0 0 1.4em;
+    transition: none;
 }
 
 .weather-temp {
     font-size: clamp(14px, 1.2vw, 18px);
     font-weight: 600;
     color: var(--color-text);
+    min-width: 3.5ch;
+    text-align: left;
 }
 
 .weather-desc {
@@ -1595,6 +1690,14 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
 
 .featured-release-card .project-title {
     letter-spacing: -0.03em;
+}
+
+@media (min-width: 769px) {
+    .cs-card .project-title {
+        white-space: nowrap;
+        text-wrap: nowrap;
+        font-size: clamp(22px, 1.65vw, 32px);
+    }
 }
 
 .featured-release-card .project-badge {
@@ -3912,29 +4015,6 @@ html[data-vt-direction="back"]::view-transition-new(root) {
     }
 }
 
-/* ═══════════════════════════════════════════════════════
-   THEME TOGGLE — Polygon-Gradient View Transition
-   Scoped via html[data-vt-theme] to avoid clashing with
-   page-nav slide VT above.
-   MWG-2025/same-document-transitions
-═══════════════════════════════════════════════════════ */
-html[data-vt-theme]::view-transition-group(root) {
-    animation-timing-function: var(--expo-out);
-}
-html[data-vt-theme]::view-transition-new(root) {
-    mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="M0 0H40L0 40V0Z" fill="url(%23g)"/><defs><linearGradient id="g" x1="0" y1="0" x2="20.5" y2="20.5" gradientUnits="userSpaceOnUse"><stop stop-color="white"/><stop offset="0.85" stop-color="white" stop-opacity="0.99"/><stop offset="0.95" stop-color="white" stop-opacity="0"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient></defs></svg>') top left / 0 no-repeat;
-    mask-origin: top left;
-    animation: theme-reveal 1.5s var(--expo-out) both;
-}
-html[data-vt-theme]::view-transition-old(root) {
-    animation: none;
-    z-index: -1;
-    transform-origin: top left;
-}
-@keyframes theme-reveal {
-    to { mask-size: 200vmax; }
-}
-
 html[data-vt-case-study]::view-transition-old(root) {
     animation: none;
 }
@@ -3978,6 +4058,30 @@ main.pt-leave,
     }
     @keyframes pt-fade-in  { from { opacity: 0; } to { opacity: 1; } }
     @keyframes pt-fade-out { from { opacity: 1; } to { opacity: 0; } }
+}
+
+/* ═══════════════════════════════════════════════════════
+   THEME TOGGLE — Circular reveal from button position.
+   Scoped via html[data-vt-theme] to avoid clashing with
+   page-nav slide VT above.
+   ═══════════════════════════════════════════════════════ */
+html[data-vt-theme]::view-transition-old(root),
+html[data-vt-theme]::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+html[data-vt-theme]::view-transition-new(root) {
+    clip-path: circle(0 at var(--theme-x) var(--theme-y));
+    animation: theme-circle-reveal 650ms var(--expo-out) both;
+}
+@keyframes theme-circle-reveal {
+    to { clip-path: circle(150vmax at var(--theme-x) var(--theme-y)); }
+}
+@media (prefers-reduced-motion: reduce) {
+    html[data-vt-theme]::view-transition-new(root),
+    html[data-vt-theme]::view-transition-old(root) {
+        animation: none !important;
+    }
 }
 
 } /* end @layer components */

@@ -458,14 +458,34 @@ dialog.cs-overlay[open] .cs-scroll-cue {
   padding: clamp(72px,10vw,130px) clamp(24px,7vw,100px);
   max-width: 1280px;
   margin: 0 auto;
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity .65s ease, transform .65s var(--cs-ease-spring);
 }
 
+.cs-section,
 .cs-section.cs-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+}
+
+.cs-stat,
+.cs-insight,
+.cs-step,
+.cs-showcase-phone,
+.cs-showcase-tablet,
+.cs-results,
+.cs-proto,
+.cs-bottom-nav,
+.cs-phone,
+.cs-tablet {
+  opacity: 1;
+  transform: none;
+}
+
+.cs-phone img,
+.cs-tablet img,
+.cs-showcase-phone img,
+.cs-showcase-tablet img {
+  opacity: 1;
+  backface-visibility: hidden;
 }
 
 .cs-section-tag {
