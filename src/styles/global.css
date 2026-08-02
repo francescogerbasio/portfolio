@@ -1299,16 +1299,6 @@ dialog.nda-modal:open::backdrop {
     transition: transform 0.3s ease;
 }
 
-details[open] summary .accordion-icon {
-    background: var(--color-text);
-    transform: rotate(0);
-}
-
-details[open] summary .accordion-icon::after {
-    border-color: white;
-    transform: rotate(225deg) translate(-1px, -2px);
-}
-
 .accordion-content {
     width: 100%;
     max-height: 0;
