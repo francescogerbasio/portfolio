@@ -10,6 +10,7 @@
         off?: (event: string, callback: () => void) => void;
         raf: (time: number) => void;
       };
+      lenisRaf?: { stop: () => void; start: () => void };
     }
   }
 
@@ -17,8 +18,8 @@
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true });
 
-    const lenis = window.lenis;
     const hero = document.querySelector<HTMLElement>('.hero');
     const heroContent = document.querySelector<HTMLElement>('.hero-content');
     const heroSubtitle = document.querySelector<HTMLElement>('.hero-subtitle');
@@ -31,10 +32,28 @@
     const wideEnough = window.innerWidth >= 900;
     const enableParallax = finePointer && wideEnough && Boolean(hero);
     const onLenisScroll = () => ScrollTrigger.update();
+    let lenisCleanup: (() => void) | undefined;
+
+    const syncLenis = () => {
+      const lenis = window.lenis;
+      if (!lenis?.on || !lenis?.raf || lenisCleanup) return;
+      lenis.on('scroll', onLenisScroll);
+      const drive = (time: number) => lenis.raf(time * 1000);
+      window.lenisRaf?.stop();
+      gsap.ticker.add(drive);
+      gsap.ticker.lagSmoothing(0);
+      lenisCleanup = () => {
+        lenis.off?.('scroll', onLenisScroll);
+        gsap.ticker.remove(drive);
+        gsap.ticker.lagSmoothing(500, 33);
+        window.lenisRaf?.start();
+      };
+    };
+
+    if (window.lenis) syncLenis();
+    else window.addEventListener('lenis:ready', syncLenis, { once: true });
 
     gsap.defaults({ ease: 'power3.out' });
-
-    if (lenis?.on) lenis.on('scroll', onLenisScroll);
 
     const ctx = gsap.context(() => {
       if (hero) {
@@ -199,7 +218,8 @@
         icon.removeEventListener('click', handleSocialClick);
       });
       ctx.revert();
-      if (lenis?.off) lenis.off('scroll', onLenisScroll);
+      lenisCleanup?.();
+      window.removeEventListener('lenis:ready', syncLenis);
     };
   });
 </script>

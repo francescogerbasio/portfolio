@@ -9,6 +9,7 @@
       lenis?: {
         stop?: () => void;
         start?: () => void;
+        scrollTo?: (target: number) => void;
       };
     }
   }
@@ -601,7 +602,10 @@
         if (!el) return;
         el.addEventListener('click', () => {
           animateClose(study);
-          setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 700);
+          setTimeout(() => {
+            if (window.lenis?.scrollTo) window.lenis.scrollTo(0);
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 700);
         });
       });
 
