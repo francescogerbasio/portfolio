@@ -42,5 +42,25 @@
     staggerReveal('timeline', '.timeline-item', 130);
     staggerReveal('bentoGrid', '.bento-card', 80);
     staggerReveal('certificationsSection', '.cert-card', 100);
+
+    initBeamPause();
   });
+
+  function initBeamPause() {
+    const beams = document.querySelectorAll('.beam-wrap');
+    if (!beams.length || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const el = entry.target;
+        if (entry.isIntersecting) {
+          el.style.removeProperty('--beam-play');
+          el.removeAttribute('data-paused');
+        } else {
+          el.style.setProperty('--beam-play', 'paused');
+          el.setAttribute('data-paused', '');
+        }
+      });
+    }, { rootMargin: '256px' });
+    beams.forEach(b => observer.observe(b));
+  }
 </script>

@@ -1,0 +1,147 @@
+/* ═══════════════════════════════════════════════
+   BORDER BEAM
+   Inspired by Jakubantalik/border-beam
+   Vanilla CSS port using @property + conic-gradient + mask-composite
+   Guide ID: MWG-2025/css-conic-gradient
+
+   NOTE: @property registrations must live OUTSIDE of @layer blocks.
+   Browsers silently ignore @property inside cascade layers, so the
+   --beam-angle angle type would never be registered and the keyframe
+   interpolation between 0deg and 360deg would be a no-op.
+   ═══════════════════════════════════════════════ */
+
+@property --beam-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@property --beam-strength {
+    syntax: "<number>";
+    initial-value: 1;
+    inherits: true;
+}
+
+@layer components {
+
+
+/* Base wrapper — every beam target gets a positioning context and a hairline */
+.beam-wrap {
+    position: relative;
+    isolation: isolate;
+}
+
+/* Beam layer (::before) — the conic-gradient traveling around the border */
+.beam-wrap::before,
+.beam-wrap > .beam {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+    opacity: calc(0.85 * var(--beam-strength, 1));
+    background: var(--beam-gradient, conic-gradient(from var(--beam-angle), transparent 0deg, #2a8cff 20deg, transparent 40deg));
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+            mask-composite: exclude;
+    padding: var(--beam-thickness, 1.5px);
+    animation: beam-spin var(--beam-duration, 3.4s) linear infinite;
+    animation-play-state: var(--beam-play, running);
+    will-change: background;
+}
+
+/* Bloom layer (::after) — the soft glow halo around the beam */
+.beam-wrap::after,
+.beam-wrap > .beam-bloom {
+    content: "";
+    position: absolute;
+    inset: calc(var(--beam-thickness, 1.5px) * -3);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+    background: var(--beam-gradient, conic-gradient(from var(--beam-angle), transparent 0deg, #2a8cff 20deg, transparent 40deg));
+    filter: blur(10px) saturate(1.3);
+    opacity: calc(0.32 * var(--beam-strength, 1));
+    animation: beam-spin var(--beam-duration, 3.4s) linear infinite;
+    animation-play-state: var(--beam-play, running);
+}
+
+/* The child element must sit on top so clicks/text remain interactive */
+.beam-wrap > * {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes beam-spin {
+    to { --beam-angle: 360deg; }
+}
+
+/* ── Color palettes ─────────────────────────────────────── */
+
+/* Ocean — blues/purples for the LinkedIn button */
+.beam-ocean {
+    --beam-gradient: conic-gradient(from var(--beam-angle),
+        transparent 0deg,
+        rgb(40, 140, 255) 8deg,
+        rgb(100, 70, 255) 24deg,
+        rgb(130, 70, 255) 40deg,
+        transparent 56deg);
+}
+
+/* Sunset — warm orange/coral for the Email button */
+.beam-sunset {
+    --beam-gradient: conic-gradient(from var(--beam-angle),
+        transparent 0deg,
+        rgb(255, 120, 50) 8deg,
+        rgb(255, 180, 60) 24deg,
+        rgb(255, 90, 70) 40deg,
+        transparent 56deg);
+}
+
+/* ── Pause when offscreen ───────────────────────────────── */
+.beam-wrap[data-paused]::before,
+.beam-wrap[data-paused]::after,
+.beam-wrap[data-paused] > .beam,
+.beam-wrap[data-paused] > .beam-bloom {
+    animation-play-state: paused;
+}
+
+/* ── Reduced motion fallback — static glow, no rotation ─── */
+@media (prefers-reduced-motion: reduce) {
+    .beam-wrap::before,
+    .beam-wrap > .beam,
+    .beam-wrap::after,
+    .beam-wrap > .beam-bloom {
+        animation: none;
+        --beam-angle: 90deg;
+    }
+}
+
+/* ── Integration with CTA buttons ──────────────────────── */
+
+/* LinkedIn (.btn-primary): solid pill, beam rides on top of the fill */
+.btn-primary.beam-wrap {
+    --beam-thickness: 2px;
+    --beam-duration: 3.4s;
+}
+.btn-primary.beam-wrap::before {
+    opacity: 0.95;
+}
+
+/* Email (.btn-secondary): transparent pill, beam is the border highlight */
+.btn-secondary.beam-wrap {
+    --beam-thickness: 2px;
+    --beam-duration: 4.2s;
+}
+.btn-secondary.beam-wrap::after {
+    opacity: 0.45;
+    inset: calc(var(--beam-thickness, 1.5px) * -5);
+}
+
+} /* end @layer components */

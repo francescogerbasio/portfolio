@@ -291,7 +291,55 @@
       }
       const overlay = projectCard.querySelector('.nda-overlay');
       if (overlay) overlay.classList.add('hidden');
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets: HTMLElement[] = [];
+      const title = projectCard.querySelector<HTMLElement>('.project-title');
+      if (title) targets.push(title);
+      projectCard.querySelectorAll<HTMLElement>('.nda-hidden-text').forEach(t => targets.push(t));
+
+      if (reducedMotion) {
+        targets.forEach(el => { el.style.color = ''; el.textContent = el.dataset.decryptOriginal ?? el.textContent; });
+        setTimeout(() => projectCard.querySelectorAll('.particle-container').forEach(c => c.remove()), 1000);
+        return;
+      }
+
+      targets.forEach((el, i) => {
+        setTimeout(() => runDecryptReveal(el), i * 120);
+      });
       setTimeout(() => projectCard.querySelectorAll('.particle-container').forEach(c => c.remove()), 1000);
+    }
+
+    const CIPHER_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?';
+    function runDecryptReveal(el: HTMLElement) {
+      const original = el.textContent ?? '';
+      el.dataset.decryptOriginal = original;
+      if (!original) return;
+      const tickInterval = 40;
+      const totalDuration = 1100 + (original.length * 18);
+      const startTime = performance.now();
+      const length = original.length;
+
+      function tick(now: number) {
+        const elapsed = now - startTime;
+        if (elapsed >= totalDuration) {
+          el.textContent = original;
+          el.style.color = '';
+          return;
+        }
+        const progress = Math.min(1, elapsed / totalDuration);
+        let out = '';
+        for (let i = 0; i < length; i++) {
+          const ch = original[i];
+          if (ch === ' ' || ch === '\u00A0') { out += ch; continue; }
+          const charProgress = progress * length * 0.85;
+          if (i < charProgress) out += ch;
+          else out += CIPHER_CHARS[Math.floor(Math.random() * CIPHER_CHARS.length)];
+        }
+        el.textContent = out;
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
     }
 
     ndaSubmitBtn.addEventListener('click', submitPassword);
@@ -460,7 +508,7 @@
         const entry = registry[overlayId];
         if (entry) {
           _register(entry.cardId, overlayId);
-          await decodeOverlayImages(document.getElementById(overlayId) as HTMLDialogElement);
+          decodeOverlayImages(document.getElementById(overlayId) as HTMLDialogElement);
         }
       } catch (err) {
         console.error(`Failed to load ${overlayId}.html`, err);

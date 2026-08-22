@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/pages/about.css';
+import '../styles/border-beam.css';
 import ScrollReveal from '../islands/ScrollReveal.svelte';
 const base = import.meta.env.BASE_URL;
 ---
@@ -125,8 +126,8 @@ const base = import.meta.env.BASE_URL;
     <div class="about-cta scroll-reveal" id="ctaSection">
       <p class="cta-text">Want to work together?<br><span>Let's talk.</span></p>
       <div class="cta-buttons">
-        <a href="https://www.linkedin.com/in/francesco-gerbasio" target="_blank" rel="noopener noreferrer" class="btn-primary">LinkedIn <svg width="14" height="14" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:2px"><use href="#icon-arrow-out"/></svg></a>
-        <a href="mailto:francesco.gerbasio00@gmail.com" class="btn-secondary">Email me</a>
+        <a href="https://www.linkedin.com/in/francesco-gerbasio" target="_blank" rel="noopener noreferrer" class="btn-primary beam-wrap beam-ocean" id="beamLinkedin">LinkedIn <svg width="14" height="14" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:2px"><use href="#icon-arrow-out"/></svg></a>
+        <a href="mailto:francesco.gerbasio00@gmail.com" class="btn-secondary beam-wrap beam-sunset" id="beamEmail">Email me</a>
       </div>
     </div>
   </main>

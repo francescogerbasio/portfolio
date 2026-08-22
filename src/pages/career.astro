@@ -1,8 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/pages/about.css';
+import '../styles/border-beam.css';
 import '../styles/pages/career.css';
 import ScrollReveal from '../islands/ScrollReveal.svelte';
+import CareerMotion from '../islands/CareerMotion.svelte';
 const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout
@@ -16,6 +18,8 @@ const base = import.meta.env.BASE_URL;
 >
   <main id="main-content" class="container">
     <section class="career-hero" aria-label="Career overview">
+      <div class="career-orb career-orb-1" aria-hidden="true"></div>
+      <div class="career-orb career-orb-2" aria-hidden="true"></div>
       <p class="career-eyebrow">Career</p>
       <h1 class="career-headline">
         Where precision<br>
@@ -30,7 +34,7 @@ const base = import.meta.env.BASE_URL;
 
     <dl class="about-stats" id="statsRow">
       <div class="stat-item">
-        <dt class="stat-number">20+</dt>
+        <dt class="stat-number" data-count="20" data-suffix="+">20+</dt>
         <dd class="stat-label">Shipped titles across LQA &amp; UX</dd>
       </div>
       <div class="stat-item">
@@ -38,7 +42,7 @@ const base = import.meta.env.BASE_URL;
         <dd class="stat-label">Languages spoken fluently</dd>
       </div>
       <div class="stat-item">
-        <dt class="stat-number">2+</dt>
+        <dt class="stat-number" data-start-date="2024-03-01">2.4+</dt>
         <dd class="stat-label">Years of design practice</dd>
       </div>
     </dl>
@@ -46,36 +50,40 @@ const base = import.meta.env.BASE_URL;
     <div class="about-grid scroll-reveal" id="skillsGrid" style="margin-bottom:100px;">
       <div class="skills-block" id="skillsBlock">
         <div>
-          <p class="skill-group-title">Design</p>
+          <p class="skill-group-title">UX &amp; Product Design</p>
           <div class="skill-tags">
             <span class="skill-tag">UX Research</span>
-            <span class="skill-tag">Wireframing</span>
-            <span class="skill-tag">Prototyping</span>
-            <span class="skill-tag">Design Systems</span>
+            <span class="skill-tag">User Interviews</span>
+            <span class="skill-tag">Wireframing &amp; Prototyping</span>
             <span class="skill-tag">Figma</span>
-            <span class="skill-tag">Interaction Design</span>
-            <span class="skill-tag">Accessibility · WCAG</span>
+            <span class="skill-tag">Information Architecture</span>
+            <span class="skill-tag">Design Systems</span>
+            <span class="skill-tag">Usability Testing</span>
+            <span class="skill-tag">Responsive Design</span>
           </div>
         </div>
         <div>
           <p class="skill-group-title">Quality &amp; Localization</p>
           <div class="skill-tags">
-            <span class="skill-tag">LQA</span>
+            <span class="skill-tag">Localization QA</span>
             <span class="skill-tag">Functional QA</span>
-            <span class="skill-tag">JIRA · Bonsai</span>
+            <span class="skill-tag">JIRA · Confluence</span>
+            <span class="skill-tag">WCAG 2.1 · Accessibility</span>
             <span class="skill-tag">Italian ↔ English</span>
             <span class="skill-tag">Spanish</span>
-            <span class="skill-tag">Regression Testing</span>
+            <span class="skill-tag">Multilingual UX</span>
           </div>
         </div>
         <div>
-          <p class="skill-group-title">Development &amp; Tools</p>
+          <p class="skill-group-title">Development &amp; AI</p>
           <div class="skill-tags">
             <span class="skill-tag">HTML / CSS</span>
             <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">Prompt Engineering</span>
+            <span class="skill-tag">AI Workflow Design</span>
             <span class="skill-tag">Framer</span>
             <span class="skill-tag">Adobe Creative Suite</span>
-            <span class="skill-tag">Web Animation</span>
+            <span class="skill-tag">Design Thinking</span>
           </div>
         </div>
       </div>
@@ -193,4 +201,5 @@ const base = import.meta.env.BASE_URL;
     </div>
   </main>
   <ScrollReveal client:load />
+  <CareerMotion client:load />
 </BaseLayout>

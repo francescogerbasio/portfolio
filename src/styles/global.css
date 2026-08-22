@@ -76,7 +76,7 @@
 
 /* Font fallbacks - Replace these with your custom fonts later */
 :root {
-    color-scheme: light dark;
+    color-scheme: light;
     --font-heading: 'Qurova', sans-serif;
     --font-body: 'BrittiSans', sans-serif;
     --cursor-x: 50;
@@ -138,6 +138,7 @@
    =================================== */
 
 [data-theme="dark"] {
+    color-scheme: dark;
     --color-bg:         oklch(14.7% 0.0000 0 / 1);   /* #252525 — outer space */
     --color-text:       oklch(95% 0.005 15 / 1);   /* #f0ecec — warm white */
     --color-text-light: oklch(58% 0.005 15 / 1);   /* #888 — muted */
@@ -451,7 +452,7 @@ select, nav, header, main, section, article, aside, footer, figure, figcaption,
 .accordion-content, .accordion-icon, .accordion-count, .skill-tag, .lang-pill,
 .btn-primary, .btn-secondary, .cert-card, .value-item,
 .stat-item, .values-header, .about-cta, .about-divider, .timeline-item,
-.about-stats, .game-card, .artist-card, .travel-card, .song-card, .category-btn,
+.about-stats, .game-card, .vinyl-sleeve, .travel-card, .song-card, .category-btn,
 .flag-btn, .flag-navigation, .flag-nav-pill, .gf-arrow, .gf-dot, .nda-password-input,
 .cv-picker, .cv-picker-option, .nda-overlay, .nda-modal-content, .mobile-menu,
 .hamburger-fade-zone, .theme-toggle, .social-icon, .cs-panel, .cs-overlay,
@@ -574,8 +575,14 @@ p, blockquote, li {
 }
 
 /* Isolate self-contained cards so internal changes don't trigger page-wide reflows */
-.project-card, .bento-card, .cert-card, .game-card, .artist-card, .travel-card, .song-card {
+.project-card, .bento-card, .cert-card, .vinyl-sleeve, .travel-card, .song-card {
     contain: layout style paint;
+}
+
+/* game-card excluded from paint containment: its hover lifts the child
+   .game-cover above the card bounds — paint containment clips that */
+.game-card {
+    contain: layout style;
 }
 
 /* ===================================
@@ -775,6 +782,19 @@ button.nav-link {
     text-wrap: balance;
     margin-bottom: 0;
     transition: font-size 0.3s ease;
+}
+
+.hero-char {
+    display: inline-block;
+    white-space: pre;
+    will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-char {
+        transform: none !important;
+        opacity: 1 !important;
+    }
 }
 
 /* Fixed height container wrapper */
@@ -2511,7 +2531,7 @@ html.lenis, html.lenis body {
 
 .category-btn:active,
 .game-card:active .game-cover,
-.artist-card:active {
+.vinyl-sleeve:active {
     transform: scale(0.97);
     transition: transform 0.1s ease;
 }
@@ -2524,14 +2544,15 @@ html.lenis, html.lenis body {
     position: relative;
     width: 100%;
     transition: opacity 0.3s ease;
-    columns: 280px;
+    columns: 320px;
     column-gap: 12px;
+    padding: 32px 28px 48px;
 }
 
 @supports (display: grid-lanes) {
     .masonry-grid {
         display: grid-lanes;
-        grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
         gap: 1rem;
         flow-tolerance: 1rem;
         columns: unset;
@@ -2601,6 +2622,25 @@ html.lenis, html.lenis body {
     opacity: 0;
     transform: scale(0.92) translateY(12px);
     aspect-ratio: 0.75; /* 800/1067 portrait */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.travel-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    border-radius: inherit;
+    background-image:
+        radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+        radial-gradient(rgba(0,0,0,0.4) 1px, transparent 1px);
+    background-size: 4px 4px, 4px 4px;
+    background-position: 0 0, 2px 2px;
+    transition: opacity 0.25s ease;
+}
+.travel-card.grain-active::after {
+    opacity: 0.55;
 }
 /* Every 5th card: square — shorter, creates masonry stagger in column fallback */
 .travel-card:nth-child(5n) {
@@ -2625,6 +2665,7 @@ html.lenis, html.lenis body {
     object-fit: cover;
     display: block;
     vertical-align: bottom;
+    border-radius: inherit;
     transition: transform 0.3s ease;
 }
 
@@ -2640,6 +2681,7 @@ html.lenis, html.lenis body {
     padding: 16px 14px 12px;
     background: rgba(0, 0, 0, 0.35);
     backdrop-filter: blur(12px);
+    border-radius: 0 0 var(--card-radius) var(--card-radius);
 
     display: flex;
     align-items: center;
@@ -2943,166 +2985,628 @@ html.lenis, html.lenis body {
 }
 
 /* ===================================
-   ARTISTS GRID
+   VINYL SHELF
    =================================== */
 
-.artists-grid {
+.vinyl-shelf {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 28px;
+    padding: 32px 28px 48px;
     container-type: inline-size;
 }
 
-.artist-card {
-    border-radius: var(--card-radius);
-    cursor: pointer;
-    aspect-ratio: 3/4;
-    background: light-dark(#111, #252830);
+.vinyl-sleeve {
     position: relative;
+    cursor: pointer;
+    contain: layout style paint;
+    aspect-ratio: 1 / 1;
+    inline-size: 100%;
+    block-size: auto;
 
-    display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns: 1fr;
-
+    background: light-dark(#1a1a1a, #2a2a30);
+    border-radius: 14px;
     box-shadow: var(--card-shadow);
+    overflow: hidden;
+
     opacity: 0;
-    transform: translateY(20px);
+    animation: vinyl-reveal 0.55s cubic-bezier(0.34, 1.18, 0.64, 1) forwards;
+    animation-delay: calc(var(--i, 0) * 0.06s);
     transition:
-        opacity   0.4s ease calc(var(--i, 0) * 0.04s),
-        transform 0.45s cubic-bezier(0.34, 1.18, 0.64, 1) calc(var(--i, 0) * 0.04s);
+        transform 0.3s cubic-bezier(0.34, 1.18, 0.64, 1),
+        box-shadow 0.3s ease;
 }
-.artists-grid.revealed .artist-card {
-    opacity: 1;
-    transform: translateY(0);
+
+@keyframes vinyl-reveal {
+    from { opacity: 0; transform: translateY(18px) scale(0.94); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
 @media (hover: hover) {
-    .artist-card:hover {
-        transform: translateY(-8px) scale(1.03);
+    .vinyl-sleeve:hover {
+        transform: translateY(-6px) scale(1.03);
         box-shadow:
-            0 8px 16px  rgba(0,0,0,0.16),
-            0 24px 48px rgba(0,0,0,0.18);
+            0 10px 20px rgba(0,0,0,0.18),
+            0 30px 60px rgba(0,0,0,0.22);
+        z-index: 4;
     }
 }
 
-.artist-image,
-.artist-overlay,
-.artist-info {
-    grid-row: 1;
-    grid-column: 1;
+.vinyl-sleeve:focus-visible {
+    outline: 2px solid var(--music-accent, #c98aff);
+    outline-offset: 4px;
 }
 
-.artist-image {
-    width: 100%;
-    height: 100%;
+/* ── Vinyl disc — peeks from the bottom-right corner ── */
+.vinyl-disc {
+    position: absolute;
+    inset: auto -16% -16% auto;
+    inline-size: 60%;
+    block-size: 60%;
+    border-radius: 50%;
+    z-index: 3;
+    pointer-events: none;
+    background:
+        repeating-radial-gradient(
+            circle at 50% 50%,
+            #111 0,
+            #111 2px,
+            #1d1d22 2px,
+            #1d1d22 4px
+        ),
+        radial-gradient(
+            circle at 50% 50%,
+            #0a0a0a 0%,
+            #111 38%,
+            #1a1a1f 80%,
+            #0a0a0a 100%
+        );
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.06),
+        inset 0 0 20px rgba(0,0,0,0.6),
+        0 6px 14px rgba(0,0,0,0.22);
+    transition: transform 0.55s cubic-bezier(0.32, 0.94, 0.6, 1.18);
+}
+
+.vinyl-disc-label {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    inline-size: 32%;
+    block-size: 32%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            color-mix(in oklch, var(--music-accent, #c98aff) 65%, #1a1a1a) 0%,
+            color-mix(in oklch, var(--music-accent, #c98aff) 40%, #1a1a1a) 70%,
+            color-mix(in oklch, var(--music-accent, #c98aff) 25%, #1a1a1a) 100%
+        );
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.1),
+        inset 0 0 0 4px rgba(0,0,0,0.5);
+}
+.vinyl-disc-label::after {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 50%;
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.7);
+    transform: translate(-50%, -50%);
+}
+
+@media (hover: hover) {
+    .vinyl-sleeve:hover .vinyl-disc {
+        transform: translate(8px, 8px) rotate(160deg);
+        animation: vinylSpin 4s linear infinite;
+    }
+}
+
+@keyframes vinylSpin {
+    to { transform: translate(8px, 8px) rotate(520deg); }
+}
+
+/* ── Sleeve front face ── */
+.sleeve-front {
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
     overflow: hidden;
-    border-radius: 20px;
     z-index: 1;
-    mask-image: radial-gradient(white, black);
+    background: #111;
 }
 
-.artist-image img {
-    width: 100%;
-    height: 100%;
+.sleeve-art {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
     object-fit: cover;
-    object-position: top center;
-    display: block;
+    object-position: center top;
     transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: block;
+    z-index: 1;
 }
 
-.artist-card:hover .artist-image img {
-    transform: scale(1.08);
+@media (hover: hover) {
+    .vinyl-sleeve:hover .sleeve-art {
+        transform: scale(1.05);
+    }
 }
 
-.artist-overlay {
-    border-radius: 20px;
-    z-index: 2;
+.sleeve-overlay {
+    position: absolute;
+    inset: 0;
     background: linear-gradient(
         to bottom,
-        transparent      0%,
-        transparent      30%,
-        rgba(0,0,0,0.30) 50%,
-        rgba(0,0,0,0.82) 72%,
-        rgba(0,0,0,0.97) 100%
+        rgba(0,0,0,0) 0%,
+        rgba(0,0,0,0) 50%,
+        rgba(0,0,0,0.45) 75%,
+        rgba(0,0,0,0.85) 100%
     );
     pointer-events: none;
+    z-index: 2;
 }
 
-.artist-info {
-    align-self: end;
-    z-index: 3;
-    padding: 20px 14px 16px;
+.sleeve-meta {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 16px 14px 14px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     pointer-events: none;
+    z-index: 4;
 }
 
-.artist-name {
-    font-size: 14px;
+.sleeve-name {
+    font-size: 15px;
     font-weight: 700;
     color: #fff;
     letter-spacing: -0.01em;
     line-height: 1.2;
     margin: 0;
     text-shadow:
-        0 1px 3px rgba(0,0,0,0.9),
-        0 2px 8px rgba(0,0,0,0.7);
+        0 1px 3px rgba(0,0,0,0.95),
+        0 2px 10px rgba(0,0,0,0.7);
 }
 
-.artist-spotify-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-    
-    border: 0.5px solid rgba(255,255,255,0.18);
-    color: rgba(255,255,255,0.85);
+.sleeve-album-count {
     font-size: 10px;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 20px;
-    width: fit-content;
-    opacity: 0;
-    transform: translateY(6px);
-    transition:
-        opacity   0.3s ease 0.05s,
-        transform 0.35s cubic-bezier(0.34, 1.30, 0.64, 1) 0.05s;
+    color: rgba(255,255,255,0.78);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
 }
 
-.artist-card:hover .artist-spotify-pill {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.artist-spotify-pill::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    background: #1DB954;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-
-
+/* ── Responsive sizes ── */
 @media (max-width: 1024px) {
-    .artists-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .vinyl-shelf { gap: 22px; padding: 28px 24px 40px; }
+}
+@media (max-width: 768px) {
+    .vinyl-shelf { grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 24px 20px 36px; }
+}
+@media (max-width: 500px) {
+    .vinyl-shelf { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px 16px 32px; }
+    .vinyl-disc { inline-size: 42%; block-size: 42%; inset: auto -10% -10% auto; }
+    .sleeve-meta { padding: 12px 10px 10px; }
+    .sleeve-name { font-size: 13px; }
+    .sleeve-album-count { font-size: 9px; }
 }
 
-@media (max-width: 768px) {
-    .artists-grid { grid-template-columns: repeat(3, 1fr); gap: 20px 10px; }
+@container (max-width: 420px) {
+    .vinyl-shelf { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
 
-    .artist-card {
+@media (prefers-reduced-motion: reduce) {
+    .vinyl-sleeve {
+        animation: none;
+        opacity: 1;
+    }
+    .vinyl-disc,
+    .vinyl-sleeve:hover .vinyl-disc,
+    .sleeve-art,
+    .vinyl-sleeve:hover .sleeve-art {
+        transition: none;
         animation: none;
     }
+    .vinyl-sleeve:hover { transform: none; }
 }
 
 /* ===================================
-   GAMING SECTION — Apple Cinematic Dark
+   VINYL DETAIL DIALOG
+   =================================== */
+
+dialog.vinyl-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    inline-size: 100%;
+    block-size: 100%;
+    max-inline-size: 100%;
+    max-block-size: 100%;
+    padding: 40px 24px;
+    border: 0;
+    background: transparent;
+    overflow: hidden;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+}
+
+dialog.vinyl-overlay::backdrop {
+    background: rgba(8,8,8,0);
+    backdrop-filter: blur(0px) saturate(100%);
+    transition:
+        display         var(--cs-dur-slow, 0.6s) allow-discrete,
+        overlay         var(--cs-dur-slow, 0.6s) allow-discrete,
+        background      var(--cs-dur-slow, 0.6s) var(--cs-ease-out, ease-out),
+        backdrop-filter var(--cs-dur-slow, 0.6s) var(--cs-ease-out, ease-out);
+}
+
+dialog.vinyl-overlay[open]::backdrop {
+    background: rgba(8,8,8,.7);
+    backdrop-filter: blur(10px) saturate(140%);
+    transition:
+        display         var(--cs-dur-slow, 0.6s) allow-discrete,
+        overlay         var(--cs-dur-slow, 0.6s) allow-discrete,
+        background      var(--cs-dur-med, 0.4s) var(--cs-ease-out, ease-out) var(--cs-dur-med, 0.4s),
+        backdrop-filter var(--cs-dur-med, 0.4s) var(--cs-ease-out, ease-out) var(--cs-dur-med, 0.4s);
+
+    @starting-style {
+        background: rgba(8,8,8,0);
+        backdrop-filter: blur(0px) saturate(100%);
+    }
+}
+
+dialog.vinyl-overlay.vinyl-closing::backdrop {
+    background: rgba(8,8,8,0);
+    backdrop-filter: blur(0px) saturate(100%);
+    transition:
+        background      var(--cs-dur-med, 0.38s) var(--cs-ease-out, ease-out),
+        backdrop-filter var(--cs-dur-med, 0.38s) var(--cs-ease-out, ease-out);
+}
+
+.vinyl-panel {
+    position: relative;
+    inline-size: 100%;
+    max-inline-size: 720px;
+    max-block-size: 84vh;
+    background: var(--color-bg, #fdf5f6);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: light-dark(rgba(0,0,0,.14), rgba(255,255,255,.14)) transparent;
+    opacity: 0;
+    transform: scale(0.96);
+    border-radius: 24px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    pointer-events: none;
+    transition:
+        display   var(--cs-dur-med, 0.38s) allow-discrete,
+        overlay   var(--cs-dur-med, 0.38s) allow-discrete,
+        opacity   0.38s var(--cs-ease-out, ease-out),
+        transform 0.38s cubic-bezier(0.32, 0.94, 0.6, 1.18);
+}
+
+dialog.vinyl-overlay[open] .vinyl-panel {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+
+    @starting-style {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+}
+
+dialog.vinyl-overlay.vinyl-closing .vinyl-panel {
+    opacity: 0;
+    transform: scale(0.96);
+    transition:
+        opacity   0.38s var(--cs-ease-out, ease-out),
+        transform 0.38s cubic-bezier(0.32, 0.94, 0.6, 1.18);
+}
+
+.vinyl-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 5;
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #111;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transform: scale(0.85);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    transition:
+        opacity   0.3s ease var(--cs-dur-med, 0.38s),
+        transform 0.3s cubic-bezier(0.34, 1.18, 0.64, 1) var(--cs-dur-med, 0.38s),
+        background 0.2s ease;
+}
+
+dialog.vinyl-overlay[open] .vinyl-close-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.vinyl-close-btn:hover {
+    background: rgba(255,255,255,0.95);
+    transform: scale(1.08) !important;
+}
+.vinyl-close-btn:focus-visible {
+    outline: 2px solid var(--music-accent, #c98aff);
+    outline-offset: 3px;
+}
+
+.vinyl-card-head {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 28px 32px 8px;
+}
+
+.vinyl-avatar {
+    inline-size: clamp(120px, 30vw, 200px);
+    block-size: clamp(120px, 30vw, 200px);
+    border-radius: 20px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: light-dark(#e8e8ec, #2a2a30);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.24);
+}
+
+.vinyl-avatar img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.vinyl-card-head-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    min-inline-size: 0;
+}
+
+.vinyl-body {
+    padding: 20px 32px 40px;
+}
+
+.vinyl-name {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--color-text, #1a1a1a);
+    margin: 0;
+}
+
+.vinyl-spotify-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border-radius: 999px;
+    background: #1DB954;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(29,185,84,0.3);
+    transition:
+        transform 0.2s cubic-bezier(0.34, 1.18, 0.64, 1),
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+    flex-shrink: 0;
+}
+.vinyl-spotify-btn:hover {
+    background: #1ed760;
+    transform: scale(1.04);
+    box-shadow: 0 6px 20px rgba(29,185,84,0.42);
+}
+.vinyl-spotify-btn:focus-visible {
+    outline: 2px solid var(--color-text, #1a1a1a);
+    outline-offset: 3px;
+}
+.vinyl-spotify-dot {
+    inline-size: 9px;
+    block-size: 9px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(255,255,255,0.6);
+    flex-shrink: 0;
+}
+
+.vinyl-albums-section {
+    margin-block-start: 4px;
+}
+
+.vinyl-section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-light, #888);
+    margin: 0 0 16px;
+}
+
+.vinyl-albums-row {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    /* scroll container clips ink overflow: pad inside, pull back outside */
+    padding-block: 14px 8px;
+    padding-inline: 24px;
+    margin-block: -14px -8px;
+    margin-inline: -24px;
+}
+.vinyl-albums-row::-webkit-scrollbar { display: none; }
+
+.vinyl-album {
+    flex: 0 0 auto;
+    inline-size: 150px;
+    cursor: pointer;
+}
+
+.vinyl-album-cover {
+    inline-size: 150px;
+    block-size: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: light-dark(#e8e8ec, #2a2a30);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    margin-block-end: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vinyl-album-cover img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+@media (hover: hover) {
+    .vinyl-album { position: relative; }
+    .vinyl-album:hover { z-index: 10; }
+    .vinyl-album:hover .vinyl-album-cover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: var(--card-shadow-hover, 0 8px 24px rgba(0,0,0,0.16), 0 24px 48px rgba(0,0,0,0.10));
+    }
+    .vinyl-album:hover .vinyl-album-cover img {
+        transform: scale(1.05);
+    }
+}
+
+.vinyl-album-name {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-text, #1a1a1a);
+    letter-spacing: -0.005em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: clip;
+}
+
+.vinyl-album-info {
+    margin-block-start: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vinyl-album-year {
+    font-size: 11px;
+    font-weight: 500;
+    color: light-dark(rgba(0,0,0,0.5), rgba(255,255,255,0.55));
+    letter-spacing: -0.005em;
+}
+
+.vinyl-album-skeleton {
+    flex: 0 0 150px;
+    inline-size: 150px;
+    block-size: 150px;
+    border-radius: 8px;
+    background:
+        linear-gradient(
+            90deg,
+            light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.06)) 0%,
+            light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.12)) 50%,
+            light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.06)) 100%
+        );
+    background-size: 200% 100%;
+    animation: vinylShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes vinylShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.vinyl-albums-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.vinyl-album-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.08));
+    color: var(--color-text, #1a1a1a);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    backdrop-filter: blur(8px);
+}
+
+@media (max-width: 768px) {
+    .vinyl-panel { max-block-size: 88vh; border-radius: 20px; }
+    .vinyl-card-head { padding: 20px 20px 4px; gap: 16px; }
+    .vinyl-avatar { inline-size: 96px; block-size: 96px; border-radius: 16px; }
+    .vinyl-body { padding: 16px 20px 32px; }
+    .vinyl-album,
+    .vinyl-album-cover,
+    .vinyl-album-skeleton { inline-size: 130px; flex-basis: 130px; }
+    .vinyl-album-cover { block-size: 130px; }
+    .vinyl-album-skeleton { block-size: 130px; }
+    .vinyl-albums-row { padding-inline: 20px; margin-inline: -20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    dialog.vinyl-overlay::backdrop,
+    dialog.vinyl-overlay[open]::backdrop,
+    dialog.vinyl-overlay.vinyl-closing::backdrop {
+        transition: none;
+    }
+    .vinyl-panel,
+    dialog.vinyl-overlay[open] .vinyl-panel,
+    dialog.vinyl-overlay.vinyl-closing .vinyl-panel {
+        transition: none;
+        transform: none;
+    }
+    .vinyl-close-btn,
+    .vinyl-album-cover,
+    .vinyl-album-cover img,
+    .vinyl-album-skeleton {
+        transition: none;
+        animation: none;
+    }
+    .vinyl-album-skeleton { background-size: 100% 100%; }
+}
+
+/* ===================================
+   GAMING SECTION — Cinematic Stage
+   MWG-2025/animate-element-entry-exit
+   MWG-2025/physics-based-easing
+   MWG-2025/animate-to-intrinsic-sizes
    =================================== */
 
 #gaming-section {
@@ -3147,7 +3651,10 @@ html.lenis, html.lenis body {
     50%       { opacity: 0.6; box-shadow: 0 0 12px rgba(48,209,88,0.9); }
 }
 
-.games-featured {
+/* ── Featured — cinematic full-bleed stage ── */
+
+.gf-stage {
+    --gf-dwell: 7s;
     position: relative;
     width: 100%;
     aspect-ratio: 21/9;
@@ -3157,67 +3664,109 @@ html.lenis, html.lenis body {
 }
 
 @media (max-width: 768px) {
-    .games-featured { aspect-ratio: 4/3; border-radius: var(--radius-sm); }
+    .gf-stage { aspect-ratio: 4/3; border-radius: var(--radius-sm); }
 }
 
 .gf-slide {
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    visibility: hidden;
     pointer-events: none;
+    transition:
+        opacity    1.1s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 1.1s;
+    transition-behavior: allow-discrete;
 }
 
-.gf-slide.active {
+.gf-slide.is-active {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
 }
 
-.gf-bg {
-    position: absolute;
-    inset: -5%;
-}
-
 .gf-bg-img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center top;
     display: block;
-    transform: scale(1.08);
-    transition: transform 6s cubic-bezier(0.4, 0, 0.2, 1);
+    scale: 1;
 }
 
-.gf-slide.active .gf-bg-img {
-    transform: scale(1.0);
+/* Ken Burns via animation so it also plays on the slide's first
+   render/display (transitions skip first style resolution) */
+.gf-slide.is-active .gf-bg-img {
+    scale: 1.05;
+    animation: gf-kenburns-in var(--gf-dwell) linear backwards;
 }
 
-.gf-bg-overlay {
+@keyframes gf-kenburns-in {
+    from { scale: 1; }
+}
+
+.gf-shade {
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(to top,   rgba(0,0,0,0.92) 0%,  rgba(0,0,0,0.3) 40%, transparent 65%),
-        linear-gradient(to right, rgba(0,0,0,0.5)  0%,  transparent 60%);
+        radial-gradient(120% 90% at 50% 10%, transparent 60%, rgba(0,0,0,0.25) 100%),
+        linear-gradient(to top,   rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.25) 42%, transparent 68%),
+        linear-gradient(to right, rgba(0,0,0,0.45) 0%, transparent 55%);
+    pointer-events: none;
 }
 
 .gf-content {
     position: absolute;
     bottom: 0;
     left: 0;
+    right: 0;
     padding: clamp(20px, 4vw, 48px);
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    transform: translateY(12px);
-    opacity: 0;
-    transition:
-        transform 0.5s cubic-bezier(0.34, 1.18, 0.64, 1) 0.2s,
-        opacity   0.4s ease 0.2s;
+    align-items: flex-start;
+    gap: 12px;
 }
 
-.gf-slide.active .gf-content {
-    transform: translateY(0);
+.gf-genre,
+.gf-title,
+.gf-year {
+    opacity: 0;
+    translate: 0 -14px;
+    filter: blur(10px);
+}
+
+/* Exit — smooth fade-rise-away when the slide loses .is-active */
+.gf-slide:not(.is-active) .gf-genre,
+.gf-slide:not(.is-active) .gf-title,
+.gf-slide:not(.is-active) .gf-year {
+    transition:
+        opacity   0.35s ease,
+        translate 0.35s ease,
+        filter    0.35s ease;
+}
+
+/* Entry — keyframes play deterministically on first render/display
+   (transitions never fire for an element's first style resolution) */
+.gf-slide.is-active .gf-genre,
+.gf-slide.is-active .gf-title,
+.gf-slide.is-active .gf-year {
     opacity: 1;
+    translate: 0 0;
+    filter: blur(0);
+}
+
+.gf-slide.is-active .gf-genre { animation: gf-content-in 0.7s var(--expo-out) 0.15s backwards; }
+.gf-slide.is-active .gf-title { animation: gf-content-in 0.7s var(--expo-out) 0.25s backwards; }
+.gf-slide.is-active .gf-year  { animation: gf-content-in 0.7s var(--expo-out) 0.35s backwards; }
+
+@keyframes gf-content-in {
+    from {
+        opacity: 0;
+        translate: 0 24px;
+        filter: blur(10px);
+    }
 }
 
 .gf-genre {
@@ -3225,7 +3774,12 @@ html.lenis, html.lenis body {
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.55);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
 }
 
 .gf-title {
@@ -3244,66 +3798,107 @@ html.lenis, html.lenis body {
 .gf-year {
     font-size: 13px;
     font-weight: 500;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.55);
     letter-spacing: 0.05em;
 }
 
-.gf-dots {
+/* ── Story-style progress segments ── */
+
+.gf-progress {
     position: absolute;
-    bottom: clamp(16px, 3vw, 28px);
-    right: clamp(16px, 3vw, 28px);
+    top: clamp(16px, 2.5vw, 24px);
+    right: clamp(16px, 2.5vw, 24px);
     display: flex;
-    gap: 6px;
+    gap: 4px;
     z-index: 10;
 }
 
-.gf-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.3);
-    background-clip: content-box;
+.gf-seg {
+    appearance: none;
+    width: 36px;
+    height: 18px;
+    padding: 0;
     border: none;
+    background: transparent;
     cursor: pointer;
-    padding: 9px;
-    margin: -9px;
-    transition: background 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
 }
 
-.gf-dot.active {
-    background: #fff;
-    transform: scale(1.3);
+.gf-seg::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 3px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.28);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: background 0.3s ease;
 }
+
+.gf-seg.done::before {
+    background: rgba(255,255,255,0.55);
+    transform: scaleX(1);
+}
+
+.gf-seg.is-active::before {
+    background: #fff;
+    animation: gf-progress-fill var(--gf-dwell) linear forwards;
+}
+
+@keyframes gf-progress-fill {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
+.gf-seg:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* ── Arrows — revealed on stage hover ── */
 
 .gf-arrow {
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    opacity: 0;
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(12px);
-    
     border: 1px solid rgba(255,255,255,0.15);
     color: #fff;
-    font-size: 22px;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10;
-    transition: background 0.2s ease, transform 0.2s ease;
-    line-height: 1;
+    transition:
+        opacity   0.3s ease,
+        translate 0.35s var(--expo-out),
+        background 0.2s ease;
+}
+
+.gf-prev { left:  clamp(12px, 2vw, 20px); translate: -6px -50%; }
+.gf-next { right: clamp(12px, 2vw, 20px); translate: 6px -50%; }
+
+.gf-stage:hover .gf-arrow,
+.gf-arrow:focus-visible {
+    opacity: 1;
+    translate: 0 -50%;
 }
 
 .gf-arrow:hover {
-    background: rgba(255,255,255,0.2);
-    transform: translateY(-50%) scale(1.08);
+    background: rgba(255,255,255,0.22);
 }
 
-.gf-prev { left:  clamp(12px, 2vw, 20px); }
-.gf-next { right: clamp(12px, 2vw, 20px); }
+.gf-arrow:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
 
 @media (max-width: 768px) {
     .gf-arrow { display: none; }
@@ -3311,50 +3906,54 @@ html.lenis, html.lenis body {
 
 .games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 20px;
     container-type: inline-size;
 }
 
 .games-grid.small {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     container-type: inline-size;
 }
 
 @media (max-width: 768px) {
-    .games-grid       { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .games-grid.small { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .games-grid       { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .games-grid.small { grid-template-columns: repeat(2, 1fr); gap: 12px; }
 }
 
 @supports not (container-type: inline-size) {
     @media (max-width: 768px) {
-        .games-grid       { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .games-grid.small { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .games-grid       { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .games-grid.small { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     }
 }
 
 @container (max-width: 500px) {
-    .games-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .games-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
 }
 
 @container (max-width: 300px) {
-    .games-grid.small { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .games-grid.small { grid-template-columns: repeat(2, 1fr); gap: 12px; }
 }
 
+/* MWG-2025/animate-element-entry-exit — blur+rise entrance on first render */
 .game-card {
     display: flex;
     flex-direction: column;
-    gap: 10px;
     cursor: default;
-    opacity: 0;
-    transform: translateY(16px);
+    position: relative;
     transition:
-        opacity   0.4s ease calc(var(--i, 0) * 0.04s),
-        transform 0.45s cubic-bezier(0.34, 1.18, 0.64, 1) calc(var(--i, 0) * 0.04s);
+        opacity   0.55s var(--expo-out) calc(var(--i, 0) * 60ms),
+        translate 0.55s var(--expo-out) calc(var(--i, 0) * 60ms),
+        filter    0.55s var(--expo-out) calc(var(--i, 0) * 60ms);
 }
-.games-grid.revealed .game-card {
-    opacity: 1;
-    transform: translateY(0);
+
+@starting-style {
+    .game-card {
+        opacity: 0;
+        translate: 0 16px;
+        filter: blur(6px);
+    }
 }
 
 .game-cover {
@@ -3365,23 +3964,11 @@ html.lenis, html.lenis body {
     overflow: hidden;
     background: light-dark(#1a1a1a, #2a2c32);
     box-shadow:
-        0 2px 4px  rgba(0,0,0,0.10),
+        0 2px 4px  rgba(0,0,0,0.08),
         0 8px 20px var(--shadow-light);
-    transition: transform 0.4s cubic-bezier(0.34, 1.20, 0.64, 1),
-                box-shadow 0.4s ease;
-}
-
-@media (hover: hover) {
-    .game-card:hover .game-cover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow:
-            0 8px 16px  rgba(0,0,0,0.16),
-            0 20px 40px rgba(0,0,0,0.16);
-    }
-
-    .game-card:hover .game-cover img {
-        transform: scale(1.06);
-    }
+    transition:
+        translate  0.45s var(--expo-out),
+        box-shadow 0.45s ease;
 }
 
 .game-cover img {
@@ -3389,59 +3976,186 @@ html.lenis, html.lenis body {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: scale 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.game-cover-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        to bottom,
-        transparent 50%,
-        rgba(0,0,0,0.35) 100%
-    );
-    pointer-events: none;
+@media (hover: hover) {
+    .game-card:hover {
+        z-index: 2;
+    }
+
+    .game-card:hover .game-cover {
+        translate: 0 -4px;
+        box-shadow:
+            0 16px 32px rgba(0,0,0,0.12),
+            0 32px 64px rgba(0,0,0,0.10);
+    }
+
+    .game-card:hover .game-cover img {
+        scale: 1.03;
+    }
+}
+
+.game-card:focus-visible .game-cover {
+    outline: 2px solid var(--gaming-accent);
+    outline-offset: 3px;
 }
 
 .game-meta {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 0 2px;
+    gap: 3px;
+    padding: 10px 2px 0;
 }
 
 .game-genre-tag {
     font-size: 10px;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
     color: var(--color-text-light);
 }
 
 .game-name {
-    font-size: clamp(13px, 1.1vw, 15px);
+    font-size: 14px;
     font-weight: 600;
     color: var(--color-text);
-    line-height: 1.2;
+    line-height: 1.3;
     margin: 0;
 }
+
+/* ── Currently Playing — compact Up-Next cards ── */
+
+.games-playing-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 400px));
+    justify-content: start;
+    gap: 16px;
+}
+
+.playing-card {
+    display: flex;
+    align-items: stretch;
+    gap: 18px;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    background: light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.04));
+    border: 1px solid light-dark(var(--shadow-faint), rgba(255,255,255,0.08));
+    box-shadow: var(--card-shadow);
+    animation: playing-enter 0.55s var(--expo-out) backwards;
+    animation-delay: calc(var(--i, 0) * 80ms);
+    transition:
+        translate  0.3s var(--expo-out),
+        box-shadow 0.3s ease;
+}
+
+@keyframes playing-enter {
+    from {
+        opacity: 0;
+        translate: 0 16px;
+        filter: blur(6px);
+    }
+}
+
+@media (hover: hover) {
+    .playing-card:hover {
+        translate: 0 -2px;
+        box-shadow: var(--card-shadow-hover);
+    }
+}
+
+.playing-cover {
+    flex: 0 0 clamp(96px, 22%, 140px);
+    aspect-ratio: 3/4;
+    border-radius: calc(var(--radius-md) - 6px);
+    overflow: hidden;
+    background: light-dark(#1a1a1a, #2a2c32);
+}
+
+.playing-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.playing-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    min-width: 0;
+    padding-right: 6px;
+}
+
+.playing-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    /* WCAG AA on card surface: #166534 ≈ 6.6:1 light, #30d158 ≈ 6.8:1 dark */
+    color: light-dark(#166534, #30d158);
+}
+
+.playing-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.25;
+    margin: 0;
+}
+
+.playing-genre {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-light);
+}
+
+/* ── Saga ── */
 
 .saga-card {
     cursor: pointer;
 }
 
-.saga-card .game-cover {
-    position: relative;
+/* Open saga expands across the whole grid row so the game list
+   gets real width for its 2–3 column layout; order:-1 moves it to
+   the top of the grid so every saga opens above the rest */
+.saga-card.open {
+    grid-column: 1 / -1;
+    order: -1;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: clamp(140px, 16vw, 200px) minmax(0, 1fr);
+    grid-template-areas:
+        "cover meta"
+        "cover drawer";
+    align-items: start;
+    column-gap: 20px;
+}
+
+.saga-card.open .game-cover  { grid-area: cover; }
+.saga-card.open .game-meta   { grid-area: meta; }
+.saga-card.open .saga-drawer { grid-area: drawer; }
+
+@media (max-width: 500px) {
+    .saga-card.open {
+        grid-template-columns: clamp(96px, 28vw, 130px) minmax(0, 1fr);
+        column-gap: 14px;
+    }
 }
 
 .saga-badge {
     position: absolute;
     top: 10px;
     right: 10px;
+    z-index: 3;
     background: rgba(0,0,0,0.55);
     backdrop-filter: blur(8px);
-    
-    border: 1px solid rgba(255,255,255,0.15);
+
+    border: 1px solid color-mix(in oklch, var(--gaming-accent) 55%, transparent);
     color: rgba(255,255,255,0.9);
     font-size: 10px;
     font-weight: 600;
@@ -3451,62 +4165,92 @@ html.lenis, html.lenis body {
     pointer-events: none;
 }
 
-.saga-card .game-name::after {
-    content: ' ↓';
-    font-size: 11px;
-    opacity: 0.4;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    display: inline-block;
+.saga-chevron {
+    margin-left: 5px;
+    vertical-align: -1px;
+    opacity: 0.45;
+    transition:
+        rotate  0.35s var(--expo-out),
+        opacity 0.35s ease;
 }
 
-.saga-card.open .game-name::after {
-    transform: rotate(180deg);
-    opacity: 0.7;
-    content: ' ↑';
+.saga-card.open .saga-chevron {
+    rotate: 180deg;
+    opacity: 0.75;
 }
 
 .saga-card.open .game-cover {
     box-shadow:
-        0 0 0 2px var(--color-text),
-        0 8px 16px rgba(0,0,0,0.16),
-        0 20px 40px rgba(0,0,0,0.16);
+        0 0 0 2px var(--gaming-accent),
+        0 16px 32px rgba(0,0,0,0.12),
+        0 32px 64px rgba(0,0,0,0.10);
 }
 
+/* MWG-2025/animate-to-intrinsic-sizes — grid rows 0fr→1fr animates to
+   intrinsic height; Baseline everywhere, unlike interpolate-size */
 .saga-drawer {
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     overflow: hidden;
-    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity    0.3s ease;
     opacity: 0;
+    transition:
+        grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity            0.3s ease;
 }
 
 .saga-card.open .saga-drawer {
-    max-height: 600px;
+    grid-template-rows: 1fr;
     opacity: 1;
 }
 
 .saga-list {
     list-style: none;
-    margin: 10px 0 0 0;
-    padding: 0;
+    margin: 12px 0 0 0;
+    padding: 14px 16px 6px;
     border-top: 1px solid var(--shadow-faint);
-    padding-top: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
+    overflow: hidden;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+}
+
+/* Columns follow the grid container width, not the viewport —
+   the drawer only spans wide once .saga-card.open expands the row */
+@container (min-width: 900px) {
+    .saga-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@container (max-width: 520px) {
+    .saga-list { grid-template-columns: 1fr; padding: 12px 4px 4px; }
 }
 
 .saga-list-item {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 6px 2px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 7px 2px;
+    border-bottom: 1px solid light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.06));
     gap: 8px;
+    opacity: 0;
+    translate: 0 6px;
+    transition:
+        opacity   0.45s var(--expo-out),
+        translate 0.45s var(--expo-out);
 }
 
 .saga-list-item:last-child {
     border-bottom: none;
+}
+
+.saga-card.open .saga-list-item {
+    opacity: 1;
+    translate: 0 0;
+    transition-delay: calc(var(--j, 0) * 30ms);
+}
+
+.saga-card:not(.open) .saga-list-item {
+    transition-delay: 0s;
 }
 
 .saga-list-title {
@@ -3522,6 +4266,54 @@ html.lenis, html.lenis body {
     font-weight: 400;
     color: var(--color-text-light);
     flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gf-slide.is-active .gf-bg-img {
+        animation: none;
+    }
+
+    .gf-genre,
+    .gf-title,
+    .gf-year {
+        transition-duration: 0.01s;
+        transition-delay: 0s;
+    }
+
+    .gf-slide.is-active .gf-genre,
+    .gf-slide.is-active .gf-title,
+    .gf-slide.is-active .gf-year {
+        animation: none;
+        filter: none;
+    }
+
+    .gf-seg.is-active::before {
+        animation: none;
+        background: #fff;
+        transform: scaleX(1);
+    }
+
+    .game-card,
+    .playing-card,
+    .saga-list-item {
+        transition-duration: 0.01s;
+        filter: none;
+    }
+
+    .playing-card {
+        animation: none;
+    }
+
+    .saga-drawer,
+    .game-cover,
+    .game-cover img,
+    .saga-chevron {
+        transition: none !important;
+    }
+
+    .game-card:hover .game-cover {
+        translate: none;
+    }
 }
 
 /* ===================================
@@ -3556,35 +4348,6 @@ html.lenis, html.lenis body {
 /* ===================================
    RESPONSIVE - FUN PAGE
    =================================== */
-
-@media (max-width: 1024px) {
-    .artists-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
-}
-
-@media (max-width: 600px) {
-    .artists-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-}
-
-@supports not (container-type: inline-size) {
-    @media (max-width: 600px) {
-        .artists-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-    }
-}
-
-@container (max-width: 320px) {
-    .artists-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-}
 
 @supports not (container-type: inline-size) {
     @media (max-width: 600px) {
@@ -4004,8 +4767,8 @@ html[data-vt-direction="back"]::view-transition-new(root) {
     .category-section.active,
     .category-section.exiting,
     .travel-card,
-    .artist-card,
-    .artists-grid.revealed .artist-card,
+    .vinyl-sleeve,
+    .vinyl-shelf.revealed .vinyl-sleeve,
     .game-card,
     .games-grid.revealed .game-card,
     .gf-content {

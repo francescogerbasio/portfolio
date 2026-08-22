@@ -118,6 +118,11 @@
       if (category === 'travel') {
         loadTravel();
         void scheduleMovePill();
+        requestAnimationFrame(() => initGrainReveal());
+      } else if (category === 'gaming') {
+        restartFeaturedCycle();
+      } else {
+        stopFeaturedAuto();
       }
       switching = false;
     }, 180);
@@ -148,6 +153,7 @@
         btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
       void scheduleMovePill();
+      requestAnimationFrame(() => initGrainReveal());
     });
   }
 
@@ -171,44 +177,76 @@
     };
   }
 
-  // Gaming state
+  // Gaming state — dwell-tracked autoplay keeps the progress-segment fill in sync
   let featuredIndex = $state(0);
-  let autoTimer: ReturnType<typeof setInterval> | null = null;
+  let segCycle = $state(0);
+  const GF_DWELL_MS = 7000;
+  let autoTimeout: ReturnType<typeof setTimeout> | null = null;
+  let autoStartedAt = 0;
+  let autoElapsed = 0;
   const prefersReducedMotion = typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
 
   function startFeaturedAuto() {
-    if (prefersReducedMotion) return;
-    stopFeaturedAuto();
-    autoTimer = setInterval(() => {
+    if (prefersReducedMotion || document.hidden || autoTimeout) return;
+    const remaining = Math.max(400, GF_DWELL_MS - autoElapsed);
+    autoStartedAt = performance.now();
+    autoTimeout = setTimeout(() => {
+      autoTimeout = null;
+      autoStartedAt = 0;
+      autoElapsed = 0;
       featuredIndex = (featuredIndex + 1) % gamesData.featured.length;
-    }, 5000);
+      startFeaturedAuto();
+    }, remaining);
   }
+
   function stopFeaturedAuto() {
-    if (autoTimer) clearInterval(autoTimer);
+    if (autoTimeout) {
+      clearTimeout(autoTimeout);
+      autoTimeout = null;
+    }
+    if (autoStartedAt) {
+      autoElapsed = Math.min(GF_DWELL_MS, autoElapsed + performance.now() - autoStartedAt);
+      autoStartedAt = 0;
+    }
   }
 
   onMount(() => {
-    startFeaturedAuto();
+    initGrainReveal();
+    void loadArtistImages();
     const onVisibility = () => {
       if (document.hidden) stopFeaturedAuto();
-      else startFeaturedAuto();
+      else if (currentCategory === 'gaming') startFeaturedAuto();
     };
     document.addEventListener('visibilitychange', onVisibility);
     return () => {
       stopFeaturedAuto();
+      grainObserver?.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
     };
   });
 
   function goToFeatured(n: number) {
     stopFeaturedAuto();
-    featuredIndex = (n + gamesData.featured.length) % gamesData.featured.length;
+    const count = gamesData.featured.length;
+    featuredIndex = ((n % count) + count) % count;
+    segCycle++;
+    autoElapsed = 0;
     startFeaturedAuto();
   }
 
   function onFeaturedKey(e: KeyboardEvent) {
     if (e.key === 'ArrowLeft') { e.preventDefault(); goToFeatured(featuredIndex - 1); }
     if (e.key === 'ArrowRight') { e.preventDefault(); goToFeatured(featuredIndex + 1); }
+  }
+
+  // Fresh cycle whenever Gaming becomes visible — timer and segment fill start together.
+  // Imperative on purpose: mutating segCycle inside an $effect makes it a dependency
+  // of its own writer ($effect tracks the read in segCycle++) and the effect loops.
+  function restartFeaturedCycle() {
+    stopFeaturedAuto();
+    autoElapsed = 0;
+    segCycle++;
+    startFeaturedAuto();
   }
 
   function flipSongCard() {
@@ -235,6 +273,213 @@
   let openSaga = $state<string | null>(null);
   function toggleSaga(id: string) {
     openSaga = openSaga === id ? null : id;
+  }
+
+  // Artist detail dialog + Deezer album fetch
+  type DeezerAlbum = {
+    name: string;
+    cover: string;
+    release_date: string;
+  };
+  const albumCache = new Map<string, DeezerAlbum[]>();
+  let expandedArtistId = $state<string | null>(null);
+  let expandedArtistAlbums = $state<DeezerAlbum[] | null>(null);
+  let expandedArtistLoading = $state(false);
+  let vinylDialog: HTMLDialogElement | null = $state(null);
+  let closeTimer: ReturnType<typeof setTimeout> | null = null;
+
+  type DeezerArtist = {
+    id: number;
+    name: string;
+    picture_xl: string;
+    nb_fan: number;
+  };
+  const deezerCache = new Map<string, DeezerArtist | null>();
+  let artistImages = $state<Record<string, string>>({});
+  let artistAlbumCounts = $state<Record<string, number>>({});
+
+  const DEEZER_ARTIST_OVERRIDES: Record<string, number> = {
+    'Flaco G': 13478397,
+    'Izi': 4677848,
+    'Kid Yugi': 139795852,
+    'Papa V': 85051272,
+    'Young Miko': 139171932,
+    'Quevedo': 6705223,
+    'Lucho RK': 151322852
+  };
+
+  async function fetchDeezerArtist(artistName: string): Promise<DeezerArtist | null> {
+    if (deezerCache.has(artistName)) {
+      return deezerCache.get(artistName) || null;
+    }
+    try {
+      const overrideId = DEEZER_ARTIST_OVERRIDES[artistName];
+      const endpoint = overrideId
+        ? `/.netlify/functions/deezer-artist?id=${overrideId}`
+        : `/.netlify/functions/deezer-artist?name=${encodeURIComponent(artistName)}`;
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        deezerCache.set(artistName, null);
+        return null;
+      }
+      const data = await response.json();
+      let bestMatch: DeezerArtist | null = null;
+      if (overrideId) {
+        if (!data || !data.id) {
+          deezerCache.set(artistName, null);
+          return null;
+        }
+        bestMatch = {
+          id: data.id,
+          name: data.name ?? artistName,
+          picture_xl: data.picture_xl ?? '',
+          nb_fan: data.nb_fan ?? 0
+        };
+      } else {
+        if (!data.data || data.data.length === 0) {
+          deezerCache.set(artistName, null);
+          return null;
+        }
+        bestMatch = data.data.reduce((best: DeezerArtist, current: DeezerArtist) =>
+          current.nb_fan > best.nb_fan ? current : best
+        );
+      }
+      deezerCache.set(artistName, bestMatch);
+      return bestMatch;
+    } catch {
+      deezerCache.set(artistName, null);
+      return null;
+    }
+  }
+
+  async function loadArtistImages() {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+    await Promise.all(
+      musicData.artists.map(async (artist) => {
+        const deezerData = await fetchDeezerArtist(artist.name);
+        if (deezerData?.picture_xl) {
+          artistImages = { ...artistImages, [artist.id]: deezerData.picture_xl };
+        }
+        if (deezerData?.id) {
+          const albums = await fetchAlbumsById(deezerData.id, artist.albumAllowlist);
+          if (albums.length > 0) {
+            artistAlbumCounts = { ...artistAlbumCounts, [artist.id]: albums.length };
+            albumCache.set(artist.id, albums);
+          }
+        }
+      })
+    );
+  }
+
+  function openArtistDetail(artistId: string) {
+    const artist = musicData.artists.find(a => a.id === artistId);
+    if (!artist) return;
+    if (closeTimer) {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+    }
+    vinylDialog?.classList.remove('vinyl-closing');
+    expandedArtistId = artistId;
+
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      expandedArtistAlbums = null;
+      expandedArtistLoading = false;
+    } else {
+      const cached = albumCache.get(artistId);
+      if (cached) {
+        expandedArtistAlbums = cached;
+        expandedArtistLoading = false;
+      } else {
+        expandedArtistAlbums = null;
+        expandedArtistLoading = true;
+        void fetchAlbums(artistId).then(albums => {
+          if (expandedArtistId !== artistId) return;
+          expandedArtistAlbums = albums;
+          expandedArtistLoading = false;
+        });
+      }
+    }
+
+    requestAnimationFrame(() => {
+      if (vinylDialog && !vinylDialog.open) vinylDialog.showModal();
+    });
+  }
+
+  function closeArtistDetail() {
+    if (!vinylDialog?.open) return;
+    vinylDialog.classList.add('vinyl-closing');
+    closeTimer = setTimeout(() => {
+      closeTimer = null;
+      vinylDialog?.close();
+      vinylDialog?.classList.remove('vinyl-closing');
+      expandedArtistId = null;
+      expandedArtistAlbums = null;
+      expandedArtistLoading = false;
+    }, 380);
+  }
+
+  async function fetchAlbumsById(deezerId: number, allowlist?: string[]): Promise<DeezerAlbum[]> {
+    try {
+      const res = await fetch(`/.netlify/functions/deezer-artist?albums_for=${deezerId}`);
+      if (!res.ok) return [];
+      const data = await res.json();
+      const seen = new Set<string>();
+      const allowed = allowlist ? new Set(allowlist.map(n => n.toLowerCase())) : null;
+      const albums: DeezerAlbum[] = (data.data || [])
+        .filter((a: any) => a.title && a.cover_xl && (a.record_type || 'album').toLowerCase() === 'album')
+        .filter((a: any) => {
+          // ponytail: exact-title dedupe; go case-insensitive if variant dupes appear
+          const name = String(a.title);
+          if (seen.has(name)) return false;
+          seen.add(name);
+          return true;
+        })
+        .filter((a: any) => !allowed || allowed.has(String(a.title).toLowerCase()))
+        .map((a: any) => ({
+          name: String(a.title),
+          cover: String(a.cover_xl),
+          release_date: String(a.release_date || '')
+        }));
+      return albums;
+    } catch {
+      return [];
+    }
+  }
+
+  async function fetchAlbums(artistId: string): Promise<DeezerAlbum[]> {
+    const artist = musicData.artists.find(a => a.id === artistId);
+    if (!artist) return [];
+
+    const deezerArtist = await fetchDeezerArtist(artist.name);
+    if (!deezerArtist?.id) return [];
+
+    return fetchAlbumsById(deezerArtist.id, artist.albumAllowlist);
+  }
+
+  function spotifyUrl(artistName: string): string {
+    return `https://open.spotify.com/search/${encodeURIComponent(artistName)}`;
+  }
+
+  // Travel card grain reveal — inspired by Canvas-UI Particle Scroll
+  let grainObserver: IntersectionObserver | null = null;
+  function initGrainReveal() {
+    const grid = document.getElementById('travelGrid');
+    if (!grid || typeof IntersectionObserver === 'undefined') return;
+    grainObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const card = entry.target as HTMLElement;
+        if (entry.isIntersecting) {
+          card.classList.add('grain-active');
+          setTimeout(() => card.classList.remove('grain-active'), 300);
+          grainObserver?.unobserve(card);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
+    grid.querySelectorAll('.travel-card').forEach(c => {
+      const rect = c.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) return;
+      grainObserver?.observe(c);
+    });
   }
 </script>
 
@@ -338,95 +583,172 @@
   </div>
   <div class="music-category">
     <h3 class="music-category-title">Favorite Artists</h3>
-    <div class="artists-grid revealed" id="artistsGrid">
+    <div class="vinyl-shelf" id="vinylShelf" role="list" aria-label="Favorite artists">
       {#each musicData.artists as artist, i (artist.id)}
-        <div class="artist-card" data-index={i} style="--i:{i}"
+        {@const hiResImg = artistImages[artist.id] || artist.image}
+        {@const albumCount = artistAlbumCounts[artist.id] ?? artist.albums.length}
+        <div class="vinyl-sleeve" data-index={i} style="--i:{i}"
              role="button" tabindex="0"
-             use:makeKeyboardClickable={() => window.open(`https://open.spotify.com/search/${encodeURIComponent(artist.name)}`, '_blank')}
-             onclick={() => window.open(`https://open.spotify.com/search/${encodeURIComponent(artist.name)}`, '_blank')}>
-          <div class="artist-image">
-            {#if artist.image}
-              <img src={artist.image} alt={artist.name} width="300" height="400" loading="lazy" decoding="async" srcset={srcset(artist.image, [300, 600])} sizes="(max-width: 600px) 33vw, 200px">
-            {/if}
+             aria-label="Open {artist.name} details"
+             use:makeKeyboardClickable={() => openArtistDetail(artist.id)}
+             onclick={() => openArtistDetail(artist.id)}>
+          <div class="vinyl-disc" aria-hidden="true">
+            <div class="vinyl-disc-label"></div>
           </div>
-          <div class="artist-overlay"></div>
-          <div class="artist-info">
-            <h4 class="artist-name">{artist.name}</h4>
-            <span class="artist-spotify-pill">Open in Spotify</span>
+          <div class="sleeve-front">
+            {#if hiResImg}
+              <img class="sleeve-art" src={hiResImg} alt="" width="600" height="600" loading="lazy" decoding="async">
+            {/if}
+            <div class="sleeve-overlay"></div>
+            <div class="sleeve-meta">
+              <h4 class="sleeve-name">{artist.name}</h4>
+              {#if albumCount > 0}
+                <span class="sleeve-album-count">{albumCount} album{albumCount > 1 ? 's' : ''}</span>
+              {/if}
+            </div>
           </div>
         </div>
       {/each}
     </div>
   </div>
+
+  {#if expandedArtistId}
+    {@const expandedArtist = musicData.artists.find(a => a.id === expandedArtistId)}
+    <dialog class="vinyl-overlay" id="vinylOverlay" aria-label="Artist details" bind:this={vinylDialog}
+            oncancel={(e) => { e.preventDefault(); closeArtistDetail(); }}
+            onclick={(e) => { if (e.target === vinylDialog) closeArtistDetail(); }}>
+      {#if expandedArtist}
+      <div class="vinyl-panel">
+        <button class="vinyl-close-btn" aria-label="Close artist details" onclick={closeArtistDetail}>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="vinyl-card-head">
+          <div class="vinyl-avatar">
+            <img src={artistImages[expandedArtist.id] || expandedArtist.image} alt={expandedArtist.name} width="1000" height="1000" loading="eager" decoding="async">
+          </div>
+          <div class="vinyl-card-head-text">
+            <h3 class="vinyl-name">{expandedArtist.name}</h3>
+            <a class="vinyl-spotify-btn" href={spotifyUrl(expandedArtist.name)} target="_blank" rel="noopener noreferrer">
+              <span class="vinyl-spotify-dot" aria-hidden="true"></span>
+              <span>Open in Spotify</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="vinyl-body">
+          {#if expandedArtistLoading || (expandedArtistAlbums && expandedArtistAlbums.length > 0) || expandedArtist.albums.length > 0}
+            <div class="vinyl-albums-section">
+              <h4 class="vinyl-section-label">Notable Albums</h4>
+              {#if expandedArtistLoading}
+                <div class="vinyl-albums-row" aria-busy="true" aria-label="Loading albums">
+                  {#each Array(3) as _, k (k)}
+                    <div class="vinyl-album-skeleton"></div>
+                  {/each}
+                </div>
+              {:else if expandedArtistAlbums && expandedArtistAlbums.length > 0}
+                <div class="vinyl-albums-row">
+                  {#each expandedArtistAlbums as album (album.name)}
+                    <div class="vinyl-album">
+                      <div class="vinyl-album-cover">
+                        <img src={album.cover} alt={album.name} width="300" height="300" loading="lazy" decoding="async">
+                      </div>
+                      <div class="vinyl-album-info">
+                        <span class="vinyl-album-name">{album.name}</span>
+                        {#if album.release_date}
+                          <span class="vinyl-album-year">{album.release_date.split('-')[0]}</span>
+                        {/if}
+                      </div>
+                    </div>
+                  {/each}
+                </div>
+              {:else}
+                <div class="vinyl-albums-pills">
+                  {#each expandedArtist.albums as name (name)}
+                    <span class="vinyl-album-pill">{name}</span>
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          {/if}
+        </div>
+      </div>
+      {/if}
+    </dialog>
+  {/if}
 </section>
 
 <section class="category-section{currentCategory === 'gaming' ? ' active' : ''}" id="gaming-section" role="tabpanel" aria-labelledby="tab-gaming" hidden={currentCategory !== 'gaming'}>
-  <div class="games-featured" id="gamesFeatured" role="region" aria-roledescription="carousel" aria-label="Featured games" onkeydown={onFeaturedKey}>
-    <div class="gf-track" id="gfTrack">
-      {#each gamesData.featured as game, i (game.id)}
-        <div class="gf-slide{featuredIndex === i ? ' active' : ''}" data-index={i} role="group" aria-roledescription="slide" aria-label="{i + 1} of {gamesData.featured.length}">
-          <div class="gf-bg">
-            <img src={game.cover} alt={game.title} class="gf-bg-img" width="2100" height="900" loading="lazy" fetchpriority="low" decoding="async"
-                 srcset={srcset(game.cover, [800, 1600])} sizes="100vw">
-            <div class="gf-bg-overlay"></div>
-          </div>
-          <div class="gf-content">
-            <span class="gf-genre">{game.genre}</span>
-            <h2 class="gf-title">{game.title}</h2>
-            <span class="gf-year">{game.year}</span>
-          </div>
+  <div class="gf-stage" id="gamesFeatured" role="region" aria-roledescription="carousel" aria-label="Featured games"
+       onkeydown={onFeaturedKey}>
+    {#each gamesData.featured as game, i (game.id)}
+      <article class="gf-slide{featuredIndex === i ? ' is-active' : ''}" data-index={i}
+               role="group" aria-roledescription="slide" aria-label="{i + 1} of {gamesData.featured.length}"
+               aria-hidden={featuredIndex !== i}>
+        <img class="gf-bg-img" src={game.cover} alt="" width="2100" height="900" loading="lazy" fetchpriority="low" decoding="async"
+             srcset={srcset(game.cover, [800, 1600])} sizes="100vw">
+        <div class="gf-shade"></div>
+        <div class="gf-content">
+          <span class="gf-genre">{game.genre}</span>
+          <h2 class="gf-title">{game.title}</h2>
+          <span class="gf-year">{game.year}</span>
         </div>
+      </article>
+    {/each}
+    <div class="gf-progress" role="tablist" aria-label="Featured game slides">
+      {#each gamesData.featured as _, i (i + '-' + (featuredIndex === i ? segCycle : 'idle'))}
+        <button class="gf-seg{featuredIndex === i ? ' is-active' : ''}{featuredIndex > i ? ' done' : ''}"
+                role="tab" aria-label="Go to slide {i + 1}" aria-selected={featuredIndex === i}
+                tabindex={featuredIndex === i ? 0 : -1}
+                onclick={() => goToFeatured(i)}></button>
       {/each}
     </div>
-    <div class="gf-dots" role="tablist" aria-label="Featured game slides">
-      {#each gamesData.featured as _, i}
-        <button class="gf-dot{featuredIndex === i ? ' active' : ''}" data-i={i} role="tab" aria-label="Go to slide {i + 1}" aria-selected={featuredIndex === i} tabindex={featuredIndex === i ? 0 : -1} onclick={() => goToFeatured(i)}></button>
-      {/each}
-    </div>
-    <button class="gf-arrow gf-prev" aria-label="Previous slide" onclick={() => goToFeatured(featuredIndex - 1)}>‹</button>
-    <button class="gf-arrow gf-next" aria-label="Next slide" onclick={() => goToFeatured(featuredIndex + 1)}>›</button>
+    <button class="gf-arrow gf-prev" aria-label="Previous slide" onclick={() => goToFeatured(featuredIndex - 1)}>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    </button>
+    <button class="gf-arrow gf-next" aria-label="Next slide" onclick={() => goToFeatured(featuredIndex + 1)}>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    </button>
   </div>
 
   <div class="games-subsection">
     <h3 class="games-subsection-title"><span class="games-subsection-dot playing"></span>Currently Playing</h3>
-    <div class="games-grid small revealed" id="gamesPlaying">
+    <div class="games-playing-row">
       {#each gamesData.currentlyPlaying as game, i (game.id)}
-        <div class="game-card" data-id={game.id} style="--i:{i}">
-          <div class="game-cover">
-            <img src={game.cover} alt={game.title} width="300" height="400" loading="lazy" decoding="async" srcset={srcset(game.cover, [300, 600])} sizes="(max-width: 600px) 33vw, 180px">
-            <div class="game-cover-overlay"></div>
+        <article class="playing-card" style="--i:{i}">
+          <div class="playing-cover">
+            <img src={game.cover} alt={game.title} width="300" height="400" loading="lazy" decoding="async" srcset={srcset(game.cover, [300, 600])} sizes="(max-width: 700px) 28vw, 140px">
           </div>
-          <div class="game-meta">
-            <span class="game-genre-tag">{game.genre}</span>
-            <h4 class="game-name">{game.title}</h4>
+          <div class="playing-info">
+            <span class="playing-live"><span class="games-subsection-dot playing"></span>Now Playing</span>
+            <h4 class="playing-name">{game.title}</h4>
+            <span class="playing-genre">{game.genre}</span>
           </div>
-        </div>
+        </article>
       {/each}
     </div>
   </div>
 
   <div class="games-subsection">
     <h3 class="games-subsection-title">All‑Time Favourites</h3>
-    <div class="games-grid revealed" id="gamesFavourites">
+    <div class="games-grid" id="gamesFavourites">
       {#each gamesData.favorites as game, i (game.id)}
         {#if game.isSaga}
           <div class="game-card saga-card{openSaga === game.id ? ' open' : ''}" data-id={game.id} style="--i:{i}"
-               role="button" tabindex="0"
+               role="button" tabindex="0" aria-expanded={openSaga === game.id}
                use:makeKeyboardClickable={() => toggleSaga(game.id)}
                onclick={() => toggleSaga(game.id)}>
             <div class="game-cover">
               <img src={game.cover} alt={game.title} width="300" height="400" loading="lazy" decoding="async" srcset={srcset(game.cover, [300, 600])} sizes="(max-width: 600px) 33vw, 180px">
-              <div class="game-cover-overlay"></div>
               <div class="saga-badge">{game.games?.length} games</div>
             </div>
             <div class="game-meta">
               <span class="game-genre-tag">{game.genre}</span>
-              <h4 class="game-name">{game.title}</h4>
+              <h4 class="game-name">{game.title}<svg class="saga-chevron" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></h4>
             </div>
             <div class="saga-drawer" id="drawer-{game.id}">
               <ul class="saga-list">
-                {#each game.games || [] as entry}
-                  <li class="saga-list-item"><span class="saga-list-title">{entry.title}</span><span class="saga-list-year">{entry.year}</span></li>
+                {#each game.games || [] as entry, j (entry.title)}
+                  <li class="saga-list-item" style="--j:{j}"><span class="saga-list-title">{entry.title}</span><span class="saga-list-year">{entry.year}</span></li>
                 {/each}
               </ul>
             </div>
@@ -435,7 +757,6 @@
           <div class="game-card" data-id={game.id} style="--i:{i}">
             <div class="game-cover">
               <img src={game.cover} alt={game.title} width="300" height="400" loading="lazy" decoding="async">
-              <div class="game-cover-overlay"></div>
             </div>
             <div class="game-meta">
               <span class="game-genre-tag">{game.genre}</span>

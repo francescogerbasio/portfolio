@@ -397,9 +397,9 @@
     content: '';
     position: absolute;
     right: -20px;
-    top: 7px;
-    width: 7px;
-    height: 7px;
+    top: 10px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: var(--color-text);
     transform: translateX(50%);
@@ -591,15 +591,18 @@
     font-size: 15px;
     font-weight: 600;
     font-family: var(--font-body);
-    border: 1px solid light-dark(rgba(0,0,0,0.2), rgba(255,255,255,0.2));
+    border: 2px solid var(--color-text);
     border-radius: 100px;
     cursor: pointer;
     text-decoration: none;
-    transition: transform 0.25s var(--ease-spring), background 0.2s ease;
+    transition: transform 0.25s var(--ease-spring), 
+                border-color 0.2s ease,
+                box-shadow 0.25s ease;
 }
 
 .btn-secondary:hover {
-    background: light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.06));
+    border-color: var(--color-text);
+    box-shadow: 0 4px 12px light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.18));
     transform: scale(1.04) translateY(-1px);
 }
 

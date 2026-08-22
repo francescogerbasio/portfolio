@@ -7,7 +7,8 @@ export interface Artist {
   id: string;
   name: string;
   image: string;
-  albums: Album[];
+  albums: string[];
+  albumAllowlist?: string[];
 }
 
 export interface Song {
@@ -41,36 +42,26 @@ export const musicData: MusicData = {
       id: 'lazza',
       name: 'Lazza',
       image: img('/Assets/Images/Music/Artists/lazza.webp'),
-      albums: [
-        { name: 'Sirio', cover: img('/Assets/Images/Albums/lazza-sirio.jpg') },
-        { name: 'Re Mida', cover: img('/Assets/Images/Albums/lazza-remida.jpg') },
-        { name: 'J', cover: img('/Assets/Images/Albums/lazza-j.jpg') }
-      ]
+      albums: ['Sirio', 'Re Mida', 'J']
     },
     {
       id: 'sfera-ebbasta',
       name: 'Sfera Ebbasta',
       image: img('/Assets/Images/Music/Artists/sfera-ebbasta.webp'),
-      albums: [
-        { name: 'Famoso', cover: img('/Assets/Images/Albums/sfera-famoso.jpg') },
-        { name: 'XDVR', cover: img('/Assets/Images/Albums/sfera-xdvr.jpg') }
-      ]
+      albums: ['Famoso', 'XDVR']
     },
     {
       id: 'flaco-g',
       name: 'Flaco G',
       image: img('/Assets/Images/Music/Artists/flaco-g.webp'),
-      albums: [
-        { name: 'Album 1', cover: img('/Assets/Images/Albums/flaco-album1.jpg') }
-      ]
+      albums: ['Album 1']
     },
     {
       id: 'izi',
       name: 'Izi',
       image: img('/Assets/Images/Music/Artists/izi.webp'),
-      albums: [
-        { name: 'Fenice', cover: img('/Assets/Images/Albums/izi-fenice.jpg') }
-      ]
+      albums: ['Fenice'],
+      albumAllowlist: ['RIOT', 'Aletheia', 'Pizzicato', 'Julian Ross Mixtape', 'Fenice']
     },
     { id: 'niky-savage', name: 'Niky Savage', image: img('/Assets/Images/Music/Artists/niky-savage.webp'), albums: [] },
     { id: 'kid-yugi', name: 'Kid Yugi', image: img('/Assets/Images/Music/Artists/kid-yugi.webp'), albums: [] },
@@ -81,18 +72,13 @@ export const musicData: MusicData = {
       id: 'bad-bunny',
       name: 'Bad Bunny',
       image: img('/Assets/Images/Music/Artists/bad-bunny.webp'),
-      albums: [
-        { name: 'Un Verano Sin Ti', cover: img('/Assets/Images/Albums/bb-verano.jpg') },
-        { name: 'Nadie Sabe Lo Que Va a Pasar Mañana', cover: img('/Assets/Images/Albums/bb-nadie.jpg') }
-      ]
+      albums: ['Un Verano Sin Ti', 'Nadie Sabe Lo Que Va a Pasar Mañana']
     },
     {
       id: 'j-balvin',
       name: 'J Balvin',
       image: img('/Assets/Images/Music/Artists/j-balvin.webp'),
-      albums: [
-        { name: 'Jose', cover: img('/Assets/Images/Albums/jbalvin-jose.jpg') }
-      ]
+      albums: ['Jose']
     },
     { id: 'arcangel', name: 'Arcángel', image: img('/Assets/Images/Music/Artists/arcangel.webp'), albums: [] },
     { id: 'young-miko', name: 'Young Miko', image: img('/Assets/Images/Music/Artists/young-miko.webp'), albums: [] },
@@ -102,9 +88,7 @@ export const musicData: MusicData = {
       id: 'rauw-alejandro',
       name: 'Rauw Alejandro',
       image: img('/Assets/Images/Music/Artists/rauw-alejandro.webp'),
-      albums: [
-        { name: 'Saturno', cover: img('/Assets/Images/Albums/rauw-saturno.jpg') }
-      ]
+      albums: ['Saturno']
     },
     { id: 'lyanno', name: 'Lyanno', image: img('/Assets/Images/Music/Artists/lyanno.webp'), albums: [] },
     { id: 'quevedo', name: 'Quevedo', image: img('/Assets/Images/Music/Artists/quevedo.webp'), albums: [] },

@@ -10,17 +10,11 @@
     max-width: 1100px;
 }
 
-/* Defer rendering of below-fold sections */
-.certifications-section {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
+@media (prefers-reduced-motion: reduce) {
+    .career-hero { overflow: visible; }
 }
 
-@supports not (content-visibility: auto) {
-    .certifications-section {
-        contain: layout style;
-    }
-}
+
 
 .career-eyebrow {
     font-size: clamp(11px, 0.9vw, 13px);
@@ -45,7 +39,11 @@
     animation: fadeUp 0.7s cubic-bezier(0.34, 1.2, 0.64, 1) 0.2s backwards;
 }
 
-.career-headline .highlight { color: var(--color-text-light); }
+.career-headline .highlight {
+    color: var(--color-text-light);
+    background: none;
+    -webkit-text-fill-color: inherit;
+}
 
 .career-intro-text {
     font-size: clamp(17px, 1.6vw, 22px);
@@ -81,8 +79,113 @@
     margin-bottom: 0;
 }
 
+/* ── Stats bar ── */
+.stat-number {
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-item {
+    transition: opacity 0.5s ease,
+                transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+/* ── Skill pills ── */
+.skills-block .skill-tag {
+    position: relative;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text);
+    background: light-dark(
+        #ffffff,
+        #38383a
+    );
+    border: 1px solid light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.10));
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+    padding: 8px 16px;
+    border-radius: 100px;
+    box-shadow: 0 1px 2px light-dark(rgba(0,0,0,0.05), rgba(0,0,0,0.30)),
+                0 2px 8px light-dark(rgba(0,0,0,0.05), rgba(0,0,0,0.30));
+    cursor: default;
+    transition: opacity 0.45s ease,
+                transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s ease,
+                border-color 0.3s ease,
+                background 0.3s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .skills-block .skill-tag {
+        opacity: 0;
+        transform: scale(0.5) translateY(10px);
+    }
+}
+
+.skills-block .skill-tag.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+@media (hover: hover) {
+    .skills-block .skill-tag:hover {
+        transform: scale(1.04);
+        background: light-dark(#ffffff, #424244);
+        border-color: light-dark(rgba(0,0,0,0.14), rgba(255,255,255,0.20));
+        box-shadow: 0 2px 4px light-dark(rgba(0,0,0,0.06), rgba(0,0,0,0.35)),
+                    0 6px 16px light-dark(rgba(0,0,0,0.10), rgba(0,0,0,0.35));
+    }
+}
+
+/* ── Timeline rail progress ── */
+/* suppress the grey static line from about.css (career only) */
+.timeline::before { content: none; }
+
+.timeline::after {
+    content: '';
+    position: absolute;
+    left: 89.75px;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 3px;
+    background: linear-gradient(180deg,
+        light-dark(#3a3a3c, #f5f5f7) 0%,
+        light-dark(#8e8e93, #86868b) 100%);
+    transform-origin: top;
+}
+
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .timeline::after {
+            animation: career-rail auto linear both;
+            animation-timeline: view();
+            animation-range: entry 20% exit 80%;
+        }
+    }
+}
+
+@keyframes career-rail {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+}
+
+@media (max-width: 768px) { .timeline::after { left: 75.25px; } }
+
+/* Dots hug the rail, then text: year · rail · dot · role */
+.timeline-year::after {
+    right: -25px !important;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .timeline-year::after { left: calc(100% + 15.5px) !important; }
+}
+
 /* ── CERTIFICATIONS ── */
-.certifications-section { margin-bottom: 100px; }
+.certifications-section { 
+    margin-bottom: 100px;
+    padding-bottom: 60px;
+}
 
 .certifications-title {
     font-family: var(--font-heading);
@@ -108,7 +211,13 @@
     .certifications-grid { grid-template-columns: 1fr; }
 }
 
+.certifications-grid {
+    perspective: 1200px;
+}
+
 .cert-card {
+    position: relative;
+    overflow: hidden;
     background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.68) 100%);
     border: 1px solid rgba(15, 15, 15, 0.08);
     border-radius: var(--radius-md);
@@ -116,9 +225,25 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    transition: transform 0.3s var(--ease-spring),
-                box-shadow 0.3s ease,
-                border-color 0.2s ease;
+    transition: box-shadow 0.3s ease,
+                border-color 0.2s ease,
+                transform 0.3s ease;
+}
+
+.cert-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 42%, light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.12)) 50%, transparent 58%);
+    transform: translateX(-120%);
+    pointer-events: none;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .cert-card:hover::after {
+        transform: translateX(120%);
+        transition: transform 0.8s ease-out;
+    }
 }
 
 [data-theme="dark"] .cert-card {
@@ -126,17 +251,18 @@
     border-color: rgba(255,255,255,0.08);
 }
 
-.cert-card.visible { opacity: 1; transform: translateY(0); }
+.cert-card.visible { opacity: 1; transform: rotateX(0); }
 
 @media (prefers-reduced-motion: no-preference) {
     .cert-card {
         opacity: 0;
-        transform: translateY(20px);
+        transform: rotateX(-12deg);
+        transform-origin: center bottom;
     }
 }
 
 .cert-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     box-shadow: 0 14px 36px rgba(15, 15, 15, 0.08);
     border-color: rgba(15, 15, 15, 0.12);
 }

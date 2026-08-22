@@ -234,6 +234,14 @@ const breadcrumbLd = {
   {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
   <link rel="preload" href={`${base}Assets/Fonts/Qurova/Qurova-Bold.woff2`} as="font" type="font/woff2" crossorigin>
   <link rel="preload" href={`${base}Assets/Fonts/BrittiSans/BrittiSans-Semibold.woff2`} as="font" type="font/woff2" crossorigin>
+  {page === 'work' && (
+    <>
+      <link rel="prefetch" href={`${base}cs-callao.html`} as="fetch" type="text/html" crossorigin>
+      <link rel="prefetch" href={`${base}cs-abruzzo.html`} as="fetch" type="text/html" crossorigin>
+      <link rel="prefetch" href={`${base}cs-dicarlobus.html`} as="fetch" type="text/html" crossorigin>
+      <link rel="prefetch" href={`${base}cs-quickcheckout.html`} as="fetch" type="text/html" crossorigin>
+    </>
+  )}
   <script is:inline type="speculationrules" set:html={JSON.stringify({
     prerender: speculationTargets[page].map(href => ({ where: { href_matches: href }, eagerness: 'moderate' })),
     prefetch: speculationTargets[page].map(href => ({ where: { href_matches: href }, eagerness: 'conservative' }))

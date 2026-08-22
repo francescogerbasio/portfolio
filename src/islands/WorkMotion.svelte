@@ -26,7 +26,7 @@
     const sidebar = document.querySelector<HTMLElement>('.sidebar');
     const sections = gsap.utils.toArray<HTMLElement>('.work-section');
     const cards = gsap.utils.toArray<HTMLElement>('.project-card');
-    const magneticTargets = gsap.utils.toArray<HTMLElement>('.accordion-trigger, .project-list-item.clickable, .nda-btn, .cs-proto-link, .cs-next-arrow, .cs-next-title');
+    const magneticTargets = gsap.utils.toArray<HTMLElement>('.project-list-item.clickable, .cs-proto-link, .cs-next-arrow, .cs-next-title');
     const socialIcons = gsap.utils.toArray<HTMLElement>('.social-icon');
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const wideEnough = window.innerWidth >= 900;
@@ -62,6 +62,8 @@
           { autoAlpha: 1, y: 0, duration: 0.72, ease: 'power3.out' }
         );
       }
+
+      initHeroCharReveal();
 
       if (enableParallax && hero) {
         gsap.timeline({
@@ -134,6 +136,46 @@
     });
 
     ScrollTrigger.refresh();
+
+    function initHeroCharReveal() {
+      const title = document.querySelector<HTMLElement>('.hero-title');
+      if (!title) return;
+      const original = title.textContent ?? '';
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      title.setAttribute('aria-label', original);
+
+      const chars = Array.from(original);
+      title.textContent = '';
+      const spans: HTMLElement[] = [];
+      chars.forEach((ch) => {
+        const span = document.createElement('span');
+        span.className = 'hero-char';
+        span.textContent = ch;
+        title.appendChild(span);
+        spans.push(span);
+      });
+
+      gsap.set(spans, {
+        opacity: 0,
+        scale: 0.2,
+        x: () => gsap.utils.random(-60, 60),
+        y: () => gsap.utils.random(-40, 40),
+        rotate: () => gsap.utils.random(-25, 25)
+      });
+
+      gsap.to(spans, {
+        opacity: 1,
+        scale: 1,
+        x: 0,
+        y: 0,
+        rotate: 0,
+        duration: 1.0,
+        ease: 'elastic.out(1, 0.6)',
+        stagger: { each: 0.035, from: 'start' },
+        delay: 0.6
+      });
+    }
 
     function handleCardTilt(event: Event) {
       if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
