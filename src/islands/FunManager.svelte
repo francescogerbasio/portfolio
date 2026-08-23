@@ -77,6 +77,10 @@
     };
   });
 
+  // Bump when photos are re-sorted or replaced inside the Travel folders —
+  // /Assets/* is cached for 30 days, so same-name files need a new URL
+  const TRAVEL_IMG_VERSION = '2';
+
   function loadTravel() {
     const allPhotos: TravelPhoto[] = [];
     travelConfig.destinations.forEach(destination => {
@@ -84,7 +88,7 @@
       for (let i = 1; i <= (destination.photoCount || 0); i++) {
         allPhotos.push({
           id: `${destination.folder}-${i}`,
-          image: `${folderPath}/${i}.webp`,
+          image: `${folderPath}/${i}.webp?v=${TRAVEL_IMG_VERSION}`,
           location: destination.location,
           country: destination.country,
           flag: destination.flag,
@@ -132,7 +136,9 @@
   }
 
   function srcset(path: string, widths: number[], originalWidth?: number): string {
-    const parts = widths.map(w => `${path.replace(/\.webp$/, `-${w}w.webp`)} ${w}w`);
+    const [base, query] = path.split('?');
+    const q = query ? `?${query}` : '';
+    const parts = widths.map(w => `${base.replace(/\.webp$/, `-${w}w.webp`)}${q} ${w}w`);
     if (originalWidth) parts.push(`${path} ${originalWidth}w`);
     return parts.join(', ');
   }
