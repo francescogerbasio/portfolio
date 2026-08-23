@@ -178,7 +178,12 @@
 }
 
 @media (max-width: 768px) {
-    .timeline-year::after { left: calc(100% + 15.5px) !important; }
+    /* Dot sits between the rail (75–78px) and the text column (starts 88px);
+       transform:none cancels the base translateX(50%) offset */
+    .timeline-year::after {
+        left: calc(100% + 12px) !important;
+        transform: none !important;
+    }
 }
 
 /* ── CERTIFICATIONS ── */

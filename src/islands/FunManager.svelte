@@ -61,7 +61,6 @@
 
   onMount(() => {
     isWindows = (navigator.userAgentData?.platform || navigator.platform || '').toLowerCase().includes('win');
-    loadTravel();
 
     void scheduleMovePill();
     flagNav?.addEventListener('scroll', movePill);
@@ -109,6 +108,10 @@
     }
     return shuffled;
   }
+
+  // Runs at init (server + client) so the travel grid ships in the initial
+  // HTML and image fetches start at parse time instead of after hydration
+  loadTravel();
 
   function switchCategory(category: string) {
     if (switching) return;
@@ -549,7 +552,8 @@
              role="button" tabindex="0"
              use:makeKeyboardClickable={() => activateCountryFromCard(photo.country)}
              onclick={() => activateCountryFromCard(photo.country)}>
-          <img src={photo.image} alt={photo.location} width="800" height="1067" loading="lazy" decoding="async"
+          <img src={photo.image} alt={photo.location} width="800" height="1067"
+               loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i < 4 ? 'high' : undefined} decoding="async"
                srcset={srcset(photo.image, [315], 630)} sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
           <div class="travel-card-location"><span class="flag">{photo.flag}</span><span class="location-name">{photo.location}</span></div>
         </div>
@@ -564,7 +568,8 @@
                role="button" tabindex="0"
                use:makeKeyboardClickable={() => activateCountryFromCard(photo.country)}
                onclick={() => activateCountryFromCard(photo.country)}>
-            <img src={photo.image} alt={photo.location} width="800" height="1067" loading="lazy" decoding="async"
+            <img src={photo.image} alt={photo.location} width="800" height="1067"
+                 loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i < 4 ? 'high' : undefined} decoding="async"
                  srcset={srcset(photo.image, [315], 630)} sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
             <div class="travel-card-location"><span class="flag">{photo.flag}</span><span class="location-name">{photo.location}</span></div>
           </div>
