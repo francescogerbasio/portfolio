@@ -101,14 +101,21 @@
     shuffledPhotos = shuffleArray([...allPhotos]);
   }
 
+  // Deterministic daily shuffle — SSR and client hydration must produce the
+  // SAME order or Svelte 5 splices img/label pairs across cards. Seed = UTC
+  // day number: same mix for everyone all day, new mix at midnight UTC.
   function shuffleArray<T>(array: T[]): T[] {
     const shuffled = [...array];
-    const seedBuffer = new Uint32Array(1);
-    crypto.getRandomValues(seedBuffer);
-    let seed = seedBuffer[0];
+    let seed = Math.floor(Date.now() / 86400000) >>> 0;
+    const rand = () => {
+      seed = (seed + 0x6d2b79f5) >>> 0;
+      let t = seed;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
     for (let i = shuffled.length - 1; i > 0; i--) {
-      seed = (seed * 9301 + 49297) % 233280;
-      const j = Math.floor((seed / 233280) * (i + 1));
+      const j = Math.floor(rand() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
@@ -562,7 +569,7 @@
           <img src={photo.image} alt={photo.location} width="800" height="1067"
                loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i < 4 ? 'high' : undefined} decoding="async"
                srcset={srcset(photo.image, [315], 630)} sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
-          <div class="travel-card-location"><span class="flag">{photo.flag}</span><span class="location-name">{photo.location}</span></div>
+          <div class="travel-card-location">{#if !isWindows}<span class="flag">{photo.flag}</span>{/if}<span class="location-name">{photo.location}</span></div>
         </div>
       {/each}
     {:else}
@@ -578,7 +585,7 @@
             <img src={photo.image} alt={photo.location} width="800" height="1067"
                  loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i < 4 ? 'high' : undefined} decoding="async"
                  srcset={srcset(photo.image, [315], 630)} sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
-            <div class="travel-card-location"><span class="flag">{photo.flag}</span><span class="location-name">{photo.location}</span></div>
+            <div class="travel-card-location">{#if !isWindows}<span class="flag">{photo.flag}</span>{/if}<span class="location-name">{photo.location}</span></div>
           </div>
         {/each}
       {/if}
