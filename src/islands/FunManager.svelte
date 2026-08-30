@@ -22,7 +22,6 @@
   const base = import.meta.env.BASE_URL;
 
   let currentCategory = $state('travel');
-  let switching = $state(false);
   let currentCountry = $state('all');
   let photos = $state<TravelPhoto[]>([]);
   let shuffledPhotos = $state<TravelPhoto[]>([]);
@@ -33,6 +32,7 @@
   let flipped = $state(false);
   let isFlipping = $state(false);
   let previewSrc = $state('');
+  let artistDataRequested = false;
 
   const countries = $derived.by(() => {
     const map = new Map<string, { name: string; flag: string; countryCode: string }>();
@@ -101,12 +101,10 @@
     shuffledPhotos = shuffleArray([...allPhotos]);
   }
 
-  // Deterministic daily shuffle — SSR and client hydration must produce the
-  // SAME order or Svelte 5 splices img/label pairs across cards. Seed = UTC
-  // day number: same mix for everyone all day, new mix at midnight UTC.
+  // A static seed keeps the pre-rendered order identical during hydration.
   function shuffleArray<T>(array: T[]): T[] {
     const shuffled = [...array];
-    let seed = Math.floor(Date.now() / 86400000) >>> 0;
+    let seed = 0x6d2b79f5;
     const rand = () => {
       seed = (seed + 0x6d2b79f5) >>> 0;
       let t = seed;
@@ -126,21 +124,18 @@
   loadTravel();
 
   function switchCategory(category: string) {
-    if (switching) return;
-    switching = true;
-    setTimeout(() => {
-      currentCategory = category;
-      if (category === 'travel') {
-        loadTravel();
-        void scheduleMovePill();
-        requestAnimationFrame(() => initGrainReveal());
-      } else if (category === 'gaming') {
-        restartFeaturedCycle();
-      } else {
-        stopFeaturedAuto();
-      }
-      switching = false;
-    }, 180);
+    if (currentCategory === category) return;
+    currentCategory = category;
+    if (category === 'travel') {
+      loadTravel();
+      void scheduleMovePill();
+      requestAnimationFrame(() => initGrainReveal());
+    } else if (category === 'gaming') {
+      restartFeaturedCycle();
+    } else {
+      stopFeaturedAuto();
+      void loadArtistImages();
+    }
   }
 
   function srcset(path: string, widths: number[], originalWidth?: number): string {
@@ -229,7 +224,6 @@
 
   onMount(() => {
     initGrainReveal();
-    void loadArtistImages();
     const onVisibility = () => {
       if (document.hidden) stopFeaturedAuto();
       else if (currentCategory === 'gaming') startFeaturedAuto();
@@ -297,6 +291,12 @@
     name: string;
     cover: string;
     release_date: string;
+  };
+  type DeezerAlbumApiItem = {
+    title?: unknown;
+    cover_xl?: unknown;
+    record_type?: unknown;
+    release_date?: unknown;
   };
   const albumCache = new Map<string, DeezerAlbum[]>();
   let expandedArtistId = $state<string | null>(null);
@@ -370,7 +370,8 @@
   }
 
   async function loadArtistImages() {
-    if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+    if (artistDataRequested || (typeof navigator !== 'undefined' && !navigator.onLine)) return;
+    artistDataRequested = true;
     await Promise.all(
       musicData.artists.map(async (artist) => {
         const deezerData = await fetchDeezerArtist(artist.name);
@@ -439,20 +440,21 @@
     try {
       const res = await fetch(`/.netlify/functions/deezer-artist?albums_for=${deezerId}`);
       if (!res.ok) return [];
-      const data = await res.json();
+      const data = await res.json() as { data?: DeezerAlbumApiItem[] };
       const seen = new Set<string>();
       const allowed = allowlist ? new Set(allowlist.map(n => n.toLowerCase())) : null;
       const albums: DeezerAlbum[] = (data.data || [])
-        .filter((a: any) => a.title && a.cover_xl && (a.record_type || 'album').toLowerCase() === 'album')
-        .filter((a: any) => {
-          // ponytail: exact-title dedupe; go case-insensitive if variant dupes appear
+        .filter((a) => typeof a.title === 'string' && typeof a.cover_xl === 'string'
+          && (typeof a.record_type !== 'string' || a.record_type.toLowerCase() === 'album'))
+        .filter((a) => {
+          // Exact-title dedupe; switch to case-insensitive matching if variant duplicates appear.
           const name = String(a.title);
           if (seen.has(name)) return false;
           seen.add(name);
           return true;
         })
-        .filter((a: any) => !allowed || allowed.has(String(a.title).toLowerCase()))
-        .map((a: any) => ({
+        .filter((a) => !allowed || allowed.has(String(a.title).toLowerCase()))
+        .map((a) => ({
           name: String(a.title),
           cover: String(a.cover_xl),
           release_date: String(a.release_date || '')
@@ -502,7 +504,7 @@
 
 {#snippet musicCard()}
   {@const song = musicData.mySong}
-  {@const canPreview = typeof navigator !== 'undefined' && navigator.onLine && song.youtubeEmbedId}
+  {@const canPreview = Boolean(previewSrc)}
   {@const artworkSrc = song.artwork || `https://i.ytimg.com/vi/${song.youtubeEmbedId}/maxresdefault.jpg`}
   <div class="song-card{flipped ? ' flipped' : ''}" id="songCard" onmouseleave={unflipSongCard}>
     <div class="song-card-inner">
@@ -518,11 +520,10 @@
             <p class="song-card-artist">{song.artist}</p>
             <p class="song-card-producer">{song.producer}</p>
           </div>
-          <div class="song-card-play-btn" role="button" tabindex="0" aria-label="Open on YouTube"
-               onclick={() => window.open(song.youtubeUrl, '_blank')}
-               onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.open(song.youtubeUrl, '_blank'); } }}>
+          <button type="button" class="song-card-play-btn" aria-label="Open on YouTube"
+                  onclick={() => window.open(song.youtubeUrl, '_blank', 'noopener,noreferrer')}>
             <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </div>
+          </button>
         </div>
       </div>
       <div class="song-card-back">
@@ -543,20 +544,20 @@
   </div>
 {/snippet}
 
-<div class="category-nav-top" role="tablist" aria-label="Content categories">
-  <button class="category-btn{currentCategory === 'travel' ? ' active' : ''}" data-category="travel" role="tab" aria-selected={currentCategory === 'travel'} aria-controls="travel-section" id="tab-travel" onclick={() => switchCategory('travel')}>Travel</button>
-  <button class="category-btn{currentCategory === 'music' ? ' active' : ''}" data-category="music" role="tab" aria-selected={currentCategory === 'music'} aria-controls="music-section" id="tab-music" onclick={() => switchCategory('music')}>Music</button>
-  <button class="category-btn{currentCategory === 'gaming' ? ' active' : ''}" data-category="gaming" role="tab" aria-selected={currentCategory === 'gaming'} aria-controls="gaming-section" id="tab-gaming" onclick={() => switchCategory('gaming')}>Gaming</button>
+<div class="category-nav-top" aria-label="Content categories">
+  <button class="category-btn{currentCategory === 'travel' ? ' active' : ''}" data-category="travel" aria-pressed={currentCategory === 'travel'} aria-controls="travel-section" id="tab-travel" onclick={() => switchCategory('travel')}>Travel</button>
+  <button class="category-btn{currentCategory === 'music' ? ' active' : ''}" data-category="music" aria-pressed={currentCategory === 'music'} aria-controls="music-section" id="tab-music" onclick={() => switchCategory('music')}>Music</button>
+  <button class="category-btn{currentCategory === 'gaming' ? ' active' : ''}" data-category="gaming" aria-pressed={currentCategory === 'gaming'} aria-controls="gaming-section" id="tab-gaming" onclick={() => switchCategory('gaming')}>Gaming</button>
 </div>
 
 <p class="category-subtitle" id="categorySubtitle">{CATEGORY_SUBTITLES[currentCategory]}</p>
 
-<section class="category-section{currentCategory === 'travel' ? ' active' : ''}" id="travel-section" role="tabpanel" aria-labelledby="tab-travel" hidden={currentCategory !== 'travel'}>
-  <div class="flag-navigation" id="flagNavigation" bind:this={flagNav}>
+<section class="category-section{currentCategory === 'travel' ? ' active' : ''}" id="travel-section" aria-labelledby="tab-travel" hidden={currentCategory !== 'travel'}>
+  <div class="flag-navigation" id="flagNavigation" bind:this={flagNav} aria-label="Filter travel photos by country">
     <div class="flag-nav-pill" id="flagNavPill" bind:this={flagPill}></div>
-    <button class="flag-btn{currentCountry === 'all' ? ' active' : ''}" data-country="all" onclick={() => filterCountry('all')}>{isWindows ? 'All' : '🌍 All'}</button>
+    <button class="flag-btn{currentCountry === 'all' ? ' active' : ''}" data-country="all" aria-pressed={currentCountry === 'all'} onclick={() => filterCountry('all')}>{isWindows ? 'All' : '🌍 All'}</button>
     {#each countries as c}
-      <button class="flag-btn{currentCountry === c.countryCode ? ' active' : ''}" data-country={c.countryCode} onclick={() => filterCountry(c.countryCode)}>{isWindows ? c.name : `${c.flag} ${c.name}`}</button>
+      <button class="flag-btn{currentCountry === c.countryCode ? ' active' : ''}" data-country={c.countryCode} aria-pressed={currentCountry === c.countryCode} onclick={() => filterCountry(c.countryCode)}>{isWindows ? c.name : `${c.flag} ${c.name}`}</button>
     {/each}
   </div>
   <div class="masonry-grid" id="travelGrid">
@@ -566,8 +567,8 @@
              role="button" tabindex="0"
              use:makeKeyboardClickable={() => activateCountryFromCard(photo.country)}
              onclick={() => activateCountryFromCard(photo.country)}>
-          <img src={photo.image} alt={photo.location} width="800" height="1067"
-               loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i < 4 ? 'high' : undefined} decoding="async"
+          <img src={photo.image} alt={photo.location} width="630" height="840"
+               loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async"
                srcset={srcset(photo.image, [315], 630)} sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
           <div class="travel-card-location">{#if !isWindows}<span class="flag">{photo.flag}</span>{/if}<span class="location-name">{photo.location}</span></div>
         </div>
@@ -582,8 +583,8 @@
                role="button" tabindex="0"
                use:makeKeyboardClickable={() => activateCountryFromCard(photo.country)}
                onclick={() => activateCountryFromCard(photo.country)}>
-            <img src={photo.image} alt={photo.location} width="800" height="1067"
-                 loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i < 4 ? 'high' : undefined} decoding="async"
+            <img src={photo.image} alt={photo.location} width="630" height="840"
+                 loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async"
                  srcset={srcset(photo.image, [315], 630)} sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
             <div class="travel-card-location">{#if !isWindows}<span class="flag">{photo.flag}</span>{/if}<span class="location-name">{photo.location}</span></div>
           </div>
@@ -593,7 +594,7 @@
   </div>
 </section>
 
-<section class="category-section{currentCategory === 'music' ? ' active' : ''}" id="music-section" role="tabpanel" aria-labelledby="tab-music" hidden={currentCategory !== 'music'}>
+<section class="category-section{currentCategory === 'music' ? ' active' : ''}" id="music-section" aria-labelledby="tab-music" hidden={currentCategory !== 'music'}>
   <div class="music-category">
     <h3 class="music-category-title">Music Production</h3>
     <div class="my-music-container" id="myMusicContainer">
@@ -696,9 +697,10 @@
   {/if}
 </section>
 
-<section class="category-section{currentCategory === 'gaming' ? ' active' : ''}" id="gaming-section" role="tabpanel" aria-labelledby="tab-gaming" hidden={currentCategory !== 'gaming'}>
+<section class="category-section{currentCategory === 'gaming' ? ' active' : ''}" id="gaming-section" aria-labelledby="tab-gaming" hidden={currentCategory !== 'gaming'}>
   <div class="gf-stage" id="gamesFeatured" role="region" aria-roledescription="carousel" aria-label="Featured games"
-       onkeydown={onFeaturedKey}>
+       onkeydown={onFeaturedKey} onmouseenter={stopFeaturedAuto} onmouseleave={startFeaturedAuto}
+       onfocusin={stopFeaturedAuto} onfocusout={startFeaturedAuto}>
     {#each gamesData.featured as game, i (game.id)}
       <article class="gf-slide{featuredIndex === i ? ' is-active' : ''}" data-index={i}
                role="group" aria-roledescription="slide" aria-label="{i + 1} of {gamesData.featured.length}"
@@ -713,11 +715,10 @@
         </div>
       </article>
     {/each}
-    <div class="gf-progress" role="tablist" aria-label="Featured game slides">
+    <div class="gf-progress" role="group" aria-label="Featured game slides">
       {#each gamesData.featured as _, i (i + '-' + (featuredIndex === i ? segCycle : 'idle'))}
         <button class="gf-seg{featuredIndex === i ? ' is-active' : ''}{featuredIndex > i ? ' done' : ''}"
-                role="tab" aria-label="Go to slide {i + 1}" aria-selected={featuredIndex === i}
-                tabindex={featuredIndex === i ? 0 : -1}
+                aria-label="Go to slide {i + 1}" aria-pressed={featuredIndex === i}
                 onclick={() => goToFeatured(i)}></button>
       {/each}
     </div>
@@ -775,7 +776,8 @@
         {:else}
           <div class="game-card" data-id={game.id} style="--i:{i}">
             <div class="game-cover">
-              <img src={game.cover} alt={game.title} width="300" height="400" loading="lazy" decoding="async">
+              <img src={game.cover} alt={game.title} width="300" height="400" loading="lazy" decoding="async"
+                   srcset={srcset(game.cover, [300])} sizes="(max-width: 600px) 33vw, 180px">
             </div>
             <div class="game-meta">
               <span class="game-genre-tag">{game.genre}</span>

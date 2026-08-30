@@ -112,15 +112,20 @@ const structuredData =
 const breadcrumbLd = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Work', item: `${siteUrl}/` },
-    { '@type': 'ListItem', position: 2, name: breadcrumbName, item: pageUrl }
-  ]
+  itemListElement: page === 'work'
+    ? [{ '@type': 'ListItem', position: 1, name: 'Work', item: `${siteUrl}/` }]
+    : [
+        { '@type': 'ListItem', position: 1, name: 'Work', item: `${siteUrl}/` },
+        { '@type': 'ListItem', position: 2, name: breadcrumbName, item: pageUrl }
+      ]
 };
 ---
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" id="themeColorMeta" content="#fdf5f6">
   <script is:inline>
     (function () {
       'use strict';
@@ -132,24 +137,28 @@ const breadcrumbLd = {
         html.style.colorScheme = theme;
         const csm = document.querySelector('meta[name="color-scheme"]');
         if (csm) csm.content = theme;
+        document.querySelectorAll('[id^="themeToggle"]').forEach(function (button) {
+          const isDark = theme === 'dark';
+          button.setAttribute('aria-pressed', String(isDark));
+          button.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+        });
       }
       function applyThemeChrome(theme) {
         const color = theme === 'dark' ? '#252525' : '#fdf5f6';
-        const old = document.querySelector('meta[name="theme-color"]');
-        if (old) old.remove();
-        const m = document.createElement('meta');
-        m.name = 'theme-color';
-        m.id = 'themeColorMeta';
-        m.content = color;
-        document.head.appendChild(m);
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = color;
       }
       function applyTheme(theme) { applyThemeCore(theme); applyThemeChrome(theme); }
-      function getSavedTheme() { return localStorage.getItem(STORAGE_KEY) || 'light'; }
+      function getSavedTheme() {
+        var saved = null;
+        try { saved = localStorage.getItem(STORAGE_KEY); } catch (_) {}
+        return saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      }
       function toggleTheme() {
         const next = (html.getAttribute('data-theme') || 'light') === 'dark' ? 'light' : 'dark';
-        localStorage.setItem(STORAGE_KEY, next);
+        try { localStorage.setItem(STORAGE_KEY, next); } catch (_) {}
         if (window.innerWidth <= 768) {
-          sessionStorage.setItem('themeScrollY', String(window.scrollY));
+          try { sessionStorage.setItem('themeScrollY', String(window.scrollY)); } catch (_) {}
           const s = document.createElement('style');
           s.textContent = '@view-transition { navigation: none; }';
           document.head.appendChild(s);
@@ -177,8 +186,7 @@ const breadcrumbLd = {
       }
       applyTheme(getSavedTheme());
       document.addEventListener('DOMContentLoaded', function () {
-        const m = document.getElementById('themeColorMeta');
-        if (m) m.content = getSavedTheme() === 'dark' ? '#252525' : '#fdf5f6';
+        applyTheme(getSavedTheme());
         ['themeToggle', 'themeToggleMobile'].forEach(function (id) {
           var b = document.getElementById(id);
           if (b) b.addEventListener('click', toggleTheme);
@@ -203,12 +211,9 @@ const breadcrumbLd = {
       }
     });
   </script>
-  <meta charset="UTF-8">
-  <meta name="color-scheme" content="light dark">
   <link rel="icon" href={`${base}Assets/Images/favicon.svg`} type="image/svg+xml">
   <link rel="icon" href={`${base}Assets/Images/favicon.ico`} sizes="any">
   <link rel="apple-touch-icon" href={`${base}Assets/Images/apple-touch-icon.png`}>
-  <meta name="theme-color" id="themeColorMeta" content="#fdf5f6">
   <link rel="canonical" href={pageUrl}>
   <meta name="description" content={description}>
   <meta property="og:type" content="website">
@@ -230,7 +235,7 @@ const breadcrumbLd = {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>{title}</title>
   {dnsPrefetch.map(href => <link rel="dns-prefetch" href={href} />)}
-  <link rel="preconnect" href="https://api.open-meteo.com" crossorigin>
+  {page === 'work' && <link rel="preconnect" href="https://api.open-meteo.com" crossorigin />}
   {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
   <link rel="preload" href={`${base}Assets/Fonts/Qurova/Qurova-Bold.woff2`} as="font" type="font/woff2" crossorigin>
   <link rel="preload" href={`${base}Assets/Fonts/BrittiSans/BrittiSans-Semibold.woff2`} as="font" type="font/woff2" crossorigin>

@@ -453,7 +453,7 @@ select, nav, header, main, section, article, aside, footer, figure, figcaption,
 .btn-primary, .btn-secondary, .cert-card, .value-item,
 .stat-item, .values-header, .about-cta, .about-divider, .timeline-item,
 .about-stats, .game-card, .vinyl-sleeve, .travel-card, .song-card, .category-btn,
-.flag-btn, .flag-navigation, .flag-nav-pill, .gf-arrow, .gf-dot, .nda-password-input,
+.flag-btn, .flag-navigation, .flag-nav-pill, .gf-arrow, .nda-password-input,
 .cv-picker, .cv-picker-option, .nda-overlay, .nda-modal-content, .mobile-menu,
 .hamburger-fade-zone, .theme-toggle, .social-icon, .cs-panel, .cs-overlay,
 .cs-close-btn, .featured-release-card, .project-badge, .project-meta {
@@ -991,13 +991,6 @@ button.nav-link {
     color: var(--color-text-light);
 }
 
-/* Hide map container */
-
-/* Mobile Location Widget - Top Left Corner */
-.location-widget-mobile {
-    display: none;
-}
-
 /* ===================================
    NDA PASSWORD MODAL
    =================================== */
@@ -1129,7 +1122,6 @@ dialog.nda-modal:open::backdrop {
 
 .nda-password-input:focus-visible {
     border-color: var(--color-text);
-    outline: none;
 }
 
 .nda-password-input.error {
@@ -1149,7 +1141,7 @@ dialog.nda-modal:open::backdrop {
     font-weight: 600;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     font-family: var(--font-body);
     border: none;
 }
@@ -1565,12 +1557,6 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
 }
 
 
-@media (max-width: 768px) {
-    .timeline-desc, .sidebar-bio, .project-description, .cs-body, .about-text {
-        text-align: justify;
-        text-justify: inter-word;
-    }
-}
 /* ===================================
    WORK SECTIONS
    =================================== */
@@ -2168,54 +2154,6 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
         display: none;
     }
     
-    .location-widget-mobile {
-        display: flex;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 10000;
-        align-items: center;
-        gap: 10px;
-        background: rgba(253, 245, 246, 0.9);
-        backdrop-filter: blur(20px);
-        
-        padding: 10px 14px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-    }
-
-    [data-theme="dark"] .location-widget-mobile {
-        background: rgba(37, 37, 37, 0.85);
-        border-color: rgba(255, 255, 255, 0.08);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    }
-    
-    .location-map-mobile {
-        font-size: 24px;
-        line-height: 1;
-    }
-    
-    .location-info-mobile {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-    }
-    
-    .location-city-mobile {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--color-text);
-        line-height: 1.2;
-    }
-    
-    .weather-temp-mobile {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--color-text-light);
-        line-height: 1.2;
-    }
-    
     .hamburger-menu {
         display: block;
     }
@@ -2298,8 +2236,6 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
     .sidebar-bio {
         font-size: 16px;
         line-height: 1.5;
-        text-align: justify;
-        text-justify: inter-word;
     }
     
     .profile-image {
@@ -2415,13 +2351,6 @@ html.lenis, html.lenis body {
     transition: opacity 0.3s ease;
 }
 
-@media (max-width: 768px) {
-    .category-subtitle {
-        text-align: justify;
-        text-justify: inter-word;
-    }
-}
-
 .category-section {
     display: none;
     opacity: 0;
@@ -2435,11 +2364,6 @@ html.lenis, html.lenis body {
     opacity: 1;
     transform: translateY(0) scale(1);
 }
-.category-section.exiting {
-    opacity: 0;
-    transform: translateY(-12px) scale(0.98);
-}
-
 /* ===================================
    FLAG NAVIGATION
    =================================== */
@@ -3911,29 +3835,18 @@ dialog.vinyl-overlay[open] .vinyl-close-btn {
     container-type: inline-size;
 }
 
-.games-grid.small {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    container-type: inline-size;
-}
-
 @media (max-width: 768px) {
-    .games-grid       { grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .games-grid.small { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .games-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
 }
 
 @supports not (container-type: inline-size) {
     @media (max-width: 768px) {
-        .games-grid       { grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .games-grid.small { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .games-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
     }
 }
 
 @container (max-width: 500px) {
     .games-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
-}
-
-@container (max-width: 300px) {
-    .games-grid.small { grid-template-columns: repeat(2, 1fr); gap: 12px; }
 }
 
 /* MWG-2025/animate-element-entry-exit — blur+rise entrance on first render */
@@ -4325,20 +4238,6 @@ dialog.vinyl-overlay[open] .vinyl-close-btn {
     padding: 60px 20px;
 }
 
-.spinner {
-    width: 40px;
-    height: 40px;
-    margin: 0 auto 16px;
-    border: 4px solid var(--color-border);
-    border-top-color: var(--color-text);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
 .loading-state p {
     font-size: 16px;
     color: var(--color-text-light);
@@ -4351,8 +4250,7 @@ dialog.vinyl-overlay[open] .vinyl-close-btn {
 
 @supports not (container-type: inline-size) {
     @media (max-width: 600px) {
-        .games-grid,
-        .games-grid.small {
+        .games-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
         }
@@ -4360,8 +4258,7 @@ dialog.vinyl-overlay[open] .vinyl-close-btn {
 }
 
 @container (max-width: 320px) {
-    .games-grid,
-    .games-grid.small {
+    .games-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
     }
@@ -4774,12 +4671,9 @@ html[data-vt-direction="back"]::view-transition-new(root) {
 
     .category-section,
     .category-section.active,
-    .category-section.exiting,
     .travel-card,
     .vinyl-sleeve,
-    .vinyl-shelf.revealed .vinyl-sleeve,
     .game-card,
-    .games-grid.revealed .game-card,
     .gf-content {
         transition: none !important;
         opacity: 1 !important;

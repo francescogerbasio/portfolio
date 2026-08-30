@@ -1,9 +1,9 @@
-export interface GameEntry {
+interface GameEntry {
   title: string;
   year?: string;
 }
 
-export interface Game {
+interface Game {
   id: string;
   title: string;
   cover: string;
@@ -13,7 +13,7 @@ export interface Game {
   games?: GameEntry[];
 }
 
-export interface GamesData {
+interface GamesData {
   featured: Game[];
   currentlyPlaying: Game[];
   favorites: Game[];

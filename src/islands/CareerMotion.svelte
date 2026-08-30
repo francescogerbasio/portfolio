@@ -15,7 +15,6 @@
         yearsCounter.textContent = years.toFixed(1) + '+';
       };
       updateYears();
-      setInterval(updateYears, 60000);
     }
 
     const titlesCounter = document.querySelector('.stat-number[data-count="20"]');

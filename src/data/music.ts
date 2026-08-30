@@ -1,9 +1,4 @@
-export interface Album {
-  name: string;
-  cover: string;
-}
-
-export interface Artist {
+interface Artist {
   id: string;
   name: string;
   image: string;
@@ -11,7 +6,7 @@ export interface Artist {
   albumAllowlist?: string[];
 }
 
-export interface Song {
+interface Song {
   title: string;
   artist: string;
   producer: string;
@@ -20,7 +15,7 @@ export interface Song {
   youtubeEmbedId: string;
 }
 
-export interface MusicData {
+interface MusicData {
   mySong: Song;
   artists: Artist[];
 }

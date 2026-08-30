@@ -89,7 +89,7 @@
             {
               autoAlpha: 1,
               y: 0,
-              duration: isFirst ? 0.55 : 0.55,
+              duration: 0.55,
               delay: isFirst ? 0.6 : 0,
               scrollTrigger: {
                 trigger: section,
@@ -116,13 +116,12 @@
         }
       });
 
-      cards.forEach((card) => {
-        card.addEventListener('pointermove', handleCardTilt);
-        card.addEventListener('pointerleave', resetCardTilt);
-        card.addEventListener('blur', resetCardTilt);
-      });
-
       if (finePointer) {
+        cards.forEach((card) => {
+          card.addEventListener('pointermove', handleCardTilt);
+          card.addEventListener('pointerleave', resetCardTilt);
+          card.addEventListener('blur', resetCardTilt);
+        });
         magneticTargets.forEach((target) => {
           target.addEventListener('pointermove', handleMagnetMove);
           target.addEventListener('pointerleave', resetMagnet);
@@ -178,7 +177,6 @@
     }
 
     function handleCardTilt(event: Event) {
-      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
       const card = event.currentTarget as HTMLElement;
       const pointerEvent = event as PointerEvent;
       const rect = card.getBoundingClientRect();

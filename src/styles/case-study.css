@@ -518,6 +518,12 @@ dialog.cs-overlay[open] .cs-scroll-cue {
 
 .cs-body + .cs-body { margin-top: 16px; }
 
+.cs-body.cs-future-note {
+  margin-top: 28px;
+  opacity: 0.7;
+  font-size: 0.9375rem;
+}
+
 /* Two-col utility */
 .cs-2col {
   display: grid;
@@ -840,7 +846,29 @@ dialog.cs-overlay[open] .cs-scroll-cue {
   flex-wrap: wrap;
 }
 
+.cs-next-project {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  cursor: pointer;
+}
+
+.cs-next-project > span:first-child {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .cs-next-label {
+  display: block;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: .14em;
@@ -850,6 +878,7 @@ dialog.cs-overlay[open] .cs-scroll-cue {
 }
 
 .cs-next-title {
+  display: block;
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -.02em;
@@ -858,7 +887,7 @@ dialog.cs-overlay[open] .cs-scroll-cue {
   will-change: transform;
 }
 
-.cs-next-title:hover { opacity: .55; }
+.cs-next-project:hover .cs-next-title { opacity: .55; }
 
 .cs-next-arrow {
   width: 40px; height: 40px;
@@ -875,7 +904,7 @@ dialog.cs-overlay[open] .cs-scroll-cue {
   will-change: transform;
 }
 
-.cs-next-arrow:hover {
+.cs-next-project:hover .cs-next-arrow {
   background: var(--color-text, #0a0a0a);
   color: var(--color-bg, #fdf5f6);
   border-color: transparent;
@@ -926,7 +955,6 @@ dialog.cs-overlay[open] .cs-scroll-cue {
 
 body.cs-is-open .hamburger-menu,
 body.cs-is-open .hamburger-fade-zone,
-body.cs-is-open .location-widget-mobile,
 body.cs-is-open .mobile-menu {
   display: none !important;
 }
@@ -1089,7 +1117,7 @@ body.cs-is-open .mobile-menu {
 [data-theme="dark"] .cs-next-arrow {
     border-color: rgba(255,255,255,0.15);
 }
-[data-theme="dark"] .cs-next-arrow:hover {
+[data-theme="dark"] .cs-next-project:hover .cs-next-arrow {
     background: var(--color-text);
     color: var(--color-bg);
 }

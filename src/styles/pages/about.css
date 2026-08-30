@@ -107,15 +107,6 @@
     margin: 0 0 20px 0;
 }
 
-.about-intro-text,
-.about-story p,
-.value-desc,
-.timeline-desc,
-.bento-sub {
-    text-align: justify;
-    text-justify: inter-word;
-}
-
 .about-story p:last-child { margin: 0; }
 
 .about-story strong { color: var(--color-text); font-weight: 600; opacity: 1; }

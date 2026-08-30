@@ -1,4 +1,17 @@
-import type { Handler } from '@netlify/functions';
+import type { Handler, HandlerResponse } from '@netlify/functions';
+
+const jsonResponse = (
+  statusCode: number,
+  body: unknown,
+  cacheControl = 'no-store'
+): HandlerResponse => ({
+  statusCode,
+  headers: {
+    'Content-Type': 'application/json',
+    'Cache-Control': cacheControl
+  },
+  body: JSON.stringify(body)
+});
 
 const handler: Handler = async (event) => {
   const params = event.queryStringParameters ?? {};
@@ -7,11 +20,7 @@ const handler: Handler = async (event) => {
   const albumsFor = params.albums_for;
 
   if (!id && !name && !albumsFor) {
-    return {
-      statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Missing required query parameter: id, name, or albums_for' })
-    };
+    return jsonResponse(400, { error: 'Missing required query parameter: id, name, or albums_for' });
   }
 
   try {
@@ -25,27 +34,12 @@ const handler: Handler = async (event) => {
     }
     const response = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!response.ok) {
-      return {
-        statusCode: response.status,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: `Upstream returned ${response.status}` })
-      };
+      return jsonResponse(response.status, { error: `Upstream returned ${response.status}` });
     }
     const data = await response.json();
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=86400'
-      },
-      body: JSON.stringify(data)
-    };
+    return jsonResponse(200, data, 'public, max-age=86400');
   } catch {
-    return {
-      statusCode: 502,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Failed to reach upstream' })
-    };
+    return jsonResponse(502, { error: 'Failed to reach upstream' });
   }
 };
 

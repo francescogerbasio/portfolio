@@ -24,43 +24,25 @@
     function staggerReveal(containerId, childSelector, baseDelay) {
       const container = document.getElementById(containerId);
       if (!container) return;
-      new IntersectionObserver((entries) => {
+      const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             container.querySelectorAll(childSelector).forEach((item, i) => {
               setTimeout(() => item.classList.add('visible'), i * baseDelay);
             });
+            observer.unobserve(container);
           }
         });
-      }, { threshold: 0.1 }).observe(container);
+      }, { threshold: 0.1 });
+      observer.observe(container);
     }
 
     staggerReveal('statsRow', '.stat-item', 120);
     staggerReveal('skillsBlock', '.skill-tag', 55);
-    staggerReveal('skillsGrid', '.skill-tag', 55);
     staggerReveal('valuesSection', '.value-item', 100);
     staggerReveal('timeline', '.timeline-item', 130);
     staggerReveal('bentoGrid', '.bento-card', 80);
     staggerReveal('certificationsSection', '.cert-card', 100);
 
-    initBeamPause();
   });
-
-  function initBeamPause() {
-    const beams = document.querySelectorAll('.beam-wrap');
-    if (!beams.length || typeof IntersectionObserver === 'undefined') return;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const el = entry.target;
-        if (entry.isIntersecting) {
-          el.style.removeProperty('--beam-play');
-          el.removeAttribute('data-paused');
-        } else {
-          el.style.setProperty('--beam-play', 'paused');
-          el.setAttribute('data-paused', '');
-        }
-      });
-    }, { rootMargin: '256px' });
-    beams.forEach(b => observer.observe(b));
-  }
 </script>

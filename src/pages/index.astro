@@ -11,7 +11,6 @@ const base = import.meta.env.BASE_URL;
   description="UX/UI Designer and LQA Specialist based in Madrid. Case studies in product design, accessibility, and interaction design."
   canonical="/"
   page="work"
-  ogImage={`${base}Assets/Images/og-image.webp`}
   preloadImage={`${base}Assets/Images/Francesco_Gerbasio.webp`}
   dnsPrefetch={['https://www.linkedin.com', 'https://www.instagram.com']}
   breadcrumbName="Work"
@@ -47,9 +46,9 @@ const base = import.meta.env.BASE_URL;
             <div class="location-mini">
               <span class="location-pin" aria-hidden="true">📍</span>
               <span class="location-city" id="locationCity">Madrid, Spain</span>
-              <span class="vacation-badge" id="vacationBadge" aria-hidden="true">🏖️ On vacation</span>
+              <span class="vacation-badge" id="vacationBadge"><span aria-hidden="true">🏖️</span> On vacation</span>
             </div>
-            <div class="weather-info" id="weatherInfo">
+            <div class="weather-info" id="weatherInfo" aria-live="polite">
               <span class="weather-icon" id="weatherIcon" aria-hidden="true">☀️</span>
               <span class="weather-temp" id="weatherTemp">--°C</span>
               <span class="weather-desc" id="weatherDesc">Loading...</span>
@@ -73,7 +72,7 @@ const base = import.meta.env.BASE_URL;
       <h2 class="section-title" id="lqa-heading">LQA</h2>
       <div class="projects-grid">
         <div class="project-card featured-release-card clickable-card nda-protected" data-project-id="red-dead" role="button" tabindex="0" aria-label="Open protected Red Dead Redemption project">
-          <a href="#" data-href="https://www.rockstargames.com/reddeadredemption" target="_blank" rel="noopener noreferrer" class="project-image-link nda-link">
+          <div data-href="https://www.rockstargames.com/reddeadredemption" class="project-image-link nda-link">
             <div class="project-image lqa-card-thumb">
               <img src={`${base}Assets/Images/RedDeadRedemption.webp`} alt="Red Dead Redemption" width="744" height="418" loading="lazy" decoding="async"
                    srcset={`${base}Assets/Images/RedDeadRedemption-400w.webp 400w, ${base}Assets/Images/RedDeadRedemption.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
@@ -81,13 +80,13 @@ const base = import.meta.env.BASE_URL;
                 <span class="cs-card-tag">LQA · Italian · 2025</span>
                 <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
               </div>
-              <div class="nda-overlay" role="button" tabindex="0" aria-label="Unlock protected project">
+              <div class="nda-overlay" aria-hidden="true">
                 <div class="nda-lock-icon">🔒</div>
                 <div class="nda-text">NDA Protected Project</div>
                 <div class="nda-subtext">Click to unlock</div>
               </div>
             </div>
-          </a>
+          </div>
           <div class="project-info">
             <div class="project-header">
               <h3 class="project-title">Red Dead Redemption</h3>

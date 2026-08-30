@@ -1,4 +1,4 @@
-export interface Location {
+interface Location {
   city: string;
   country: string;
   lat: number;

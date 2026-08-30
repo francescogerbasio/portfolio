@@ -75,6 +75,10 @@
     margin: 0 0 24px 0;
 }
 
+.career-skills-grid {
+    margin-bottom: 100px;
+}
+
 .career-body-text:last-child {
     margin-bottom: 0;
 }

@@ -1,4 +1,4 @@
-export interface TravelDestination {
+interface TravelDestination {
   folder: string;
   location: string;
   country: string;
@@ -6,7 +6,7 @@ export interface TravelDestination {
   photoCount: number;
 }
 
-export interface TravelConfig {
+interface TravelConfig {
   destinations: TravelDestination[];
 }
 

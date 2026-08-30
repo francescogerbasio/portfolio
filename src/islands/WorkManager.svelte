@@ -1,8 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { myLocation } from '../data/location';
+
+  type WeatherData = {
+    temperature: number;
+    weathercode: number;
+  };
 
   declare global {
     interface Window {
@@ -15,49 +18,12 @@
   }
 
   onMount(() => {
-    initNavActiveState();
-    initScrollSpy();
     initRotatingPhrases();
     initLocationWidget();
     initNdaProtection();
     initCardGlow();
     initCaseStudies();
   });
-
-  function initNavActiveState() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    const mobileNavLinks = document.querySelectorAll('.mobile-menu .nav-link');
-    let navigatingAway = false;
-    navLinks.forEach(link => {
-      link.addEventListener('click', function(this: HTMLAnchorElement, e: Event) {
-        const href = this.getAttribute('href');
-        if (href && !href.startsWith('#')) navigatingAway = true;
-        navLinks.forEach(l => l.classList.remove('active'));
-        mobileNavLinks.forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
-        Array.from(navLinks).filter(l => l.getAttribute('href') === href).forEach(l => l.classList.add('active'));
-      });
-    });
-  }
-
-  function initScrollSpy() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    let navigatingAway = false;
-    const sections = document.querySelectorAll('section[id]');
-    const sectionObserver = new IntersectionObserver((entries) => {
-      if (navigatingAway) return;
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const id = entry.target.getAttribute('id');
-        const match = Array.from(navLinks).find(l => l.getAttribute('href') === `#${id}`);
-        if (match) {
-          navLinks.forEach(l => l.classList.remove('active'));
-          match.classList.add('active');
-        }
-      });
-    }, { rootMargin: '-35% 0px -55% 0px' });
-    sections.forEach(s => sectionObserver.observe(s));
-  }
 
   function initRotatingPhrases() {
     const rotatingPhrases = [
@@ -99,9 +65,6 @@
     const isOnVacation = !(location.city === 'Madrid' && location.country === 'Spain');
     const vacationBadge = document.getElementById('vacationBadge');
     if (vacationBadge) vacationBadge.classList.toggle('show', isOnVacation);
-    const cityMobileElement = document.getElementById('locationCityMobile');
-    if (cityMobileElement) cityMobileElement.textContent = location.city;
-
     const cached = readCachedWeather();
     if (cached) renderWeather(cached);
 
@@ -112,13 +75,14 @@
     schedule(async () => {
       const CACHE_KEY = 'weather_cache';
       const CACHE_TTL = 30 * 60 * 1000;
-      let weatherData: any = readCachedWeather(CACHE_TTL);
+      let weatherData = readCachedWeather(CACHE_TTL);
 
       if (!weatherData) {
         try {
           const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current_weather=true`);
+          if (!res.ok) throw new Error(`Weather request failed with ${res.status}`);
           const json = await res.json();
-          weatherData = json.current_weather;
+          weatherData = json.current_weather as WeatherData;
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: weatherData, ts: Date.now() })); } catch (_) {}
         } catch (_) {
           const descEl = document.getElementById('weatherDesc');
@@ -131,7 +95,7 @@
     });
   }
 
-  function readCachedWeather(ttl = 30 * 60 * 1000): any | null {
+  function readCachedWeather(ttl = 30 * 60 * 1000): WeatherData | null {
     try {
       const cached = sessionStorage.getItem('weather_cache');
       if (!cached) return null;
@@ -142,7 +106,7 @@
     }
   }
 
-  function renderWeather(weatherData: any) {
+  function renderWeather(weatherData: WeatherData) {
     const temp = Math.round(weatherData.temperature);
     const weatherInfo = getWeatherInfo(weatherData.weathercode);
     const tempEl = document.getElementById('weatherTemp');
@@ -151,10 +115,6 @@
     if (iconEl) iconEl.textContent = weatherInfo.icon;
     const descEl = document.getElementById('weatherDesc');
     if (descEl) descEl.textContent = weatherInfo.desc;
-    const tempMobileEl = document.getElementById('weatherTempMobile');
-    if (tempMobileEl) tempMobileEl.textContent = `${temp}°`;
-    const iconMobileEl = document.getElementById('weatherIconMobile');
-    if (iconMobileEl) iconMobileEl.textContent = weatherInfo.icon;
   }
 
   function getWeatherInfo(code: number): { icon: string; desc: string } {
@@ -219,23 +179,13 @@
       });
     }
 
-    document.querySelectorAll('.nda-overlay').forEach(overlay => {
-      overlay.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        currentNdaProject = overlay.closest('.project-card');
-        openNdaModal();
-      });
-    });
-
     document.querySelectorAll('.project-card.nda-protected').forEach(card => {
       card.addEventListener('click', function(this: Element, e: Event) {
         if ((e.target as Element).closest('.nda-modal')) return;
-        if ((e.target as Element).closest('.project-image-link')) return;
         const link = this.querySelector('.project-image-link.nda-link');
         if (link && link.classList.contains('unlocked')) {
-          const href = link.getAttribute('href');
-          if (href) window.open(href, link.getAttribute('target') || '_self');
+          const href = link.getAttribute('data-href');
+          if (href) window.open(href, '_blank', 'noopener,noreferrer');
           return;
         }
         currentNdaProject = this;
@@ -286,8 +236,6 @@
       const link = projectCard.querySelector('.project-image-link.nda-link');
       if (link) {
         link.classList.add('unlocked');
-        const realHref = link.getAttribute('data-href');
-        if (realHref) link.setAttribute('href', realHref);
       }
       const overlay = projectCard.querySelector('.nda-overlay');
       if (overlay) overlay.classList.add('hidden');
@@ -315,7 +263,6 @@
       const original = el.textContent ?? '';
       el.dataset.decryptOriginal = original;
       if (!original) return;
-      const tickInterval = 40;
       const totalDuration = 1100 + (original.length * 18);
       const startTime = performance.now();
       const length = original.length;
@@ -348,12 +295,6 @@
     if (sessionStorage.getItem('nda-unlocked') === 'true') {
       document.querySelectorAll('.project-card.nda-protected').forEach(card => unlockProject(card));
     }
-
-    document.querySelectorAll('.project-image-link.nda-link').forEach(link => {
-      link.addEventListener('click', function(e) {
-        if (!this.classList.contains('unlocked')) e.preventDefault();
-      });
-    });
 
     // Particle system
     function buildParticleHTML(numParticles: number) {
@@ -464,36 +405,9 @@
     });
   }
 
-  function initProjectCards() {
-    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          (entry.target as HTMLElement).style.opacity = '1';
-          (entry.target as HTMLElement).style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.project-card').forEach(card => {
-      const rect = card.getBoundingClientRect();
-      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-      if (isVisible) {
-        (card as HTMLElement).style.opacity = '1';
-        (card as HTMLElement).style.transform = 'translateY(0)';
-      } else {
-        (card as HTMLElement).style.opacity = '0';
-        (card as HTMLElement).style.transform = 'translateY(30px)';
-        (card as HTMLElement).style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(card);
-      }
-    });
-  }
-
   function initCaseStudies() {
-    gsap.registerPlugin(ScrollTrigger);
-    const registry: Record<string, { cardId: string; overlayId: string; _pendingOpen?: boolean }> = {};
-    const studyMap: Record<string, { card: HTMLElement; dialog: HTMLDialogElement; panel: HTMLElement; closeBtn: HTMLButtonElement | null; overlayId: string; _closing?: boolean; motionCleanup?: () => void }> = {};
+    const registry: Record<string, { cardId: string; _pendingOpen?: boolean }> = {};
+    const studyMap: Record<string, { card: HTMLElement; dialog: HTMLDialogElement; panel: HTMLElement; closeBtn: HTMLButtonElement | null; _closing?: boolean; motionCleanup?: () => void }> = {};
     const loaded: Record<string, boolean> = {};
 
     async function loadOverlay(overlayId: string) {
@@ -501,6 +415,7 @@
       loaded[overlayId] = true;
       try {
         const res = await fetch(`${overlayId}.html`);
+        if (!res.ok) throw new Error(`Request failed with ${res.status}`);
         const text = await res.text();
         const tmp = document.createElement('div');
         tmp.innerHTML = text;
@@ -523,8 +438,8 @@
         Array.from(imgs).map((img) => {
           if (img.complete) return Promise.resolve();
           return new Promise((resolve) => {
-            if ('decode' in img && typeof (img as any).decode === 'function') {
-              (img as any).decode().then(resolve, resolve);
+            if (typeof img.decode === 'function') {
+              img.decode().then(resolve, resolve);
             } else {
               img.addEventListener('load', resolve, { once: true });
               img.addEventListener('error', resolve, { once: true });
@@ -542,10 +457,10 @@
       panel.scrollTop = 0;
       (panel as HTMLElement).style.cssText = '';
       window.lenis?.stop?.();
-      dialog.showModal();
+      if (!dialog.open) dialog.showModal();
       document.body.style.overflow = 'hidden';
       document.body.classList.add('cs-is-open');
-      if (closeBtn)       if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
+      if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
       requestAnimationFrame(() => setupReveal(study));
     }
 
@@ -580,7 +495,7 @@
       const { dialog, panel } = study;
       study.motionCleanup?.();
       panel.querySelectorAll('.cs-section').forEach(s => s.classList.add('cs-visible'));
-      const progress = ensureProgress(dialog, panel);
+      const progress = ensureProgress(dialog);
       let progressRaf = 0;
       const onPanelScroll = () => {
         if (progressRaf) return;
@@ -601,7 +516,7 @@
       };
     }
 
-    function ensureProgress(dialog: HTMLDialogElement, panel: HTMLElement) {
+    function ensureProgress(dialog: HTMLDialogElement) {
       let progress = dialog.querySelector('.cs-progress') as HTMLDivElement | null;
       if (!progress) {
         progress = document.createElement('div');
@@ -620,7 +535,7 @@
       if (!card || !dialog) return;
       const panel = dialog.querySelector('.cs-panel') as HTMLElement;
       const closeBtn = dialog.querySelector('.cs-close-btn') as HTMLButtonElement;
-      const study = { card: card as HTMLElement, dialog, panel, closeBtn, overlayId };
+      const study = { card: card as HTMLElement, dialog, panel, closeBtn };
       studyMap[overlayId] = study;
 
       dialog.addEventListener('cancel', (e) => { e.preventDefault(); animateClose(study); });
@@ -645,17 +560,15 @@
       });
 
       const backTop = panel.querySelector('#cs-back-to-top');
-      const backArrow = panel.querySelector('#cs-back-arrow');
-      [backTop, backArrow].forEach(el => {
-        if (!el) return;
-        el.addEventListener('click', () => {
+      if (backTop) {
+        backTop.addEventListener('click', () => {
           animateClose(study);
           setTimeout(() => {
             if (window.lenis?.scrollTo) window.lenis.scrollTo(0);
             else window.scrollTo({ top: 0, behavior: 'smooth' });
           }, 700);
         });
-      });
+      }
 
       if (registry[overlayId]?._pendingOpen) {
         registry[overlayId]._pendingOpen = false;
@@ -665,7 +578,7 @@
 
     async function ensureAndOpen(overlayId: string) {
       if (!loaded[overlayId]) {
-        if (!registry[overlayId]) registry[overlayId] = { cardId: '', overlayId };
+        if (!registry[overlayId]) registry[overlayId] = { cardId: '' };
         registry[overlayId]._pendingOpen = true;
         await loadOverlay(overlayId);
         if (studyMap[overlayId]) {
@@ -677,7 +590,7 @@
     }
 
     function register(cardId: string, overlayId: string) {
-      registry[overlayId] = { cardId, overlayId };
+      registry[overlayId] = { cardId };
       const card = document.getElementById(cardId);
       if (!card) return;
       if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
@@ -704,10 +617,5 @@
     register('card-dicarlobus', 'cs-dicarlobus');
     register('card-quickcheckout', 'cs-quickcheckout');
 
-    document.querySelectorAll('.cs-card').forEach(card => {
-      card.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); (card as HTMLElement).click(); }
-      });
-    });
   }
 </script>

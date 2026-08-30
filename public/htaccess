@@ -32,10 +32,11 @@
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 
-    # Astro hashed bundles are content-addressed and immutable
-    <Location "/_astro/">
+    # Astro/Vite bundles include a content hash in the filename.
+    # FilesMatch is valid in .htaccess; Location is server-config only.
+    <FilesMatch "\.[A-Za-z0-9_-]{8,}\.(css|js)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
-    </Location>
+    </FilesMatch>
 
     # Immutable flag for minified CSS (already content-addressed)
     <FilesMatch "\.min\.css$">
