@@ -7,6 +7,7 @@ const isGitHubPages = process.env.GITHUB_ACTIONS === 'true';
 // https://astro.build/config
 export default defineConfig({
   base: isGitHubPages ? '/portfolio/' : '/',
+  compressHTML: true,
   output: 'static',
   integrations: [svelte()],
   build: {

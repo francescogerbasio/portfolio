@@ -2,14 +2,16 @@
 from pathlib import Path
 import re
 import sys
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parent
 DIST = ROOT / "dist"
 HTML_FILES = list(DIST.glob("*.html"))
 
 SRC_RE = re.compile(r'(?:src|href)="([^"]+)"')
+SRCSET_RE = re.compile(r'srcset="([^"]+)"')
 IMG_RE = re.compile(r'<img\b[^>]*>', re.IGNORECASE)
-ALT_RE = re.compile(r'\balt="([^"]*)"', re.IGNORECASE)
+ALT_RE = re.compile(r'\balt="[^"]*"', re.IGNORECASE)
 
 
 def is_external(url: str) -> bool:
@@ -17,6 +19,7 @@ def is_external(url: str) -> bool:
 
 
 def resolve_target(html_dir: Path, path: str) -> Path:
+    path = unquote(path)
     if path.startswith("/"):
         normalized = path.lstrip("/")
         direct = DIST / normalized
@@ -55,17 +58,28 @@ def check_links():
                     errors.append(f"Missing file referenced in {html.name}: {raw}")
             except OSError:
                 errors.append(f"Invalid path referenced in {html.name}: {raw}")
+        for match in SRCSET_RE.finditer(content):
+            for candidate in match.group(1).split(","):
+                raw = candidate.strip().split()[0]
+                path = raw.split("?", 1)[0].split("#", 1)[0]
+                if not path or is_external(path):
+                    continue
+                target = resolve_target(html_dir, path)
+                try:
+                    if not target.exists():
+                        errors.append(f"Missing srcset file referenced in {html.name}: {raw}")
+                except OSError:
+                    errors.append(f"Invalid srcset path referenced in {html.name}: {raw}")
     return errors
 
 
 def check_alt_text():
     warnings = []
-    for html in DIST.glob("cs-*.html"):
+    for html in HTML_FILES:
         content = html.read_text(encoding="utf-8")
         for img in IMG_RE.findall(content):
-            alt = ALT_RE.search(img)
-            if not alt or not alt.group(1).strip():
-                warnings.append(f"Empty/missing alt in {html.name}: {img[:90]}...")
+            if not ALT_RE.search(img):
+                warnings.append(f"Missing alt in {html.name}: {img[:90]}...")
     return warnings
 
 
