@@ -79,12 +79,13 @@
 
   // Bump when photos are re-sorted or replaced inside the Travel folders —
   // /Assets/* is cached for 30 days, so same-name files need a new URL
-  const TRAVEL_IMG_VERSION = '2';
+  // v3: folder names now percent-encoded (fixes Wrocław 404s on Windows browsers)
+  const TRAVEL_IMG_VERSION = '3';
 
   function loadTravel() {
     const allPhotos: TravelPhoto[] = [];
     travelConfig.destinations.forEach(destination => {
-      const folderPath = `${base}Assets/Images/Travel/${destination.folder}`;
+      const folderPath = `${base}Assets/Images/Travel/${encodeURIComponent(destination.folder)}`;
       for (let i = 1; i <= (destination.photoCount || 0); i++) {
         allPhotos.push({
           id: `${destination.folder}-${i}`,
