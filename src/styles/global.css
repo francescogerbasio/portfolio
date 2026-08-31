@@ -2502,37 +2502,6 @@ html.lenis, html.lenis body {
             grid-template-columns: 1fr;
         }
     }
-
-    /* Scroll-driven reveal animation — browsers handle it natively */
-    @supports ((animation-timeline: view()) and (animation-range: entry)) {
-        @media (prefers-reduced-motion: no-preference) {
-            @keyframes travelCardReveal {
-                from {
-                    opacity: 0;
-                    transform: scale(0.92) translateY(12px);
-                }
-                to {
-                    opacity: 1;
-                    transform: none;
-                }
-            }
-
-            .travel-card {
-                opacity: 1;
-                transform: none;
-                animation: travelCardReveal linear both;
-                animation-timeline: view();
-                animation-range: entry 0% entry 100%;
-            }
-
-            /* JS reveal skipped when scroll-driven animation runs — data-anim-done never set */
-            .travel-card[data-anim-done] {
-                animation: none;
-                opacity: 1;
-                transform: none;
-            }
-        }
-    }
 }
 
 /* Base card — works for both column fallback and grid-lanes */
@@ -2543,10 +2512,33 @@ html.lenis, html.lenis body {
     border-radius: var(--card-radius);
     overflow: hidden;
     cursor: pointer;
-    opacity: 0;
-    transform: scale(0.92) translateY(12px);
     aspect-ratio: 0.75; /* 800/1067 portrait */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Scroll-driven reveal animation — browsers handle it natively.
+   Hiding is gated on support: browsers without view() show cards statically. */
+@supports ((animation-timeline: view()) and (animation-range: entry)) {
+    @media (prefers-reduced-motion: no-preference) {
+        @keyframes travelCardReveal {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .travel-card {
+            opacity: 0;
+            transform: scale(0.92) translateY(12px);
+            animation: travelCardReveal linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 100%;
+        }
+    }
 }
 .travel-card::after {
     content: "";
@@ -2569,10 +2561,6 @@ html.lenis, html.lenis body {
 /* Every 5th card: square — shorter, creates masonry stagger in column fallback */
 .travel-card:nth-child(5n) {
     aspect-ratio: 1.0;
-}
-.travel-card[data-anim-done] {
-    opacity: 1;
-    transform: none;
 }
 
 @media (hover: hover) {
