@@ -2476,9 +2476,9 @@ html.lenis, html.lenis body {
 @supports (display: grid-lanes) {
     .masonry-grid {
         display: grid-lanes;
-        grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-        gap: 1rem;
-        flow-tolerance: 1rem;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        flow-tolerance: 12px;
         columns: unset;
     }
 
@@ -2486,18 +2486,19 @@ html.lenis, html.lenis body {
         margin-bottom: 0;
     }
 
-    /* Coprime nth-child pattern — pseudo-random height variation */
-    .travel-card:nth-child(3n) { aspect-ratio: 1.0; }
-    .travel-card:nth-child(5n) { aspect-ratio: 1.333; }
-    .travel-card:nth-child(7n) { aspect-ratio: 0.85; }
-
-    @media (max-width: 768px) {
+    @media (max-width: 1400px) {
         .masonry-grid {
-            grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
     }
 
-    @media (max-width: 500px) {
+    @media (max-width: 1024px) {
+        .masonry-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 600px) {
         .masonry-grid {
             grid-template-columns: 1fr;
         }
@@ -2514,7 +2515,7 @@ html.lenis, html.lenis body {
     cursor: pointer;
     opacity: 1;
     transform: none;
-    aspect-ratio: 0.75; /* 800/1067 portrait */
+    aspect-ratio: var(--travel-card-ar, 0.75);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -2557,11 +2558,6 @@ html.lenis, html.lenis body {
 .travel-card.grain-active::after {
     opacity: 0.55;
 }
-/* Every 5th card: square — shorter, creates masonry stagger in column fallback */
-.travel-card:nth-child(5n) {
-    aspect-ratio: 1.0;
-}
-
 @media (hover: hover) {
     .travel-card:hover {
         transform: translateY(-4px) scale(1.02);

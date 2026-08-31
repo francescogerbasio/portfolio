@@ -30,6 +30,7 @@
   let flagPill: HTMLElement | null = $state(null);
   let flagResizeObserver: ResizeObserver | null = null;
   let masonryResizeFrame: number | null = null;
+  let imageObserver: IntersectionObserver | null = null;
   let flipped = $state(false);
   let isFlipping = $state(false);
   let previewSrc = $state('');
@@ -119,6 +120,14 @@
     return typeof CSS !== 'undefined' && CSS.supports('display', 'grid-lanes');
   }
 
+  function travelCardAspectRatio(index: number) {
+    const cardNumber = index + 1;
+    if (cardNumber % 7 === 0) return 0.85;
+    if (cardNumber % 5 === 0) return 1.333;
+    if (cardNumber % 3 === 0) return 1;
+    return 0.75;
+  }
+
   function resetTravelCardLayout(card: HTMLElement) {
     card.style.removeProperty('position');
     card.style.removeProperty('left');
@@ -164,7 +173,7 @@
 
     cards.forEach((card, index) => {
       resetTravelCardLayout(card);
-      const cardHeight = columnWidth * ((index + 1) % 5 === 0 ? 1 : 1.3337);
+      const cardHeight = columnWidth / travelCardAspectRatio(index);
       const column = columnHeights.indexOf(Math.min(...columnHeights));
 
       card.style.position = 'absolute';
@@ -185,6 +194,7 @@
     requestAnimationFrame(() => {
       layoutTravelGrid();
       initGrainReveal();
+      initLazyImages();
     });
   }
 
@@ -207,7 +217,7 @@
   }
 
   // Runs at init (server + client) so the travel grid ships in the initial
-  // HTML and image fetches start at parse time instead of after hydration
+  // HTML; only the first four images have sources until they near the viewport.
   loadTravel();
 
   function switchCategory(category: string) {
@@ -311,7 +321,11 @@
   }
 
   onMount(() => {
-    initGrainReveal();
+    requestAnimationFrame(() => {
+      layoutTravelGrid();
+      initGrainReveal();
+      initLazyImages();
+    });
     const onVisibility = () => {
       if (document.hidden) stopFeaturedAuto();
       else if (currentCategory === 'gaming') startFeaturedAuto();
@@ -320,6 +334,7 @@
     return () => {
       stopFeaturedAuto();
       grainObserver?.disconnect();
+      imageObserver?.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
     };
   });
@@ -569,6 +584,43 @@
 
   // Travel card grain reveal — inspired by Canvas-UI Particle Scroll
   let grainObserver: IntersectionObserver | null = null;
+
+  function loadTravelImage(img: HTMLImageElement) {
+    const src = img.dataset.src;
+    if (!src) return;
+    if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+    if (img.dataset.sizes) img.sizes = img.dataset.sizes;
+    img.src = src;
+    delete img.dataset.src;
+    delete img.dataset.srcset;
+    delete img.dataset.sizes;
+  }
+
+  function initLazyImages() {
+    const grid = document.getElementById('travelGrid');
+    if (!grid) return;
+
+    imageObserver?.disconnect();
+    const lazyImages = Array.from(grid.querySelectorAll<HTMLImageElement>('img[data-src]'));
+    if (!lazyImages.length) return;
+
+    if (typeof IntersectionObserver === 'undefined') {
+      lazyImages.forEach(loadTravelImage);
+      return;
+    }
+
+    imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const img = entry.target as HTMLImageElement;
+        loadTravelImage(img);
+        imageObserver?.unobserve(img);
+      });
+    }, { rootMargin: '600px 0px', threshold: 0 });
+
+    lazyImages.forEach(img => imageObserver?.observe(img));
+  }
+
   function initGrainReveal() {
     const grid = document.getElementById('travelGrid');
     if (!grid || typeof IntersectionObserver === 'undefined') return;
@@ -652,13 +704,17 @@
   <div class="masonry-grid" id="travelGrid">
     {#if currentCountry === 'all'}
       {#each shuffledPhotos as photo, i (photo.id)}
-        <div class="travel-card" data-country={photo.country} data-ar={photo.ar} style="--card-i:{i}"
+        <div class="travel-card" data-country={photo.country} data-ar={photo.ar} style="--card-i:{i}; --travel-card-ar:{travelCardAspectRatio(i)}"
              role="button" tabindex="0"
              use:makeKeyboardClickable={() => activateCountryFromCard(photo.country)}
              onclick={() => activateCountryFromCard(photo.country)}>
-          <img src={photo.image} alt={photo.location} width="630" height="840"
+          <img src={i < 4 ? photo.image : undefined} data-src={i >= 4 ? photo.image : undefined}
+               alt={photo.location} width="630" height="840"
                loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async"
-               srcset={srcset(photo.image, [315], 630)} sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
+               srcset={i < 4 ? srcset(photo.image, [315], 630) : undefined}
+               data-srcset={i >= 4 ? srcset(photo.image, [315], 630) : undefined}
+               sizes={i < 4 ? '(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw' : undefined}
+               data-sizes={i >= 4 ? '(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw' : undefined}>
           <div class="travel-card-location">{#if !isWindows}<span class="flag">{photo.flag}</span>{/if}<span class="location-name">{photo.location}</span></div>
         </div>
       {/each}
@@ -668,13 +724,17 @@
         <div class="loading-state"><p>No photos for this location yet.</p></div>
       {:else}
         {#each filtered as photo, i (photo.id)}
-          <div class="travel-card" data-country={photo.country} data-ar={photo.ar} style="--card-i:{i}"
+          <div class="travel-card" data-country={photo.country} data-ar={photo.ar} style="--card-i:{i}; --travel-card-ar:{travelCardAspectRatio(i)}"
                role="button" tabindex="0"
                use:makeKeyboardClickable={() => activateCountryFromCard(photo.country)}
                onclick={() => activateCountryFromCard(photo.country)}>
-            <img src={photo.image} alt={photo.location} width="630" height="840"
+            <img src={i < 4 ? photo.image : undefined} data-src={i >= 4 ? photo.image : undefined}
+                 alt={photo.location} width="630" height="840"
                  loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async"
-                 srcset={srcset(photo.image, [315], 630)} sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
+                 srcset={i < 4 ? srcset(photo.image, [315], 630) : undefined}
+                 data-srcset={i >= 4 ? srcset(photo.image, [315], 630) : undefined}
+                 sizes={i < 4 ? '(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw' : undefined}
+                 data-sizes={i >= 4 ? '(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw' : undefined}>
             <div class="travel-card-location">{#if !isWindows}<span class="flag">{photo.flag}</span>{/if}<span class="location-name">{photo.location}</span></div>
           </div>
         {/each}
