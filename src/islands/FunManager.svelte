@@ -29,6 +29,7 @@
   let flagNav: HTMLElement | null = $state(null);
   let flagPill: HTMLElement | null = $state(null);
   let flagResizeObserver: ResizeObserver | null = null;
+  let masonryResizeFrame: number | null = null;
   let flipped = $state(false);
   let isFlipping = $state(false);
   let previewSrc = $state('');
@@ -64,7 +65,19 @@
 
     void scheduleMovePill();
     flagNav?.addEventListener('scroll', movePill);
-    window.addEventListener('resize', movePill);
+    const handleResize = () => {
+      movePill();
+      if (masonryResizeFrame !== null) cancelAnimationFrame(masonryResizeFrame);
+      masonryResizeFrame = requestAnimationFrame(() => {
+        masonryResizeFrame = null;
+        layoutTravelGrid();
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    masonryResizeFrame = requestAnimationFrame(() => {
+      masonryResizeFrame = null;
+      layoutTravelGrid();
+    });
     if (flagNav) {
       flagResizeObserver = new ResizeObserver(() => movePill());
       flagResizeObserver.observe(flagNav);
@@ -72,7 +85,8 @@
 
     return () => {
       flagNav?.removeEventListener('scroll', movePill);
-      window.removeEventListener('resize', movePill);
+      window.removeEventListener('resize', handleResize);
+      if (masonryResizeFrame !== null) cancelAnimationFrame(masonryResizeFrame);
       flagResizeObserver?.disconnect();
     };
   });
@@ -99,6 +113,79 @@
     });
     photos = allPhotos;
     shuffledPhotos = shuffleArray([...allPhotos]);
+  }
+
+  function supportsGridLanes() {
+    return typeof CSS !== 'undefined' && CSS.supports('display', 'grid-lanes');
+  }
+
+  function resetTravelCardLayout(card: HTMLElement) {
+    card.style.removeProperty('position');
+    card.style.removeProperty('left');
+    card.style.removeProperty('top');
+    card.style.removeProperty('width');
+    card.style.removeProperty('height');
+    card.style.removeProperty('margin-bottom');
+  }
+
+  function layoutTravelGrid() {
+    if (typeof window === 'undefined') return;
+
+    const grid = document.getElementById('travelGrid');
+    if (!grid) return;
+
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('.travel-card'));
+    if (supportsGridLanes()) {
+      grid.style.removeProperty('height');
+      grid.style.removeProperty('columns');
+      cards.forEach(resetTravelCardLayout);
+      return;
+    }
+
+    if (!cards.length || grid.clientWidth === 0) {
+      grid.style.removeProperty('height');
+      grid.style.removeProperty('columns');
+      cards.forEach(resetTravelCardLayout);
+      return;
+    }
+
+    const styles = getComputedStyle(grid);
+    const paddingLeft = parseFloat(styles.paddingLeft) || 0;
+    const paddingRight = parseFloat(styles.paddingRight) || 0;
+    const paddingTop = parseFloat(styles.paddingTop) || 0;
+    const paddingBottom = parseFloat(styles.paddingBottom) || 0;
+    const contentWidth = grid.clientWidth - paddingLeft - paddingRight;
+    const gap = 12;
+    const columns = window.innerWidth > 1400 ? 4 : window.innerWidth > 1024 ? 3 : window.innerWidth > 600 ? 2 : 1;
+    const columnWidth = (contentWidth - gap * (columns - 1)) / columns;
+    const columnHeights = Array(columns).fill(0);
+
+    grid.style.columns = 'unset';
+
+    cards.forEach((card, index) => {
+      resetTravelCardLayout(card);
+      const cardHeight = columnWidth * ((index + 1) % 5 === 0 ? 1 : 1.3337);
+      const column = columnHeights.indexOf(Math.min(...columnHeights));
+
+      card.style.position = 'absolute';
+      card.style.left = `${paddingLeft + column * (columnWidth + gap)}px`;
+      card.style.top = `${paddingTop + columnHeights[column]}px`;
+      card.style.width = `${columnWidth}px`;
+      card.style.height = `${cardHeight}px`;
+      card.style.marginBottom = '0';
+      columnHeights[column] += cardHeight + gap;
+    });
+
+    const contentHeight = Math.max(...columnHeights, 0) - (cards.length ? gap : 0);
+    grid.style.height = `${paddingTop + Math.max(0, contentHeight) + paddingBottom}px`;
+  }
+
+  async function refreshTravelLayout() {
+    await tick();
+    requestAnimationFrame(() => {
+      layoutTravelGrid();
+      initGrainReveal();
+    });
   }
 
   // A static seed keeps the pre-rendered order identical during hydration.
@@ -129,7 +216,7 @@
     if (category === 'travel') {
       loadTravel();
       void scheduleMovePill();
-      requestAnimationFrame(() => initGrainReveal());
+      void refreshTravelLayout();
     } else if (category === 'gaming') {
       restartFeaturedCycle();
     } else {
@@ -165,7 +252,7 @@
         btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
       void scheduleMovePill();
-      requestAnimationFrame(() => initGrainReveal());
+      void refreshTravelLayout();
     });
   }
 
@@ -173,6 +260,7 @@
     currentCountry = country;
     document.getElementById('travel-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     void scheduleMovePill();
+    void refreshTravelLayout();
   }
 
   function makeKeyboardClickable(node: HTMLElement, handler: () => void) {
@@ -484,6 +572,7 @@
   function initGrainReveal() {
     const grid = document.getElementById('travelGrid');
     if (!grid || typeof IntersectionObserver === 'undefined') return;
+    grainObserver?.disconnect();
     grainObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         const card = entry.target as HTMLElement;

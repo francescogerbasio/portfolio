@@ -2524,19 +2524,16 @@ html.lenis, html.lenis body {
     @media (prefers-reduced-motion: no-preference) {
         @keyframes travelCardReveal {
             from {
-                opacity: 0;
                 transform: scale(0.92) translateY(12px);
             }
             to {
-                opacity: 1;
                 transform: none;
             }
         }
 
         .travel-card {
-            opacity: 0;
             transform: scale(0.92) translateY(12px);
-            animation: travelCardReveal linear both;
+            animation: travelCardReveal auto linear both;
             animation-timeline: view();
             animation-range: entry 0% entry 100%;
         }
