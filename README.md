@@ -10,15 +10,15 @@ The portfolio brings together selected work in product design, interaction desig
 
 ## Current status
 
-The site is live and the project is under active development. The repository is being moved from the original Astro-based application to a simpler, framework-free static site. The new structure is implemented locally and passes the repository’s link and image-alt checks.
+The migration from the original static HTML/CSS/JavaScript portfolio to Astro is complete and merged into `main`. The current site uses Astro for static generation and Svelte islands for interactive behavior.
 
-The remaining work is to complete the deployment check for the new root-level structure and merge the migration into the public branch. Until then, the public `main` branch remains on the existing Astro deployment.
+The site is live at [gerbas.io](https://gerbas.io) and continues to evolve as new work and content are added.
 
 ## Selected work
 
 ### Localization QA
 
-- **Red Dead Redemption** — a protected project available privately on request.
+- **Red Dead Redemption** — a protected project presented privately because of NDA restrictions.
 - **[Dead Take](https://www.surgentstudios.com/projects/dead-take)**
 - **[Kiln](https://www.doublefine.com/games/kiln)**
 
@@ -47,64 +47,65 @@ The design projects are presented as interactive case studies, with selected Fig
 - Scroll-reveal and career timeline animations.
 - Travel gallery with country filtering and masonry layout.
 - Current location and weather widget powered by [Open-Meteo](https://open-meteo.com/).
-- Lazy-loaded WebP images.
+- Lazy-loaded and responsive WebP images.
 - Semantic markup, keyboard-friendly navigation, focus states, and image alt text.
 
-## Technology
+## Built with
 
-The migrated version uses HTML5, CSS3, and vanilla JavaScript with browser APIs. It has no framework, package manager, bundler, or build step; the source files are served directly as a static site.
-
-The repository also contains the previous Astro/Netlify setup while the migration is being finalized. `_headers` and `htaccess` provide cache and security rules for static hosting environments.
+- [Astro](https://astro.build/) for pages and static generation
+- [Svelte](https://svelte.dev/) for interactive islands
+- [GSAP](https://gsap.com/) and [Lenis](https://lenis.darkroom.engineering/) for animation and smooth scrolling
+- CSS with custom properties, cascade layers, and responsive layouts
+- Open-Meteo for weather data
+- Netlify for deployment configuration and hosting support
 
 ## Run locally
 
-From the repository root, start a local HTTP server:
+The project requires Node.js `22.12.0` or newer.
 
 ```sh
-python3 -m http.server 8000
+npm ci
+npm run dev
 ```
 
-Then open [http://localhost:8000](http://localhost:8000). Do not open the pages with `file://`; the weather widget and other browser APIs require an HTTP server.
-
-Run the local checks with:
+Open the local URL shown by Astro. To create a production build and preview it locally:
 
 ```sh
+npm run build
+npm run preview
+```
+
+Run the checks with:
+
+```sh
+npm run check
 python3 validate.py
 ```
 
-The validator checks local file references and image alt text in the case-study files.
+`validate.py` checks the generated site in `dist/` for missing local references and image alt text.
 
 ## Project structure
 
 ```text
 .
-├── index.html                    # Work / landing page
-├── about.html                    # Personal background and values
-├── career.html                   # Experience, skills, and certifications
-├── fun.html                      # Travel, music, and gaming
-├── cs-*.html                     # UX/UI case-study content
-├── case-study-engine.js          # Case-study loading and overlay behavior
-├── case-study-overlays.html      # Shared case-study overlay markup
-├── styles.css                    # Main site styles
-├── styles-append.css             # Additional site styles
-├── about.css / career.css        # Page-specific styles
-├── case-study-engine.css         # Case-study overlay styles
-├── script.js / fun.js             # Page interactions
-├── navigation-ui.js              # Shared navigation behavior
-├── transitions.js / theme.js     # Page transitions and theme persistence
-├── data-*.js                     # Travel, music, and game content
-├── location-config.js            # Current location data
-├── cv-picker.js                  # English/Spanish CV selector
-├── Assets/                       # Images, fonts, CVs, and certificates
-├── _headers / htaccess            # Static-host cache configuration
-├── robots.txt                    # Crawler rules
-├── sitemap.xml                   # Public page sitemap
-└── validate.py                   # Local link and accessibility checks
+├── src/
+│   ├── components/              # Shared Astro components
+│   ├── data/                    # Travel, music, game, and location data
+│   ├── islands/                 # Svelte interactive islands
+│   ├── layouts/                 # Shared page layouts
+│   ├── pages/                   # Site routes
+│   └── styles/                  # Global and page-specific styles
+├── public/                      # Static assets and public files
+├── astro.config.mjs             # Astro configuration
+├── package.json                 # Scripts and dependencies
+├── netlify.toml                 # Netlify build configuration
+├── .github/workflows/           # GitHub Pages workflow
+└── validate.py                  # Build validation checks
 ```
 
 ## Deployment
 
-The migrated version is designed for static hosting from the repository root. It requires no install step and no build command. Production deployment will be re-verified after the migration is merged into `main`.
+The Astro build outputs the production site to `dist/`. `netlify.toml` configures Netlify to run `npm run build` and publish that directory. The repository also includes a GitHub Pages workflow for the `test` branch.
 
 ## Contact
 
