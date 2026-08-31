@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/pages/about.css';
+import ScrollReveal from '../islands/ScrollReveal.svelte';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout
+  title="About — Francesco Gerbasio"
+  description="About Francesco Gerbasio — UX/UI Designer and LQA Specialist based in Madrid. Background, skills, and experience."
+  canonical="/about.html"
+  page="about"
+  dnsPrefetch={['https://www.linkedin.com']}
+  breadcrumbName="About"
+  structuredDataType="profile"
+>
+  <main id="main-content" class="container">
+    <section class="about-hero" aria-label="About me">
+      <p class="about-eyebrow">About me</p>
+      <h1 class="about-headline">
+        Designing clarity<br>
+        <span class="highlight">from chaos.</span>
+      </h1>
+      <p class="about-intro-text">
+        I'm Francesco — a UX/UI designer and Localization QA specialist based in Madrid. I care deeply about the spaces between pixels: the interactions people barely notice but always feel.
+      </p>
+    </section>
+
+    <div class="about-divider" id="heroDivider" role="separator" aria-hidden="true"></div>
+
+    <div class="about-grid scroll-reveal" id="storyGrid">
+      <div class="about-story">
+        <h2 class="section-label">The story</h2>
+        <p>I grew up in <strong>Abruzzo, Italy</strong> — a region most people can't place on a map, which probably explains why I've always been drawn to making things clearer. I got into design the hard way: by using software that frustrated me until I figured out how to fix it myself. No epiphany — just a low tolerance for bad interfaces and a Computer Science background that made me dangerous with code.</p>
+        <p>I moved to <strong>Madrid</strong> and built a career at the crossroads of two disciplines: UX/UI design and Localization QA. One asks me to think in systems and empathy; the other asks me to think in precision and edge cases. Together, they make me unusually good at catching what shouldn't ship.</p>
+        <p>Outside the screen, I'm producing music, rewatching the same games I've loved for fifteen years, and photographing corners of cities most people walk past.</p>
+      </div>
+      <div>
+        <div class="about-photo">
+          <img src={`${base}Assets/Images/Spiderman.webp`} alt="Francesco Gerbasio as Spiderman"
+               width="600" height="600" loading="lazy" decoding="async"
+               srcset={`${base}Assets/Images/Spiderman-400w.webp 400w, ${base}Assets/Images/Spiderman-800w.webp 800w, ${base}Assets/Images/Spiderman.webp 900w`}
+               sizes="(max-width: 768px) 90vw, 600px"
+               onerror="this.style.display='none'">
+        </div>
+        <p class="photo-caption">Yes, I'm Spiderman. No, I will not be taking questions.</p>
+      </div>
+    </div>
+
+    <section class="values-section scroll-reveal" id="valuesSection" aria-label="Values">
+      <div class="values-header">
+        <h2 class="values-title">Things I believe in</h2>
+        <span class="values-count">04 principles</span>
+      </div>
+      <div id="valuesList">
+        <div class="value-item">
+          <span class="value-index">01</span>
+          <div>
+            <h3 class="value-name">Details are the design.</h3>
+            <p class="value-desc">The best interfaces are the ones people don't notice. They just work — and work beautifully. I obsess over the things most people skip: spacing, micro-copy, transition timing, error states.</p>
+          </div>
+        </div>
+        <div class="value-item">
+          <span class="value-index">02</span>
+          <div>
+            <h3 class="value-name">Questions before answers.</h3>
+            <p class="value-desc">Great design starts with asking why three more times than feels comfortable. A clear problem statement is worth more than a hundred wireframes.</p>
+          </div>
+        </div>
+        <div class="value-item">
+          <span class="value-index">03</span>
+          <div>
+            <h3 class="value-name">Ship early, learn faster.</h3>
+            <p class="value-desc">Perfection is a moving target. I'd rather get something real in front of people and iterate than spend months refining something no one's validated yet.</p>
+          </div>
+        </div>
+        <div class="value-item">
+          <span class="value-index">04</span>
+          <div>
+            <h3 class="value-name">Context is everything.</h3>
+            <p class="value-desc">A good solution in one language, culture, or context can be a bad one in another. My multilingual background has taught me to always ask: for whom, and where?</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="currently-section scroll-reveal" id="currentlySection" aria-label="Currently">
+      <h2 class="currently-title">Right now</h2>
+      <div class="bento-grid" id="bentoGrid">
+        <article class="bento-card">
+          <span class="bento-emoji">📍</span>
+          <p class="bento-label">Location</p>
+          <p class="bento-value">Madrid, Spain</p>
+          <p class="bento-sub">Open to remote &amp; relocation</p>
+        </article>
+        <article class="bento-card">
+          <span class="bento-emoji">🎮</span>
+          <p class="bento-label">Currently playing</p>
+          <p class="bento-value">Stray · Pokémon Legends: Z-A</p>
+          <p class="bento-sub">Always open to recommendations</p>
+        </article>
+        <article class="bento-card">
+          <span class="bento-emoji">🎵</span>
+          <p class="bento-label">On repeat</p>
+          <p class="bento-value">Italian rap &amp; Latin urbano</p>
+          <p class="bento-sub">Lazza · Bad Bunny · Rauw Alejandro</p>
+        </article>
+        <article class="bento-card">
+          <span class="bento-emoji">✈️</span>
+          <p class="bento-label">Last trip</p>
+          <p class="bento-value">Wrocław, Poland</p>
+          <p class="bento-sub">Always planning the next one</p>
+        </article>
+        <article class="bento-card">
+          <span class="bento-emoji">🌐</span>
+          <p class="bento-label">Languages</p>
+          <div class="lang-row">
+            <span class="lang-pill">🇮🇹 Italian <span class="lang-level">Native</span></span>
+            <span class="lang-pill">🇬🇧 English <span class="lang-level">Fluent</span></span>
+            <span class="lang-pill">🇪🇸 Spanish <span class="lang-level">Fluent</span></span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="about-cta scroll-reveal" id="ctaSection">
+      <p class="cta-text">Want to work together?<br><span>Let's talk.</span></p>
+      <div class="cta-buttons">
+        <a href="https://www.linkedin.com/in/francesco-gerbasio" target="_blank" rel="noopener noreferrer" class="btn-primary" id="beamLinkedin">LinkedIn <svg width="14" height="14" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:2px"><use href="#icon-arrow-out"/></svg></a>
+        <a href="mailto:francesco.gerbasio00@gmail.com" class="btn-secondary" id="beamEmail">Email me</a>
+      </div>
+    </div>
+  </main>
+  <ScrollReveal client:load />
+</BaseLayout>

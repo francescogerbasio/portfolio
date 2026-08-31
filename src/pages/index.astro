@@ -1,0 +1,277 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/pages/work.css';
+import '../styles/case-study.css';
+import WorkManager from '../islands/WorkManager.svelte';
+import WorkMotion from '../islands/WorkMotion.svelte';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout
+  title="Work — Francesco Gerbasio"
+  description="UX/UI Designer and LQA Specialist based in Madrid. Case studies in product design, accessibility, and interaction design."
+  canonical="/"
+  page="work"
+  preloadImage={`${base}Assets/Images/Francesco_Gerbasio.webp`}
+  dnsPrefetch={['https://www.linkedin.com', 'https://www.instagram.com']}
+  breadcrumbName="Work"
+  structuredDataType="person"
+>
+  <main id="main-content" class="container">
+    <section class="hero" aria-label="Introduction">
+      <div class="hero-content">
+        <h1 class="hero-title">Hello, I'm Francesco</h1>
+        <div class="phrase-container">
+          <p class="hero-subtitle" id="rotatingText">I spend more time choosing music than actually listening to it.</p>
+        </div>
+        <div class="hero-info">
+          <div class="info-block">
+            <h2>Currently</h2>
+            <p>Localization QA - Universally Speaking</p>
+          </div>
+          <div class="info-block">
+            <h2>Previously at</h2>
+            <p>UX/UI Designer - Freelancer</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="profile-map-row">
+          <div class="profile-image">
+            <img src={`${base}Assets/Images/Francesco_Gerbasio.webp`} alt="Francesco Gerbasio"
+                 width="110" height="110" fetchpriority="high" loading="eager" decoding="sync"
+                 srcset={`${base}Assets/Images/Francesco_Gerbasio-110w.webp 110w, ${base}Assets/Images/Francesco_Gerbasio.webp 220w`} sizes="110px">
+          </div>
+          <div class="location-widget-compact" role="region" aria-label="Location and weather">
+            <div class="location-mini">
+              <span class="location-pin" aria-hidden="true">📍</span>
+              <span class="location-city" id="locationCity">Madrid, Spain</span>
+              <span class="vacation-badge" id="vacationBadge"><span aria-hidden="true">🏖️</span> On vacation</span>
+            </div>
+            <div class="weather-info" id="weatherInfo" aria-live="polite">
+              <span class="weather-icon" id="weatherIcon" aria-hidden="true">☀️</span>
+              <span class="weather-temp" id="weatherTemp">--°C</span>
+              <span class="weather-desc" id="weatherDesc">Loading...</span>
+            </div>
+          </div>
+        </div>
+        <h2 class="sidebar-title">Nice to meet ya!</h2>
+        <p class="sidebar-bio">UX/UI designer by day, quality-obsessed by habit. <br>Turning early ideas into polished interfaces and catching the details that shouldn't ship.</p>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/francesco-gerbasio" target="_blank" rel="noopener noreferrer" class="social-icon">
+            <img src={`${base}Assets/Images/LinkedIn.svg`} alt="LinkedIn" width="24" height="24" loading="lazy" decoding="async">
+          </a>
+          <a href="https://www.instagram.com/gerbasio_francesco/" target="_blank" rel="noopener noreferrer" class="social-icon">
+            <img src={`${base}Assets/Images/Instagram.svg`} alt="Instagram" width="24" height="24" loading="lazy" decoding="async">
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="work" class="work-section" aria-labelledby="lqa-heading">
+      <h2 class="section-title" id="lqa-heading">LQA</h2>
+      <div class="projects-grid">
+        <div class="project-card featured-release-card clickable-card nda-protected" data-project-id="red-dead" role="button" tabindex="0" aria-label="Open protected Red Dead Redemption project">
+          <div data-href="https://www.rockstargames.com/reddeadredemption" class="project-image-link nda-link">
+            <div class="project-image lqa-card-thumb">
+              <img src={`${base}Assets/Images/RedDeadRedemption.webp`} alt="Red Dead Redemption" width="744" height="418" loading="lazy" decoding="async"
+                   srcset={`${base}Assets/Images/RedDeadRedemption-400w.webp 400w, ${base}Assets/Images/RedDeadRedemption.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+              <div class="lqa-card-overlay red-dead-lqa-overlay" aria-hidden="true">
+                <span class="cs-card-tag">LQA · Italian · 2025</span>
+                <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+              </div>
+              <div class="nda-overlay" aria-hidden="true">
+                <div class="nda-lock-icon">🔒</div>
+                <div class="nda-text">NDA Protected Project</div>
+                <div class="nda-subtext">Click to unlock</div>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-header">
+              <h3 class="project-title">Red Dead Redemption</h3>
+              <span class="project-badge">SHIPPED</span>
+            </div>
+            <p class="project-description">Contributed to the Italian localization of the latest versions of <span class="nda-hidden-text">Red Dead Redemption</span>, ensuring linguistic accuracy, tonal consistency, and adherence to franchise standards.</p>
+            <p class="project-meta"><span class="nda-hidden-text">Rockstar San Diego, Inc.</span> - 2025</p>
+          </div>
+        </div>
+
+        <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" rel="noopener noreferrer" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Dead Take project page">
+          <div class="project-image lqa-card-thumb">
+            <img src={`${base}Assets/Images/DeadTake.webp`} alt="Dead Take" width="744" height="418" loading="lazy" decoding="async"
+                 srcset={`${base}Assets/Images/DeadTake-400w.webp 400w, ${base}Assets/Images/DeadTake.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <div class="lqa-card-overlay">
+              <span class="cs-card-tag">LQA · Italian · 2025</span>
+              <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-header">
+              <h3 class="project-title">Dead Take</h3>
+              <span class="project-badge">SHIPPED</span>
+            </div>
+            <p class="project-description">Worked on the Italian localization of the horror game Dead Take, with a focus on linguistic accuracy, atmosphere, and player immersion.</p>
+            <p class="project-meta">Surgent Studios - 2025</p>
+          </div>
+        </a>
+
+        <a href="https://www.doublefine.com/games/kiln" target="_blank" rel="noopener noreferrer" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Kiln project page">
+          <div class="project-image lqa-card-thumb">
+            <img src={`${base}Assets/Images/Kiln.webp`} alt="Kiln" width="744" height="418" loading="lazy" decoding="async"
+                 srcset={`${base}Assets/Images/Kiln-400w.webp 400w, ${base}Assets/Images/Kiln.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <div class="lqa-card-overlay">
+              <span class="cs-card-tag">LQA · Italian · 2026</span>
+              <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-header">
+              <h3 class="project-title">Kiln</h3>
+              <span class="project-badge">SHIPPED</span>
+            </div>
+            <p class="project-description">Worked on the Italian localization of Kiln, with a focus on linguistic accuracy, consistency, and preserving the tone of the experience.</p>
+            <p class="project-meta">Double Fine Productions - 2026</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="work-section" aria-label="Other projects">
+      <details class="other-projects-accordion" id="otherProjectsAccordion">
+        <summary class="accordion-trigger" id="accordionTrigger">
+          <span class="accordion-title">Other Projects I've Contributed To</span>
+          <span class="accordion-count">(17)</span>
+          <span class="accordion-icon" id="accordionIcon" aria-hidden="true"></span>
+        </summary>
+        <div class="accordion-content" id="accordionContent">
+          <div class="projects-list">
+            <a href="https://en.bandainamcoent.eu/elden-ring/elden-ring" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">Elden Ring</span><span class="project-divider">·</span><span class="project-studio">FromSoftware</span><span class="project-year">2026</span></a>
+            <a href="https://7origin.netmarble.com/en/update" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">The Seven Deadly Sins: Origin</span><span class="project-divider">·</span><span class="project-studio">Netmarble</span><span class="project-year">2026</span></a>
+            <a href="https://en.bandainamcoent.eu/little-nightmares/little-nightmares-vr-altered-echoes" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">Little Nightmares VR: Altered Echoes</span><span class="project-divider">·</span><span class="project-studio">Iconik Studio</span><span class="project-year">2026</span></a>
+            <a href="https://store.steampowered.com/app/3672400/Farever/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">Farever</span><span class="project-divider">·</span><span class="project-studio">Shiro Games</span><span class="project-year">2026</span></a>
+            <a href="https://nba.2k.com/en-US/2k26/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">NBA 2K26</span><span class="project-divider">·</span><span class="project-studio">Visual Concepts</span><span class="project-year">2026</span></a>
+            <a href="https://pgatour.2k.com/2k25/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">PGA Tour 2K25</span><span class="project-divider">·</span><span class="project-studio">HB Studios</span><span class="project-year">2026</span></a>
+            <a href="https://store.steampowered.com/app/1614440/B_Path_of_the_Teal_Lotus/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">Bō: Path of the Teal Lotus</span><span class="project-divider">·</span><span class="project-studio">Squid Shock Studios, Christopher Stair, Trevor Youngquist</span><span class="project-year">2025</span></a>
+            <a href="https://en.bandainamcoent.eu/dragon-ball/dragon-ball-sparking-zero" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">Dragon Ball: Sparking! Zero</span><span class="project-divider">·</span><span class="project-studio">Spike Chunsoft</span><span class="project-year">2025</span></a>
+            <a href="https://www.paydaythegame.com/payday3/" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">Payday 3</span><span class="project-divider">·</span><span class="project-studio">Starbreeze Studios</span><span class="project-year">2025</span></a>
+            <a href="https://en.bandainamcoent.eu/tamagotchi/tamagotchi-plaza" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">Tamagotchi Plaza Nintendo Switch™ 2 Edition</span><span class="project-divider">·</span><span class="project-studio">Hyde, Inc.</span><span class="project-year">2025</span></a>
+            <a href="https://gameofthrones.netmarble.com/en" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">Game of Thrones: Kingsroad</span><span class="project-divider">·</span><span class="project-studio">netmarbleNeo</span><span class="project-year">2025</span></a>
+            <a href="https://www.roblox.com/communities/5544719/Cartoon-Network-Games#!/about" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">Cartoon Network Games</span><span class="project-divider">·</span><span class="project-studio">Roblox Corporation</span><span class="project-year">2025</span></a>
+            <a href="https://7dsgc.netmarble.com/en" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">The Seven Deadly Sins: Grand Cross</span><span class="project-divider">·</span><span class="project-studio">Netmarble</span><span class="project-year">2025</span></a>
+            <a href="https://en.bandainamcoent.eu/synduality/synduality" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">SYNDUALITY Echo of Ada</span><span class="project-divider">·</span><span class="project-studio">Game Studio</span><span class="project-year">2025</span></a>
+            <a href="https://en.bandainamcoent.eu/bleach/bleach-rebirth-of-souls" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">BLEACH Rebirth of Souls</span><span class="project-divider">·</span><span class="project-studio">Tamsoft</span><span class="project-year">2025</span></a>
+            <a href="https://en.bandainamcoent.eu/pac-man/shadow-labyrinth" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">SHADOW LABYRINTH</span><span class="project-divider">·</span><span class="project-studio">Bandai Namco Studio Inc.</span><span class="project-year">2025</span></a>
+            <a href="https://en.bandainamcoent.eu/dragon-ball/dragon-ball-the-breakers" target="_blank" rel="noopener noreferrer" class="project-list-item clickable"><span class="project-name">DRAGON BALL: THE BREAKERS</span><span class="project-divider">·</span><span class="project-studio">Dimps</span><span class="project-year">2025</span></a>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="work-section" aria-labelledby="uxui-heading">
+      <h2 class="section-title" id="uxui-heading">UX/UI Design</h2>
+      <div class="projects-grid">
+        <div class="project-card cs-card featured-release-card clickable-card" id="card-callao" role="button" tabindex="0" aria-label="Open Cines Callao case study">
+          <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#1a0a0c 0%,#2d0a0e 100%);">
+            <img src={`${base}Assets/Images/CinesCallao.webp`} alt="Cines Callao" width="744" height="418" loading="lazy" fetchpriority="low" decoding="async"
+                 srcset={`${base}Assets/Images/CinesCallao-400w.webp 400w, ${base}Assets/Images/CinesCallao.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <div class="cs-card-overlay">
+              <span class="cs-card-tag">UX/UI · iOS · 2025</span>
+              <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-header">
+              <h3 class="project-title">Cines Callao</h3>
+              <span class="project-badge cs-badge" style="border-color:#c1121f;color:#c1121f;">CASE STUDY</span>
+            </div>
+            <p class="project-description">A mobile-first redesign built on heuristic evaluation and competitive analysis. Dual-entry navigation, a component design system, and a digital ticket rebuilt for trust.</p>
+            <p class="project-meta">Personal Project · 2025</p>
+          </div>
+        </div>
+
+        <div class="project-card cs-card featured-release-card clickable-card" id="card-abruzzo" role="button" tabindex="0" aria-label="Open Abruzzo Experience case study">
+          <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#0a1a0f 0%,#0d2416 100%);">
+            <img src={`${base}Assets/Images/AbruzzoExperience.webp`} alt="Abruzzo Experience" width="744" height="418" loading="lazy" fetchpriority="low" decoding="async"
+                 srcset={`${base}Assets/Images/AbruzzoExperience-400w.webp 400w, ${base}Assets/Images/AbruzzoExperience.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <div class="cs-card-overlay">
+              <span class="cs-card-tag">UX/UI · Travel App · 2024</span>
+              <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-header">
+              <h3 class="project-title">Abruzzo Experience</h3>
+              <span class="project-badge cs-badge" style="border-color:#2d6a4f;color:#2d6a4f;">CASE STUDY</span>
+            </div>
+            <p class="project-description">One app connecting residents and visitors to activities across Italy's most underrated region. Dual persona onboarding, offline-first experience detail.</p>
+            <p class="project-meta">Personal Project · 2024</p>
+          </div>
+        </div>
+
+        <div class="project-card cs-card featured-release-card clickable-card" id="card-dicarlobus" role="button" tabindex="0" aria-label="Open Dicarlobus case study">
+          <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#1a0e00 0%,#261500 100%);">
+            <img src={`${base}Assets/Images/DicarlobusRedesign.webp`} alt="Dicarlobus Redesign" width="744" height="418" loading="lazy" fetchpriority="low" decoding="async"
+                 srcset={`${base}Assets/Images/DicarlobusRedesign-400w.webp 400w, ${base}Assets/Images/DicarlobusRedesign.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <div class="cs-card-overlay">
+              <span class="cs-card-tag">UX/UI · Transport · 2024</span>
+              <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-header">
+              <h3 class="project-title">Dicarlobus Redesign</h3>
+              <span class="project-badge cs-badge" style="border-color:#f77f00;color:#f77f00;">CASE STUDY</span>
+            </div>
+            <p class="project-description">Built a distinct brand identity from a generic shared template. Redesigned schedule visibility and ticket flow to WCAG AA accessibility standards.</p>
+            <p class="project-meta">Personal Project · 2024</p>
+          </div>
+        </div>
+
+        <div class="project-card cs-card featured-release-card clickable-card" id="card-quickcheckout" role="button" tabindex="0" aria-label="Open QuickCheckout case study">
+          <div class="project-image cs-card-thumb" style="background:linear-gradient(135deg,#040c1a 0%,#0a1a2e 100%);">
+            <img src={`${base}Assets/Images/QuickCheckout.webp`} alt="QuickCheckout" width="744" height="418" loading="lazy" fetchpriority="low" decoding="async"
+                 srcset={`${base}Assets/Images/QuickCheckout-400w.webp 400w, ${base}Assets/Images/QuickCheckout.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+            <div class="cs-card-overlay">
+              <span class="cs-card-tag">UX/UI · E-Commerce · 2024</span>
+              <span class="cs-card-open">View Case Study <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-header">
+              <h3 class="project-title">QuickCheckout</h3>
+              <span class="project-badge cs-badge" style="border-color:#2563eb;color:#2563eb;">CASE STUDY</span>
+            </div>
+            <p class="project-description">A kiosk redesign grounded in observation across Italian and American supermarkets. Error recovery, card-first payment hierarchy, and accessibility built for public screens.</p>
+            <p class="project-meta">Personal Project · 2024</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="nda-modal" id="ndaModal" aria-labelledby="ndaModalTitle">
+    <div class="nda-modal-content">
+      <h2 class="nda-modal-title" id="ndaModalTitle">🔒 Protected Project</h2>
+      <p class="nda-modal-description">This project is under NDA. Please enter the password provided to view the full details.</p>
+      <div class="nda-password-wrapper">
+        <label for="ndaPasswordInput" class="visually-hidden">Password</label>
+        <input type="password" class="nda-password-input" id="ndaPasswordInput" placeholder="Enter password" autocomplete="off">
+        <button type="button" class="nda-password-toggle" id="ndaPasswordToggle" aria-label="Toggle password visibility">
+          <svg class="eye-open" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <div class="nda-error-message" id="ndaErrorMessage" role="alert" aria-live="assertive">Incorrect password. Please try again.</div>
+      <div class="nda-modal-buttons">
+        <button class="nda-btn nda-btn-secondary" id="ndaCancelBtn">Cancel</button>
+        <button class="nda-btn nda-btn-primary" id="ndaSubmitBtn">Unlock</button>
+      </div>
+    </div>
+  </dialog>
+
+  <WorkManager client:load />
+  <WorkMotion client:load />
+</BaseLayout>

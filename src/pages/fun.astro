@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FunManager from '../islands/FunManager.svelte';
+---
+<BaseLayout
+  title="Fun — Francesco Gerbasio"
+  description="Travel photography, music production and gaming — the personal side of Francesco Gerbasio, UX/UI Designer based in Madrid."
+  canonical="/fun.html"
+  page="fun"
+  dnsPrefetch={['https://www.linkedin.com', 'https://youtube.com', 'https://youtu.be']}
+  breadcrumbName="Fun"
+  structuredDataType="webpage"
+>
+  <main id="main-content" class="container">
+    <h1 class="visually-hidden">Fun — Travel, Music &amp; Gaming</h1>
+    <FunManager client:visible />
+  </main>
+</BaseLayout>

@@ -1,0 +1,28 @@
+# Dev-only files — never track on main/production
+*.md
+# Exception for README which may be the repo's main readme
+!README.md
+
+# Unlighthouse reports
+.unlighthouse/
+
+# Astro build artifacts
+node_modules/
+dist/
+.astro/
+
+# Environment
+.env
+.env.local
+
+# macOS
+.DS_Store
+# Local Netlify folder
+.netlify
+
+# Local tooling state
+.omo/
+.opencode/
+.skills/
+.clavix/
+.codegraph/

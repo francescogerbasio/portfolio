@@ -2,42 +2,84 @@
 from pathlib import Path
 import re
 import sys
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parent
-HTML_FILES = list(ROOT.glob("*.html"))
+DIST = ROOT / "dist"
+HTML_FILES = list(DIST.glob("*.html"))
 
 SRC_RE = re.compile(r'(?:src|href)="([^"]+)"')
+SRCSET_RE = re.compile(r'srcset="([^"]+)"')
 IMG_RE = re.compile(r'<img\b[^>]*>', re.IGNORECASE)
-ALT_RE = re.compile(r'\balt="([^"]*)"', re.IGNORECASE)
+ALT_RE = re.compile(r'\balt="[^"]*"', re.IGNORECASE)
 
 
 def is_external(url: str) -> bool:
     return url.startswith(("http://", "https://", "mailto:", "tel:", "#", "//", "javascript:"))
 
 
+def resolve_target(html_dir: Path, path: str) -> Path:
+    path = unquote(path)
+    if path.startswith("/"):
+        normalized = path.lstrip("/")
+        direct = DIST / normalized
+        if direct.exists():
+            return direct
+        parts = normalized.split("/", 1)
+        if len(parts) == 2:
+            rebased = DIST / parts[1]
+            if rebased.exists():
+                return rebased
+            if path.endswith("/"):
+                rebased_index = rebased / "index.html"
+                if rebased_index.exists():
+                    return rebased_index
+        if path.endswith("/"):
+            direct_index = direct / "index.html"
+            if direct_index.exists():
+                return direct_index
+        return direct
+    return (html_dir / path).resolve()
+
+
 def check_links():
     errors = []
     for html in HTML_FILES:
         content = html.read_text(encoding="utf-8")
+        html_dir = html.parent
         for match in SRC_RE.finditer(content):
             raw = match.group(1)
             path = raw.split("?", 1)[0].split("#", 1)[0]
-            if not path or is_external(path) or path.startswith("/"):
+            if not path or is_external(path):
                 continue
-            target = ROOT / path
-            if not target.exists():
-                errors.append(f"Missing file referenced in {html.name}: {raw}")
+            target = resolve_target(html_dir, path)
+            try:
+                if not target.exists():
+                    errors.append(f"Missing file referenced in {html.name}: {raw}")
+            except OSError:
+                errors.append(f"Invalid path referenced in {html.name}: {raw}")
+        for match in SRCSET_RE.finditer(content):
+            for candidate in match.group(1).split(","):
+                raw = candidate.strip().split()[0]
+                path = raw.split("?", 1)[0].split("#", 1)[0]
+                if not path or is_external(path):
+                    continue
+                target = resolve_target(html_dir, path)
+                try:
+                    if not target.exists():
+                        errors.append(f"Missing srcset file referenced in {html.name}: {raw}")
+                except OSError:
+                    errors.append(f"Invalid srcset path referenced in {html.name}: {raw}")
     return errors
 
 
 def check_alt_text():
     warnings = []
-    for html in ROOT.glob("cs-*.html"):
+    for html in HTML_FILES:
         content = html.read_text(encoding="utf-8")
         for img in IMG_RE.findall(content):
-            alt = ALT_RE.search(img)
-            if not alt or not alt.group(1).strip():
-                warnings.append(f"Empty/missing alt in {html.name}: {img[:90]}...")
+            if not ALT_RE.search(img):
+                warnings.append(f"Missing alt in {html.name}: {img[:90]}...")
     return warnings
 
 
