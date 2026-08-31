@@ -18,7 +18,7 @@ The site is live at [gerbas.io](https://gerbas.io) and continues to evolve as ne
 
 ### Localization QA
 
-- **Red Dead Redemption** — a protected project presented privately because of NDA restrictions.
+- *** **** ********** — a protected project presented privately because of NDA restrictions.
 - **[Dead Take](https://www.surgentstudios.com/projects/dead-take)**
 - **[Kiln](https://www.doublefine.com/games/kiln)**
 
