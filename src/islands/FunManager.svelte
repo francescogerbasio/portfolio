@@ -116,16 +116,16 @@
     shuffledPhotos = shuffleArray([...allPhotos]);
   }
 
-  function supportsGridLanes() {
-    return typeof CSS !== 'undefined' && CSS.supports('display', 'grid-lanes');
-  }
-
   function travelCardAspectRatio(index: number) {
     const cardNumber = index + 1;
     if (cardNumber % 7 === 0) return 0.85;
     if (cardNumber % 5 === 0) return 1.333;
     if (cardNumber % 3 === 0) return 1;
     return 0.75;
+  }
+
+  function supportsGridLanes() {
+    return typeof CSS !== 'undefined' && CSS.supports('display', 'grid-lanes');
   }
 
   function resetTravelCardLayout(card: HTMLElement) {

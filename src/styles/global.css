@@ -2478,7 +2478,7 @@ html.lenis, html.lenis body {
         display: grid-lanes;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 12px;
-        flow-tolerance: 12px;
+        flow-tolerance: 0px;
         columns: unset;
     }
 
@@ -2505,7 +2505,7 @@ html.lenis, html.lenis body {
     }
 }
 
-/* Base card — works for both column fallback and grid-lanes */
+/* Base card — shared geometry for native Grid Lanes and the JavaScript fallback */
 .travel-card {
     position: relative;
     break-inside: avoid;
@@ -2519,27 +2519,6 @@ html.lenis, html.lenis body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Scroll-driven reveal animation — browsers handle it natively.
-   Keep it opt-in so the column fallback never hides the cards. */
-@supports (display: grid-lanes) and ((animation-timeline: view()) and (animation-range: entry)) {
-    @media (prefers-reduced-motion: no-preference) {
-        @keyframes travelCardReveal {
-            from {
-                transform: scale(0.92) translateY(12px);
-            }
-            to {
-                transform: none;
-            }
-        }
-
-        .travel-card {
-            transform: scale(0.92) translateY(12px);
-            animation: travelCardReveal auto linear both;
-            animation-timeline: view();
-            animation-range: entry 0% entry 100%;
-        }
-    }
-}
 .travel-card::after {
     content: "";
     position: absolute;
@@ -2560,7 +2539,7 @@ html.lenis, html.lenis body {
 }
 @media (hover: hover) {
     .travel-card:hover {
-        transform: translateY(-4px) scale(1.02);
+        transform: translateY(-2px) scale(1.01);
         box-shadow: var(--card-shadow-hover);
         z-index: 10;
     }
@@ -2577,7 +2556,7 @@ html.lenis, html.lenis body {
 }
 
 .travel-card:hover img {
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .travel-card-location {
