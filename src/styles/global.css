@@ -2512,13 +2512,15 @@ html.lenis, html.lenis body {
     border-radius: var(--card-radius);
     overflow: hidden;
     cursor: pointer;
+    opacity: 1;
+    transform: none;
     aspect-ratio: 0.75; /* 800/1067 portrait */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Scroll-driven reveal animation — browsers handle it natively.
-   Hiding is gated on support: browsers without view() show cards statically. */
-@supports ((animation-timeline: view()) and (animation-range: entry)) {
+   Keep it opt-in so the column fallback never hides the cards. */
+@supports (display: grid-lanes) and ((animation-timeline: view()) and (animation-range: entry)) {
     @media (prefers-reduced-motion: no-preference) {
         @keyframes travelCardReveal {
             from {
