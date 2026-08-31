@@ -4,6 +4,7 @@
   onMount(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    let removeRailFallback = () => {};
 
     const yearsCounter = document.querySelector('.stat-number[data-start-date]');
     if (yearsCounter) {
@@ -41,6 +42,40 @@
       obs.observe(titlesCounter);
     }
 
+    const timeline = document.getElementById('timeline');
+    if (timeline && !reduced && !CSS.supports('animation-timeline: view()')) {
+      let frame = 0;
+
+      const updateRail = () => {
+        frame = 0;
+        const rect = timeline.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const start = viewportHeight * 0.8;
+        const end = viewportHeight * 0.2 - rect.height;
+        const span = start - end;
+        const progress = span > 0 ? (start - rect.top) / span : 1;
+
+        timeline.style.setProperty(
+          '--career-rail-progress',
+          String(Math.min(1, Math.max(0, progress)))
+        );
+      };
+
+      const scheduleRailUpdate = () => {
+        if (!frame) frame = window.requestAnimationFrame(updateRail);
+      };
+
+      updateRail();
+      window.addEventListener('scroll', scheduleRailUpdate, { passive: true });
+      window.addEventListener('resize', scheduleRailUpdate);
+
+      removeRailFallback = () => {
+        window.removeEventListener('scroll', scheduleRailUpdate);
+        window.removeEventListener('resize', scheduleRailUpdate);
+        if (frame) window.cancelAnimationFrame(frame);
+      };
+    }
+
     if (!reduced && finePointer) {
       document.querySelectorAll('.cert-card').forEach(card => {
         card.addEventListener('pointermove', (e) => {
@@ -54,5 +89,7 @@
         });
       });
     }
+
+    return () => removeRailFallback();
   });
 </script>

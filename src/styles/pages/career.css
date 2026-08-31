@@ -163,6 +163,7 @@
         light-dark(#3a3a3c, #f5f5f7) 0%,
         light-dark(#8e8e93, #86868b) 100%);
     transform-origin: top;
+    transform: scaleY(0);
 }
 
 @supports (animation-timeline: view()) {
@@ -173,6 +174,18 @@
             animation-range: entry 20% exit 80%;
         }
     }
+}
+
+@supports not (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .timeline::after {
+            transform: scaleY(var(--career-rail-progress, 0));
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .timeline::after { transform: scaleY(1); }
 }
 
 @keyframes career-rail {
