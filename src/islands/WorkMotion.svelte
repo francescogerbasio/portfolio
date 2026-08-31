@@ -5,6 +5,7 @@
 
   declare global {
     interface Window {
+      __motion?: boolean;
       lenis?: {
         on?: (event: string, callback: () => void) => void;
         off?: (event: string, callback: () => void) => void;
@@ -15,6 +16,7 @@
   }
 
   onMount(() => {
+    window.__motion = true; // tells the head fallback that motion took over
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     gsap.registerPlugin(ScrollTrigger);

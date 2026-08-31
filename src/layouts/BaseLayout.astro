@@ -127,6 +127,15 @@ const breadcrumbLd = {
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" id="themeColorMeta" content="#fdf5f6">
   <script is:inline>
+    /* Pre-paint animation gate: hide JS-animated elements from first paint so
+       entrance animations don't flash final state and replay after hydration.
+       Skipped when JS is disabled; 3s fallback unhides if a motion island fails. */
+    document.documentElement.classList.add('anim');
+    setTimeout(function () {
+      if (!window.__motion) document.documentElement.classList.remove('anim');
+    }, 3000);
+  </script>
+  <script is:inline>
     (function () {
       'use strict';
       const STORAGE_KEY = 'theme';

@@ -88,6 +88,13 @@
     font-variant-numeric: tabular-nums;
 }
 
+/* Pre-hydration gate: hide the animated counter until CareerMotion counts it
+   up (sets inline opacity: 1), so it doesn't flash "20+" then restart at "0+".
+   `html.anim` is added by an inline head script; removed if the island fails. */
+@media (prefers-reduced-motion: no-preference) {
+  html.anim .stat-number[data-count] { opacity: 0; }
+}
+
 .stat-item {
     transition: opacity 0.5s ease,
                 transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);

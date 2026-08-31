@@ -20,6 +20,7 @@
     const titlesCounter = document.querySelector('.stat-number[data-count="20"]');
     if (titlesCounter && !reduced) {
       const animate = (el) => {
+        el.style.opacity = '1'; // reveal the CSS-hidden counter
         const target = 20;
         const start = performance.now();
         const dur = 1400;

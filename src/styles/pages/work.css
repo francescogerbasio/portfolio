@@ -80,3 +80,15 @@
 }
 
 } /* end @layer components */
+
+/* ── Pre-hydration animation gate ──
+   WorkMotion (GSAP) applies entrance state in JS after first paint, which
+   flashes the final layout and replays animations on navigation. Hide the
+   animated elements in CSS instead; GSAP inline styles override when they run.
+   `html.anim` is added by an inline head script (never when JS is disabled)
+   and removed by a 3s fallback if the motion island fails to load. */
+@media (prefers-reduced-motion: no-preference) {
+  html.anim .hero,
+  html.anim .section-title,
+  html.anim .project-card { opacity: 0; }
+}
