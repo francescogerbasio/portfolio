@@ -1,65 +1,78 @@
 # Francesco Gerbasio — Portfolio
 
-Personal portfolio website for Francesco Gerbasio, a UX/UI Designer and Localization QA Specialist based in Madrid.
+Source code for [gerbas.io](https://gerbas.io), the personal portfolio of Francesco Gerbasio, a UX/UI Designer and Localization QA Specialist based in Madrid.
 
-- **Live website:** [gerbas.io](https://gerbas.io)
-- **Repository:** [github.com/FrancescoGerbasio/portfolio](https://github.com/FrancescoGerbasio/portfolio)
+[Live site](https://gerbas.io) · [GitHub repository](https://github.com/FrancescoGerbasio/portfolio)
 
-## About the project
+## Overview
 
-This portfolio brings together Francesco’s work across product design, interaction design, accessibility, and game localization QA. It is designed to show both the thinking behind each project and the person behind the work.
+The portfolio brings together selected work in product design, interaction design, accessibility, and game localization QA. It also includes an About page, a career timeline, and a personal section covering travel photography, music production, and games.
 
-The site combines structured case studies with a more personal space for travel photography, music production, and gaming. The visual direction is editorial, expressive, and focused on clear storytelling rather than a conventional template-based portfolio.
+## Current status
 
-## What’s included
+The site is live and the project is under active development. The repository is being moved from the original Astro-based application to a simpler, framework-free static site. The new structure is implemented locally and passes the repository’s link and image-alt checks.
 
-### Work
+The remaining work is to complete the deployment check for the new root-level structure and merge the migration into the public branch. Until then, the public `main` branch remains on the existing Astro deployment.
 
-The homepage presents two areas of work:
+## Selected work
 
-- **Localization QA:** *** **** **********, Dead Take, and Kiln.
-- **UX/UI Design:** Cines Callao, Abruzzo Experience, Dicarlobus Redesign, and QuickCheckout.
+### Localization QA
 
-The UX/UI projects include interactive case studies and links to selected Figma prototypes. NDA-protected work is presented through a private-project prompt.
+- **Red Dead Redemption** — a protected project available privately on request.
+- **[Dead Take](https://www.surgentstudios.com/projects/dead-take)**
+- **[Kiln](https://www.doublefine.com/games/kiln)**
 
-### About
+### UX/UI design
 
-The About page introduces Francesco’s background, design values, current interests, and contact links.
+- Cines Callao
+- Abruzzo Experience
+- Dicarlobus Redesign
+- QuickCheckout
 
-### Career
+The design projects are presented as interactive case studies, with selected Figma prototypes and process documentation. NDA-protected work is available privately.
 
-The Career page covers skills, professional experience, certifications, and downloadable CVs in English and Spanish.
+## Site sections
 
-### Fun
-
-The Fun page is a personal archive of:
-
-- Travel photography from different cities and countries.
-- Music production and favorite artists.
-- Favorite, currently playing, and featured video games.
+- **Work** — selected UX/UI and localization QA projects.
+- **About** — background, values, interests, and contact links.
+- **Career** — experience, skills, certifications, and CV downloads in English and Spanish.
+- **Fun** — travel photography, music production, favorite artists, and games.
 
 ## Features
 
 - Responsive layout for desktop and mobile.
-- Light and dark themes.
+- Light and dark themes with persistent preference.
 - Native dialog overlays for case studies.
-- Smooth page transitions with a browser-supported fallback.
-- Scroll-based reveal animations.
-- Dynamic travel gallery with country filtering.
-- Current location and weather widget.
-- Lazy-loaded images and responsive WebP assets.
-- Accessible navigation, focus states, semantic markup, and image alt text.
+- Page transitions with a browser-supported fallback.
+- Scroll-reveal and career timeline animations.
+- Travel gallery with country filtering and masonry layout.
+- Current location and weather widget powered by [Open-Meteo](https://open-meteo.com/).
+- Lazy-loaded WebP images.
+- Semantic markup, keyboard-friendly navigation, focus states, and image alt text.
 
-## Built with
+## Technology
 
-- HTML5
-- CSS3 with responsive layouts, custom properties, cascade layers, and modern animation APIs
-- Vanilla JavaScript with browser APIs
-- WebP, SVG, WOFF2, and PDF assets
-- [Open-Meteo](https://open-meteo.com/) for the weather widget
-- [Netlify](https://www.netlify.com/) for static hosting
+The migrated version uses HTML5, CSS3, and vanilla JavaScript with browser APIs. It has no framework, package manager, bundler, or build step; the source files are served directly as a static site.
 
-The project has no framework, package manager, bundler, or build step. The source files are deployed directly as a static website.
+The repository also contains the previous Astro/Netlify setup while the migration is being finalized. `_headers` and `htaccess` provide cache and security rules for static hosting environments.
+
+## Run locally
+
+From the repository root, start a local HTTP server:
+
+```sh
+python3 -m http.server 8000
+```
+
+Then open [http://localhost:8000](http://localhost:8000). Do not open the pages with `file://`; the weather widget and other browser APIs require an HTTP server.
+
+Run the local checks with:
+
+```sh
+python3 validate.py
+```
+
+The validator checks local file references and image alt text in the case-study files.
 
 ## Project structure
 
@@ -70,15 +83,20 @@ The project has no framework, package manager, bundler, or build step. The sourc
 ├── career.html                   # Experience, skills, and certifications
 ├── fun.html                      # Travel, music, and gaming
 ├── cs-*.html                     # UX/UI case-study content
+├── case-study-engine.js          # Case-study loading and overlay behavior
+├── case-study-overlays.html      # Shared case-study overlay markup
 ├── styles.css                    # Main site styles
+├── styles-append.css             # Additional site styles
 ├── about.css / career.css        # Page-specific styles
 ├── case-study-engine.css         # Case-study overlay styles
-├── script.js                     # Shared site interactions
-├── fun.js                        # Fun page interactions
+├── script.js / fun.js             # Page interactions
+├── navigation-ui.js              # Shared navigation behavior
+├── transitions.js / theme.js     # Page transitions and theme persistence
 ├── data-*.js                     # Travel, music, and game content
 ├── location-config.js            # Current location data
+├── cv-picker.js                  # English/Spanish CV selector
 ├── Assets/                       # Images, fonts, CVs, and certificates
-├── _headers                      # Netlify headers
+├── _headers / htaccess            # Static-host cache configuration
 ├── robots.txt                    # Crawler rules
 ├── sitemap.xml                   # Public page sitemap
 └── validate.py                   # Local link and accessibility checks
@@ -86,7 +104,7 @@ The project has no framework, package manager, bundler, or build step. The sourc
 
 ## Deployment
 
-The site is suitable for any static hosting provider. The production site is deployed on Netlify, with [`_headers`](_headers) providing cache and security headers. There is no build command required.
+The migrated version is designed for static hosting from the repository root. It requires no install step and no build command. Production deployment will be re-verified after the migration is merged into `main`.
 
 ## Contact
 
@@ -96,4 +114,4 @@ The site is suitable for any static hosting provider. The production site is dep
 
 ## Content and licensing
 
-No open-source license is currently included. Portfolio copy, case-study material, photographs, CVs, certificates, and visual assets should not be reused without permission. Third-party trademarks and linked content belong to their respective owners.
+No open-source license is included. Portfolio copy, case-study material, photographs, CVs, certificates, and visual assets should not be reused without permission. Third-party trademarks and linked content belong to their respective owners.
