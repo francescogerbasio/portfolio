@@ -4,6 +4,7 @@ import '../styles/pages/about.css';
 import '../styles/pages/career.css';
 import ScrollReveal from '../islands/ScrollReveal.svelte';
 import CareerMotion from '../islands/CareerMotion.svelte';
+import { travelImagePreloads } from '../data/travel';
 const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout
@@ -11,6 +12,7 @@ const base = import.meta.env.BASE_URL;
   description="Career — Francesco Gerbasio. UX/UI Designer and LQA Specialist based in Madrid. Skills, experience, and certifications."
   canonical="/career.html"
   page="career"
+  preloadImages={travelImagePreloads(base)}
   dnsPrefetch={['https://www.linkedin.com', 'https://verify.skilljar.com', 'https://coursera.org', 'https://courses.edx.org', 'https://certificates.talentgarden.com']}
   breadcrumbName="Career"
   structuredDataType="profile"

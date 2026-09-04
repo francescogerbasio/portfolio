@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import { travelConfig } from '../data/travel';
+  import { createTravelPhotos, shuffleArray, travelConfig, travelPhotoSrcset, TRAVEL_IMAGE_SIZES, type TravelPhoto } from '../data/travel';
   import { musicData } from '../data/music';
   import { gamesData } from '../data/games';
 
@@ -8,15 +8,6 @@
     travel: "Places I've been and stories from the road. Every journey tells a story, and these are mine captured through moments and memories.",
     music: "Songs I've created and the artists who inspire me. Music has always been a passion, from producing my own tracks to discovering new sounds.",
     gaming: "The games I'm playing and the worlds I'm exploring. Gaming isn't just a hobby—it's an art form, a story, and an experience."
-  };
-
-  type TravelPhoto = {
-    id: string;
-    image: string;
-    location: string;
-    country: string;
-    flag: string;
-    ar: number;
   };
 
   const base = import.meta.env.BASE_URL;
@@ -91,28 +82,9 @@
     };
   });
 
-  // Bump when photos are re-sorted or replaced inside the Travel folders —
-  // /Assets/* is cached for 30 days, so same-name files need a new URL
-  // v3: folder names now percent-encoded (fixes Wrocław 404s on Windows browsers)
-  const TRAVEL_IMG_VERSION = '3';
-
   function loadTravel() {
-    const allPhotos: TravelPhoto[] = [];
-    travelConfig.destinations.forEach(destination => {
-      const folderPath = `${base}Assets/Images/Travel/${encodeURIComponent(destination.folder)}`;
-      for (let i = 1; i <= (destination.photoCount || 0); i++) {
-        allPhotos.push({
-          id: `${destination.folder}-${i}`,
-          image: `${folderPath}/${i}.webp?v=${TRAVEL_IMG_VERSION}`,
-          location: destination.location,
-          country: destination.country,
-          flag: destination.flag,
-          ar: 1.3337
-        });
-      }
-    });
-    photos = allPhotos;
-    shuffledPhotos = shuffleArray([...allPhotos]);
+    photos = createTravelPhotos(base);
+    shuffledPhotos = shuffleArray(photos);
   }
 
   function travelCardAspectRatio(index: number) {
@@ -195,27 +167,14 @@
       initGrainReveal();
     });
   }
-
-  // A static seed keeps the pre-rendered order identical during hydration.
-  function shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array];
-    let seed = 0x6d2b79f5;
-    const rand = () => {
-      seed = (seed + 0x6d2b79f5) >>> 0;
-      let t = seed;
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(rand() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }
-
   // Runs at init (server + client) so the travel grid ships in the initial HTML.
   loadTravel();
+
+  onMount(() => {
+    // Warm Deezer artist photos on page load so they're ready before the
+    // Music tab is opened (decode-before-swap keeps the change invisible).
+    void loadArtistImages();
+  });
 
   function switchCategory(category: string) {
     if (currentCategory === category) return;
@@ -233,6 +192,7 @@
   }
 
   function srcset(path: string, widths: number[], originalWidth?: number): string {
+    if (widths.length === 1 && widths[0] === 315 && originalWidth === 630) return travelPhotoSrcset(path);
     const [base, query] = path.split('?');
     const q = query ? `?${query}` : '';
     const parts = widths.map(w => `${base.replace(/\.webp$/, `-${w}w.webp`)}${q} ${w}w`);
@@ -409,8 +369,38 @@
     picture_xl: string;
     nb_fan: number;
   };
+  type CachedArtistImage = {
+    url: string;
+    cachedAt: number;
+  };
   const deezerCache = new Map<string, DeezerArtist | null>();
-  let artistImages = $state<Record<string, string>>({});
+  const ARTIST_IMAGE_CACHE_KEY = 'deezer-artist-images-v2';
+  const ARTIST_IMAGE_CACHE_TTL = 30 * 24 * 60 * 60 * 1000;
+
+  function readCachedArtistImages(): Record<string, CachedArtistImage> {
+    if (typeof window === 'undefined') return {};
+    try {
+      const parsed: unknown = JSON.parse(window.localStorage.getItem(ARTIST_IMAGE_CACHE_KEY) || '{}');
+      if (!parsed || typeof parsed !== 'object') return {};
+      const now = Date.now();
+      return Object.fromEntries(
+        Object.entries(parsed).filter(([, value]) => {
+          if (!value || typeof value !== 'object') return false;
+          const entry = value as Partial<CachedArtistImage>;
+          return typeof entry.url === 'string'
+            && typeof entry.cachedAt === 'number'
+            && now - entry.cachedAt < ARTIST_IMAGE_CACHE_TTL;
+        })
+      ) as Record<string, CachedArtistImage>;
+    } catch {
+      return {};
+    }
+  }
+
+  const cachedArtistImages = readCachedArtistImages();
+  let artistImages = $state<Record<string, string>>(
+    Object.fromEntries(Object.entries(cachedArtistImages).map(([id, entry]) => [id, entry.url]))
+  );
   let artistAlbumCounts = $state<Record<string, number>>({});
 
   const DEEZER_ARTIST_OVERRIDES: Record<string, number> = {
@@ -420,6 +410,7 @@
     'Papa V': 85051272,
     'Young Miko': 139171932,
     'Quevedo': 6705223,
+    'Jhayco': 105047672,
     'Lucho RK': 151322852
   };
 
@@ -467,6 +458,28 @@
     }
   }
 
+  function cacheArtistImage(id: string, url: string) {
+    if (typeof window === 'undefined') return;
+    cachedArtistImages[id] = { url, cachedAt: Date.now() };
+    try {
+      window.localStorage.setItem(ARTIST_IMAGE_CACHE_KEY, JSON.stringify(cachedArtistImages));
+    } catch {
+      // Storage may be unavailable in private browsing.
+    }
+  }
+
+  async function decodeArtistImage(url: string): Promise<boolean> {
+    const image = new Image();
+    image.decoding = 'async';
+    image.src = url;
+    try {
+      await image.decode();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async function loadArtistImages() {
     if (artistDataRequested || (typeof navigator !== 'undefined' && !navigator.onLine)) return;
     artistDataRequested = true;
@@ -474,7 +487,13 @@
       musicData.artists.map(async (artist) => {
         const deezerData = await fetchDeezerArtist(artist.name);
         if (deezerData?.picture_xl) {
-          artistImages = { ...artistImages, [artist.id]: deezerData.picture_xl };
+          const imageReady = await decodeArtistImage(deezerData.picture_xl);
+          if (imageReady) {
+            if (artistImages[artist.id] !== deezerData.picture_xl) {
+              artistImages = { ...artistImages, [artist.id]: deezerData.picture_xl };
+            }
+            cacheArtistImage(artist.id, deezerData.picture_xl);
+          }
         }
         if (deezerData?.id) {
           const albums = await fetchAlbumsById(deezerData.id, artist.albumAllowlist);
@@ -689,7 +708,7 @@
                  alt={photo.location} width="630" height="840"
                  loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async"
                  srcset={srcset(photo.image, [315], 630)}
-                 sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
+                 sizes={TRAVEL_IMAGE_SIZES}>
             <div class="travel-card-location">{#if !isWindows}<span class="flag">{photo.flag}</span>{/if}<span class="location-name">{photo.location}</span></div>
           </div>
         {/each}
@@ -721,7 +740,9 @@
           </div>
           <div class="sleeve-front">
             {#if hiResImg}
-              <img class="sleeve-art" src={hiResImg} alt="" width="600" height="600" loading="lazy" decoding="async">
+              {#key hiResImg}
+                <img class="sleeve-art" class:artist-img-fade={artistImages[artist.id] !== undefined} src={hiResImg} alt="" width="600" height="600" loading="lazy" decoding="async">
+              {/key}
             {/if}
             <div class="sleeve-overlay"></div>
             <div class="sleeve-meta">
@@ -748,7 +769,9 @@
         </button>
         <div class="vinyl-card-head">
           <div class="vinyl-avatar">
-            <img src={artistImages[expandedArtist.id] || expandedArtist.image} alt={expandedArtist.name} width="1000" height="1000" loading="eager" decoding="async">
+            {#key artistImages[expandedArtist.id]}
+              <img class:artist-img-fade={artistImages[expandedArtist.id] !== undefined} src={artistImages[expandedArtist.id] || expandedArtist.image} alt={expandedArtist.name} width="1000" height="1000" loading="eager" decoding="async">
+            {/key}
           </div>
           <div class="vinyl-card-head-text">
             <h3 class="vinyl-name">{expandedArtist.name}</h3>

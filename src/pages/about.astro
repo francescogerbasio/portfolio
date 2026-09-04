@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/pages/about.css';
 import ScrollReveal from '../islands/ScrollReveal.svelte';
+import { travelImagePreloads } from '../data/travel';
 const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout
@@ -9,6 +10,7 @@ const base = import.meta.env.BASE_URL;
   description="About Francesco Gerbasio — UX/UI Designer and LQA Specialist based in Madrid. Background, skills, and experience."
   canonical="/about.html"
   page="about"
+  preloadImages={travelImagePreloads(base)}
   dnsPrefetch={['https://www.linkedin.com']}
   breadcrumbName="About"
   structuredDataType="profile"

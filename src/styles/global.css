@@ -233,8 +233,11 @@ details[open] summary .accordion-icon {
         will-change: transform, opacity;
         pointer-events: none;
         z-index: 0;
-        opacity: 0.9;
+        opacity: 0;
         transition: opacity 180ms ease;
+    }
+    [data-theme="dark"].cursor-glow-active body::before {
+        opacity: 0.9;
     }
 }
 
@@ -1683,8 +1686,6 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
 
 @media (min-width: 769px) {
     .cs-card .project-title {
-        white-space: nowrap;
-        text-wrap: nowrap;
         font-size: clamp(22px, 1.65vw, 32px);
     }
 }
@@ -3008,6 +3009,16 @@ html.lenis, html.lenis body {
     z-index: 1;
 }
 
+/* Deezer artist photo swap: remounted img fades in once decoded */
+.artist-img-fade {
+    animation: artistImgFade 0.3s ease;
+}
+
+@keyframes artistImgFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 @media (hover: hover) {
     .vinyl-sleeve:hover .sleeve-art {
         transform: scale(1.05);
@@ -3092,6 +3103,7 @@ html.lenis, html.lenis body {
         animation: none;
     }
     .vinyl-sleeve:hover { transform: none; }
+    .artist-img-fade { animation: none; }
 }
 
 /* ===================================

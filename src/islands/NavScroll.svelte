@@ -59,15 +59,15 @@
 
     if (supportsPointerGlow) {
       let cursorGlowFrame = 0;
-      let cursorGlowX = window.innerWidth / 2;
-      let cursorGlowY = window.innerHeight / 2;
+      let cursorGlowX = 0;
+      let cursorGlowY = 0;
       function flushCursorGlow() {
         document.documentElement.style.setProperty('--cursor-x', `${cursorGlowX}`);
         document.documentElement.style.setProperty('--cursor-y', `${cursorGlowY}`);
         cursorGlowFrame = 0;
       }
-      flushCursorGlow();
       document.addEventListener('mousemove', function (e) {
+        document.documentElement.classList.add('cursor-glow-active');
         cursorGlowX = e.clientX;
         cursorGlowY = e.clientY;
         if (!cursorGlowFrame) cursorGlowFrame = requestAnimationFrame(flushCursorGlow);

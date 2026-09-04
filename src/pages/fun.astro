@@ -1,12 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FunManager from '../islands/FunManager.svelte';
+import { travelImagePreloads } from '../data/travel';
+const base = import.meta.env.BASE_URL;
 ---
 <BaseLayout
   title="Fun — Francesco Gerbasio"
   description="Travel photography, music production and gaming — the personal side of Francesco Gerbasio, UX/UI Designer based in Madrid."
   canonical="/fun.html"
   page="fun"
+  preloadImages={travelImagePreloads(base, 4, 'high')}
   dnsPrefetch={['https://www.linkedin.com', 'https://youtube.com', 'https://youtu.be']}
   breadcrumbName="Fun"
   structuredDataType="webpage"
