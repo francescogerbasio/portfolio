@@ -688,7 +688,7 @@
              onclick={() => activateCountryFromCard(photo.country)}>
           <img src={photo.image}
                alt={photo.location} width="630" height="840"
-               loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async"
+               loading={i < 5 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async"
                srcset={srcset(photo.image, [315], 630)}
                sizes="(max-width: 600px) 92vw, (max-width: 1024px) 46vw, (max-width: 1400px) 31vw, 23vw">
           <div class="travel-card-location">{#if !isWindows}<span class="flag">{photo.flag}</span>{/if}<span class="location-name">{photo.location}</span></div>
@@ -706,7 +706,7 @@
                onclick={() => activateCountryFromCard(photo.country)}>
             <img src={photo.image}
                  alt={photo.location} width="630" height="840"
-                 loading={i < 4 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async"
+                 loading={i < 5 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} decoding="async"
                  srcset={srcset(photo.image, [315], 630)}
                  sizes={TRAVEL_IMAGE_SIZES}>
             <div class="travel-card-location">{#if !isWindows}<span class="flag">{photo.flag}</span>{/if}<span class="location-name">{photo.location}</span></div>
