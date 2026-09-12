@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { myLocation } from '../data/location';
-  import { getWeatherTimeOfDay, normalizeWeatherCode } from '../lib/weatherScene';
+  import { getWeatherTimeOfDay, normalizeWeather } from '../lib/weatherScene';
 
   type WeatherData = {
     temperature: number;
@@ -9,6 +9,7 @@
     sunrise?: string;
     sunset?: string;
     timezone?: string;
+    is_day?: number;
   };
 
   declare global {
@@ -98,6 +99,8 @@
         } catch (_) {
           const descEl = document.getElementById('weatherDesc');
           if (descEl) descEl.textContent = 'Weather unavailable';
+          const statusEl = document.getElementById('weatherStatus');
+          if (statusEl) statusEl.textContent = 'Weather unavailable';
           return;
         }
       }
@@ -121,8 +124,13 @@
 
   function renderWeather(weatherData: WeatherData) {
     const temp = Math.round(weatherData.temperature);
-    const weatherInfo = getWeatherInfo(weatherData.weathercode);
-    const timeOfDay = getWeatherTimeOfDay(weatherData.sunrise, weatherData.sunset, weatherData.timezone);
+    const weatherInfo = normalizeWeather(weatherData.weathercode);
+    const timeOfDay = getWeatherTimeOfDay(
+      weatherData.sunrise,
+      weatherData.sunset,
+      weatherData.timezone,
+      weatherData.is_day === undefined ? undefined : weatherData.is_day === 1
+    );
     const tempEl = document.getElementById('weatherTemp');
     if (tempEl) tempEl.textContent = `${temp}°`;
     const landscapeEl = document.getElementById('weatherLandscape');
@@ -131,21 +139,9 @@
       landscapeEl.dataset.timeOfDay = timeOfDay;
     }
     const descEl = document.getElementById('weatherDesc');
-    if (descEl) descEl.textContent = weatherInfo.desc;
-  }
-
-  function getWeatherInfo(code: number): { scene: ReturnType<typeof normalizeWeatherCode>; desc: string } {
-    const weatherMap: Record<number, string> = {
-      0: 'Clear', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Cloudy',
-      45: 'Foggy', 48: 'Foggy', 51: 'Light drizzle', 53: 'Drizzle',
-      55: 'Heavy drizzle', 56: 'Freezing drizzle', 57: 'Freezing drizzle',
-      61: 'Light rain', 63: 'Rain', 65: 'Heavy rain', 66: 'Freezing rain',
-      67: 'Freezing rain', 71: 'Light snow', 73: 'Snow', 75: 'Heavy snow',
-      77: 'Snow grains', 80: 'Light showers', 81: 'Showers', 82: 'Heavy showers',
-      85: 'Light snow showers', 86: 'Heavy snow showers', 95: 'Thunderstorm',
-      96: 'Thunderstorm with hail', 99: 'Heavy thunderstorm'
-    };
-    return { scene: normalizeWeatherCode(code), desc: weatherMap[code] || 'Unknown' };
+    if (descEl) descEl.textContent = weatherInfo.label;
+    const statusEl = document.getElementById('weatherStatus');
+    if (statusEl) statusEl.textContent = `${temp} degrees Celsius, ${weatherInfo.label}`;
   }
 
   async function hashPassword(password: string): Promise<string> {

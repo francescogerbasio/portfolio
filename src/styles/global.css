@@ -31,7 +31,9 @@
     height: auto;
     padding: 12px 16px;
     margin: 0;
-    overflow: visible;
+    overflow: hidden;
+    border-end-start-radius: var(--radius-sm);
+    border-end-end-radius: var(--radius-sm);
     clip: auto;
     white-space: nowrap;
     background: var(--color-bg);
@@ -956,12 +958,25 @@ button.nav-link {
 }
 
 .weather-landscape {
+    --wl-horizon-back: color-mix(in oklab, var(--color-text-light) 17%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-text-light) 31%, transparent);
+    --wl-horizon-front: color-mix(in oklab, var(--color-text) 63%, transparent);
+    --wl-celestial: color-mix(in oklab, var(--color-accent) 74%, var(--color-text) 26%);
+    --wl-cloud: color-mix(in oklab, var(--color-text-light) 72%, transparent);
+    --wl-particle: color-mix(in oklab, var(--color-accent) 42%, var(--color-text-light) 58%);
+    --wl-storm-flash: color-mix(in oklab, var(--color-text) 42%, transparent);
     display: block;
-    inline-size: clamp(148px, 12vw, 170px);
+    inline-size: clamp(9.625rem, 13vw, 11.125rem);
     block-size: auto;
-    aspect-ratio: 160 / 66;
-    color: var(--color-text);
+    aspect-ratio: 2 / 1;
+    color: var(--wl-celestial);
+    overflow: visible;
+    isolation: isolate;
     contain: layout style paint;
+}
+
+.weather-landscape :is(path, circle, line, ellipse) {
+    vector-effect: non-scaling-stroke;
 }
 
 .weather-landscape .wl-reading {
@@ -971,57 +986,57 @@ button.nav-link {
 }
 
 .weather-landscape .wl-temperature {
-    font-size: 10px;
+    font-size: .8125rem;
     font-weight: 700;
-    letter-spacing: -.02em;
+    letter-spacing: -.025em;
 }
 
 .weather-landscape .wl-condition {
     fill: var(--color-text-light);
     font-family: var(--font-body);
-    font-size: 3.4px;
+    font-size: .4375rem;
     font-weight: 600;
-    letter-spacing: .12em;
+    letter-spacing: .11em;
+    text-transform: uppercase;
 }
 
-/* ===================================
-   WEATHER MICRO-LANDSCAPE
-   =================================== */
-
-.weather-landscape {
-    --wl-horizon-back: color-mix(in oklab, var(--color-text-light) 28%, transparent);
-    --wl-horizon-mid: color-mix(in oklab, var(--color-text-light) 42%, transparent);
-    --wl-horizon-front: color-mix(in oklab, var(--color-text-light) 62%, transparent);
-    --wl-celestial: color-mix(in oklab, var(--color-accent) 72%, var(--color-text) 28%);
-    --wl-cloud: color-mix(in oklab, var(--color-text-light) 64%, transparent);
-    --wl-particle: color-mix(in oklab, var(--color-accent) 55%, var(--color-text-light) 45%);
-    --wl-storm: color-mix(in oklab, var(--color-text) 38%, transparent);
-    display: block;
-    overflow: visible;
-    isolation: isolate;
+.weather-landscape :is(.wl-sun, .wl-moon, .wl-cloud, .wl-horizon, .wl-rain line, .wl-snow circle, .wl-fog path) {
+    translate: 0 0;
 }
 
-.weather-landscape rect,
-.weather-landscape path,
-.weather-landscape circle,
-.weather-landscape line {
-    vector-effect: non-scaling-stroke;
+.weather-landscape :is(.wl-sun, .wl-moon, .wl-cloud) {
+    scale: 1;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.weather-landscape :is(.wl-sun, .wl-moon, .wl-stars, .wl-cloud, .wl-rain, .wl-snow, .wl-fog, .wl-storm-flash) {
+    transition: opacity 1.1s ease;
 }
 
 .weather-landscape .wl-celestial {
-    fill: var(--wl-celestial);
-    transition: opacity 1.2s ease;
+    color: var(--wl-celestial);
+    fill: currentColor;
+    transition: opacity 1.1s ease;
 }
 
-.weather-landscape .wl-sun-ring {
+.weather-landscape .wl-celestial-glow {
+    opacity: .65;
+}
+
+.weather-landscape .wl-sun-orbit {
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.1;
+    stroke-width: .8;
 }
 
-.weather-landscape .wl-sun-core,
-.weather-landscape .wl-moon,
-.weather-landscape .wl-stars {
+.weather-landscape .wl-sun-core {
+    fill: currentColor;
+}
+
+.weather-landscape .wl-moon-shape,
+.weather-landscape .wl-stars,
+.weather-landscape .wl-snow {
     fill: currentColor;
 }
 
@@ -1031,38 +1046,30 @@ button.nav-link {
 .weather-landscape .wl-rain,
 .weather-landscape .wl-snow,
 .weather-landscape .wl-fog,
-.weather-landscape .wl-lightning {
-    transition: opacity 1.2s ease;
-}
-
-.weather-landscape .wl-stars,
-.weather-landscape .wl-cloud,
-.weather-landscape .wl-snow,
-.weather-landscape .wl-lightning {
-    fill: var(--wl-cloud);
-}
-
-.weather-landscape .wl-cloud-back,
-.weather-landscape .wl-cloud-front,
-.weather-landscape .wl-rain,
-.weather-landscape .wl-snow,
-.weather-landscape .wl-fog,
-.weather-landscape .wl-lightning {
+.weather-landscape .wl-storm-flash {
     opacity: 0;
+}
+
+.weather-landscape .wl-cloud {
+    fill: var(--wl-cloud);
 }
 
 .weather-landscape .wl-rain {
     fill: none;
     stroke: var(--wl-particle);
     stroke-linecap: round;
-    stroke-width: .8;
+    stroke-width: .75;
 }
 
 .weather-landscape .wl-fog {
     fill: none;
     stroke: var(--wl-cloud);
     stroke-linecap: round;
-    stroke-width: 2;
+    stroke-width: 2.2;
+}
+
+.weather-landscape .wl-storm-flash {
+    fill: var(--wl-storm-flash);
 }
 
 .weather-landscape .wl-horizon-back {
@@ -1077,205 +1084,264 @@ button.nav-link {
     fill: var(--wl-horizon-front);
 }
 
-.weather-landscape .wl-horizon-back,
-.weather-landscape .wl-horizon-mid,
-.weather-landscape .wl-horizon-front {
-    transition: fill 1.2s ease;
+.weather-landscape .wl-horizons {
+    transition: opacity 1.1s ease;
 }
 
-.weather-landscape[data-time-of-day="night"] {
-    --wl-horizon-back: color-mix(in oklab, var(--color-text) 32%, transparent);
-    --wl-horizon-mid: color-mix(in oklab, var(--color-text) 48%, transparent);
-    --wl-horizon-front: color-mix(in oklab, var(--color-text) 72%, transparent);
-    --wl-celestial: color-mix(in oklab, var(--color-text) 84%, var(--color-bg) 16%);
-    --wl-cloud: color-mix(in oklab, var(--color-text) 55%, transparent);
+.weather-landscape .wl-horizon {
+    transition: fill 1.1s ease;
+}
+
+.weather-landscape[data-time-of-day="dawn"] {
+    --wl-horizon-back: color-mix(in oklab, var(--color-accent) 24%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-accent) 20%, var(--color-text-light) 80%);
+    --wl-celestial: color-mix(in oklab, var(--color-accent) 86%, var(--color-text) 14%);
 }
 
 .weather-landscape[data-time-of-day="dusk"] {
-    --wl-horizon-back: color-mix(in oklab, var(--color-accent) 35%, transparent);
-    --wl-horizon-mid: color-mix(in oklab, var(--color-accent) 22%, var(--color-text-light) 78%);
+    --wl-horizon-back: color-mix(in oklab, var(--color-accent) 29%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-accent) 18%, var(--color-text-light) 82%);
     --wl-celestial: color-mix(in oklab, var(--color-accent) 82%, var(--color-text) 18%);
 }
 
-.weather-landscape[data-scene="storm"] {
-    --wl-horizon-back: color-mix(in oklab, var(--color-text) 38%, transparent);
-    --wl-horizon-mid: color-mix(in oklab, var(--color-text) 56%, transparent);
-    --wl-horizon-front: color-mix(in oklab, var(--color-text) 78%, transparent);
-    --wl-cloud: color-mix(in oklab, var(--color-text) 68%, transparent);
+.weather-landscape[data-time-of-day="night"] {
+    --wl-horizon-back: color-mix(in oklab, var(--color-text) 19%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-text) 35%, transparent);
+    --wl-horizon-front: color-mix(in oklab, var(--color-text) 66%, transparent);
+    --wl-celestial: color-mix(in oklab, var(--color-text) 88%, var(--color-bg) 12%);
+    --wl-cloud: color-mix(in oklab, var(--color-text) 54%, transparent);
+}
+
+.weather-landscape[data-time-of-day="night"] .wl-sun {
+    opacity: 0;
+}
+
+.weather-landscape[data-time-of-day="night"] :is(.wl-moon, .wl-stars) {
+    opacity: 1;
 }
 
 .weather-landscape[data-scene="cloudy"] .wl-cloud-back,
 .weather-landscape[data-scene="rain"] .wl-cloud-back,
-.weather-landscape[data-scene="storm"] .wl-cloud-back,
 .weather-landscape[data-scene="snow"] .wl-cloud-back {
     opacity: .38;
 }
 
 .weather-landscape[data-scene="cloudy"] .wl-cloud-front,
 .weather-landscape[data-scene="rain"] .wl-cloud-front,
-.weather-landscape[data-scene="storm"] .wl-cloud-front,
 .weather-landscape[data-scene="snow"] .wl-cloud-front {
-    opacity: .72;
+    opacity: .7;
 }
 
-.weather-landscape[data-scene="rain"] .wl-rain,
-.weather-landscape[data-scene="storm"] .wl-rain {
-    opacity: .72;
+.weather-landscape[data-scene="rain"] .wl-rain {
+    opacity: .78;
 }
 
 .weather-landscape[data-scene="snow"] .wl-snow {
-    opacity: .72;
+    opacity: .82;
+}
+
+.weather-landscape[data-scene="fog"] {
+    --wl-horizon-back: color-mix(in oklab, var(--color-text-light) 12%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-text-light) 21%, transparent);
+    --wl-horizon-front: color-mix(in oklab, var(--color-text-light) 42%, transparent);
 }
 
 .weather-landscape[data-scene="fog"] .wl-fog {
-    opacity: .48;
+    opacity: .6;
 }
 
-.weather-landscape[data-scene="fog"] .wl-cloud-front {
-    opacity: .2;
+.weather-landscape[data-scene="fog"] :is(.wl-horizons, .wl-celestial) {
+    opacity: .62;
 }
 
-.weather-landscape[data-scene="storm"] .wl-lightning {
-    opacity: .01;
+.weather-landscape[data-scene="storm"] {
+    --wl-horizon-back: color-mix(in oklab, var(--color-text) 28%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-text) 47%, transparent);
+    --wl-horizon-front: color-mix(in oklab, var(--color-text) 75%, transparent);
+    --wl-cloud: color-mix(in oklab, var(--color-text) 72%, transparent);
 }
 
-.weather-landscape[data-time-of-day="night"] .wl-sun,
-.weather-landscape[data-time-of-day="dusk"] .wl-sun,
-.weather-landscape[data-time-of-day="day"] .wl-moon,
-.weather-landscape[data-time-of-day="day"] .wl-stars,
-.weather-landscape[data-time-of-day="dusk"] .wl-moon,
-.weather-landscape[data-time-of-day="dusk"] .wl-stars {
-    opacity: 0;
+.weather-landscape[data-scene="storm"] .wl-cloud-back {
+    opacity: .58;
+    scale: 1.06 .84;
 }
 
-.weather-landscape[data-time-of-day="night"] .wl-moon,
-.weather-landscape[data-time-of-day="night"] .wl-stars {
-    opacity: 1;
+.weather-landscape[data-scene="storm"] .wl-cloud-front {
+    opacity: .9;
+    scale: 1.08 .82;
+}
+
+.weather-landscape[data-scene="storm"] .wl-rain {
+    opacity: .9;
+}
+
+.weather-landscape[data-scene="storm"] .wl-celestial {
+    opacity: .14;
 }
 
 @media (prefers-reduced-motion: no-preference) {
     .weather-landscape .wl-horizon-back {
-        animation: wl-horizon-drift 12s ease-in-out infinite alternate;
-        transform-origin: center;
+        animation: wl-horizon-back-drift 15s ease-in-out infinite alternate;
     }
 
     .weather-landscape .wl-horizon-mid {
-        animation: wl-horizon-drift 9s ease-in-out -2s infinite alternate-reverse;
-        transform-origin: center;
+        animation: wl-horizon-mid-drift 11s ease-in-out -3s infinite alternate;
     }
 
     .weather-landscape .wl-horizon-front {
-        animation: wl-horizon-drift 7s ease-in-out -4s infinite alternate;
-        transform-origin: center;
+        animation: wl-horizon-front-drift 16s ease-in-out -6s infinite alternate;
     }
 
     .weather-landscape .wl-cloud-back {
-        animation: wl-cloud-drift 11s ease-in-out infinite alternate;
-        transform-origin: center;
+        animation: wl-cloud-back-drift 19s linear -7s infinite;
     }
 
     .weather-landscape .wl-cloud-front {
-        animation: wl-cloud-drift 8s ease-in-out -2s infinite alternate-reverse;
-        transform-origin: center;
+        animation: wl-cloud-front-drift 14s linear -3s infinite;
     }
 
-    .weather-landscape .wl-sun,
+    .weather-landscape .wl-sun {
+        animation: wl-celestial-float 8s ease-in-out infinite;
+    }
+
     .weather-landscape .wl-moon {
-        animation: wl-celestial-float 7s ease-in-out infinite;
-        transform-box: fill-box;
-        transform-origin: center;
+        animation: wl-celestial-float 11s ease-in-out -4s infinite;
     }
 
-    .weather-landscape .wl-rain {
-        animation: wl-rain-fall 5s linear infinite;
-    }
-
-    .weather-landscape .wl-snow {
-        animation: wl-snow-fall 9s ease-in-out infinite;
-        transform-box: fill-box;
-        transform-origin: center;
-    }
-
-    .weather-landscape .wl-fog {
-        animation: wl-fog-drift 10s ease-in-out infinite alternate;
+    .weather-landscape .wl-stars circle {
+        animation: wl-star-breathe 5.2s ease-in-out infinite;
     }
 
     .weather-landscape .wl-stars circle:nth-child(2n) {
-        animation: wl-star-twinkle 8s ease-in-out -2s infinite;
+        animation-duration: 3.8s;
+        animation-delay: -1.7s;
     }
 
     .weather-landscape .wl-stars circle:nth-child(3n) {
-        animation: wl-star-twinkle 6s ease-in-out -4s infinite;
+        animation-duration: 6.4s;
+        animation-delay: -3.2s;
     }
 
-    .weather-landscape .wl-lightning {
-        animation: wl-lightning-pulse 9s ease-in-out infinite;
-        transform-box: fill-box;
-        transform-origin: center;
+    .weather-landscape .wl-rain line {
+        animation: wl-rain-fall 1.15s linear infinite;
+    }
+
+    .weather-landscape .wl-rain line:nth-child(2n) {
+        animation-duration: .9s;
+        animation-delay: -.55s;
+    }
+
+    .weather-landscape .wl-rain line:nth-child(3n) {
+        animation-duration: 1.4s;
+        animation-delay: -.85s;
+    }
+
+    .weather-landscape .wl-snow circle {
+        animation: wl-snow-fall 6.2s ease-in-out infinite;
+    }
+
+    .weather-landscape .wl-snow circle:nth-child(2n) {
+        animation-duration: 4.8s;
+        animation-delay: -2.6s;
+    }
+
+    .weather-landscape .wl-snow circle:nth-child(3n) {
+        animation-duration: 7.4s;
+        animation-delay: -4.1s;
+    }
+
+    .weather-landscape .wl-fog path {
+        animation: wl-fog-drift 13s ease-in-out infinite alternate;
+    }
+
+    .weather-landscape .wl-fog path:nth-child(2) {
+        animation-duration: 9s;
+        animation-direction: alternate-reverse;
+    }
+
+    .weather-landscape .wl-fog path:nth-child(3) {
+        animation-duration: 16s;
+        animation-delay: -5s;
+    }
+
+    .weather-landscape[data-scene="storm"] .wl-storm-flash {
+        animation: wl-storm-pulse 10s ease-in-out infinite;
     }
 }
 
-@keyframes wl-horizon-drift {
-    from { transform: translateX(-4px); }
-    to { transform: translateX(4px); }
+@keyframes wl-horizon-back-drift {
+    from { translate: -3px 0; }
+    to { translate: 4px 0; }
 }
 
-@keyframes wl-cloud-drift {
-    from { transform: translateX(-5px); }
-    to { transform: translateX(7px); }
+@keyframes wl-horizon-mid-drift {
+    from { translate: 3px 0; }
+    to { translate: -3px 0; }
+}
+
+@keyframes wl-horizon-front-drift {
+    from { translate: -.75px 0; }
+    to { translate: .75px 0; }
+}
+
+@keyframes wl-cloud-back-drift {
+    from { translate: -28px 0; }
+    to { translate: 96px 0; }
+}
+
+@keyframes wl-cloud-front-drift {
+    from { translate: -72px 0; }
+    to { translate: 58px 0; }
 }
 
 @keyframes wl-celestial-float {
-    0%, 100% { transform: translateY(1px); }
-    50% { transform: translateY(-2px); }
+    0%, 100% { translate: 0 1px; }
+    50% { translate: 0 -2px; }
+}
+
+@keyframes wl-star-breathe {
+    0%, 100% { opacity: .26; }
+    50% { opacity: .92; }
 }
 
 @keyframes wl-rain-fall {
-    from { transform: translateY(-3px); opacity: .25; }
-    to { transform: translateY(8px); opacity: .8; }
+    0% { translate: 2px -8px; opacity: 0; }
+    22% { opacity: .85; }
+    100% { translate: -4px 13px; opacity: 0; }
 }
 
 @keyframes wl-snow-fall {
-    0%, 100% { transform: translate(0, -2px); opacity: .25; }
-    50% { transform: translate(3px, 4px); opacity: .85; }
+    0% { translate: -2px -6px; opacity: 0; }
+    18% { opacity: .78; }
+    64% { translate: 3px 6px; opacity: .9; }
+    100% { translate: 1px 13px; opacity: 0; }
 }
 
 @keyframes wl-fog-drift {
-    from { transform: translateX(-10px); opacity: .2; }
-    to { transform: translateX(10px); opacity: .58; }
+    from { translate: -7px 0; opacity: .3; }
+    to { translate: 8px 0; opacity: .72; }
 }
 
-@keyframes wl-star-twinkle {
-    0%, 100% { opacity: .25; }
-    50% { opacity: .9; }
-}
-
-@keyframes wl-lightning-pulse {
-    0%, 42%, 46%, 100% { opacity: 0; }
-    44% { opacity: .6; }
+@keyframes wl-storm-pulse {
+    0%, 61%, 66%, 100% { opacity: 0; }
+    62% { opacity: .16; }
+    63% { opacity: .035; }
+    64% { opacity: .1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .weather-landscape * {
         animation: none !important;
+        transition: none !important;
     }
 }
 
 @media (forced-colors: active) {
-    .weather-landscape .wl-horizon-back,
-    .weather-landscape .wl-horizon-mid,
-    .weather-landscape .wl-horizon-front {
-        fill: Canvas;
-        stroke: CanvasText;
+    .weather-landscape .wl-atmosphere {
+        mask: none;
     }
 
-    .weather-landscape .wl-celestial,
-    .weather-landscape .wl-cloud,
-    .weather-landscape .wl-stars,
-    .weather-landscape .wl-rain,
-    .weather-landscape .wl-snow,
-    .weather-landscape .wl-fog,
-    .weather-landscape .wl-lightning {
+    .weather-landscape :is(.wl-horizon, .wl-celestial, .wl-cloud, .wl-stars, .wl-rain, .wl-snow, .wl-fog) {
         fill: CanvasText;
         stroke: CanvasText;
     }

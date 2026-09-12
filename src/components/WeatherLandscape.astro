@@ -5,13 +5,24 @@ interface Props {
   id?: string;
   scene?: WeatherScene;
   timeOfDay?: WeatherTimeOfDay;
+  temperature?: number;
+  label?: string;
 }
 
 const {
   id = 'weatherLandscape',
   scene = 'clear',
-  timeOfDay = 'day'
+  timeOfDay = 'day',
+  temperature,
+  label = 'Loading'
 } = Astro.props;
+
+const edgeFadeId = `${id}-edge-fade`;
+const edgeMaskId = `${id}-edge-mask`;
+const glowId = `${id}-glow`;
+const statusId = id === 'weatherLandscape' ? 'weatherStatus' : `${id}Status`;
+const temperatureText = typeof temperature === 'number' ? `${Math.round(temperature)}°` : '--°';
+const statusText = typeof temperature === 'number' ? `${Math.round(temperature)} degrees Celsius, ${label}` : 'Weather loading';
 ---
 
 <svg
@@ -19,61 +30,92 @@ const {
   class="weather-landscape"
   data-scene={scene}
   data-time-of-day={timeOfDay}
-  viewBox="0 0 160 66"
+  viewBox="0 0 168 84"
   role="presentation"
   aria-hidden="true"
   focusable="false"
 >
-  <g class="wl-stars" aria-hidden="true">
-    <circle cx="16" cy="12" r=".7" />
-    <circle cx="42" cy="8" r=".5" />
-    <circle cx="72" cy="16" r=".65" />
-    <circle cx="103" cy="9" r=".5" />
-    <circle cx="143" cy="20" r=".7" />
-  </g>
+  <defs>
+    <linearGradient id={edgeFadeId} x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="black" />
+      <stop offset=".06" stop-color="white" />
+      <stop offset=".94" stop-color="white" />
+      <stop offset="1" stop-color="black" />
+    </linearGradient>
+    <radialGradient id={glowId}>
+      <stop offset="0" stop-color="currentColor" stop-opacity=".2" />
+      <stop offset="1" stop-color="currentColor" stop-opacity="0" />
+    </radialGradient>
+    <mask id={edgeMaskId} maskUnits="userSpaceOnUse" x="0" y="0" width="168" height="84">
+      <rect width="168" height="84" fill={`url(#${edgeFadeId})`} />
+    </mask>
+  </defs>
 
-  <g class="wl-celestial" aria-hidden="true">
-    <g class="wl-sun">
-      <circle class="wl-sun-ring" cx="27" cy="17" r="6" />
-      <circle class="wl-sun-core" cx="27" cy="17" r="1.7" />
+  <g class="wl-atmosphere" mask={`url(#${edgeMaskId})`} aria-hidden="true">
+    <g class="wl-stars">
+      <circle cx="12" cy="16" r=".55" />
+      <circle cx="35" cy="8" r=".8" />
+      <circle cx="57" cy="20" r=".45" />
+      <circle cx="79" cy="11" r=".65" />
+      <circle cx="103" cy="24" r=".5" />
+      <circle cx="151" cy="10" r=".6" />
     </g>
-    <path class="wl-moon" d="M29 9.5a7.5 7.5 0 1 0 4.7 13.3A8.1 8.1 0 0 1 29 9.5Z" />
-  </g>
 
-  <g class="wl-clouds" aria-hidden="true">
-    <path class="wl-cloud wl-cloud-back" d="M43 27c4-4 8-5 13-3 3-4 9-5 13-1 3-1 7 1 8 4-8 2-20 3-34 2Z" />
-    <path class="wl-cloud wl-cloud-front" d="M69 35c4-4 9-5 14-2 3-5 10-6 14-1 4-1 8 1 10 5-10 2-25 2-38 1Z" />
-  </g>
+    <g class="wl-celestial">
+      <g class="wl-sun">
+        <circle class="wl-celestial-glow" cx="29" cy="23" r="17" fill={`url(#${glowId})`} />
+        <circle class="wl-sun-orbit" cx="29" cy="23" r="7.5" />
+        <circle class="wl-sun-core" cx="29" cy="23" r="2.2" />
+      </g>
+      <g class="wl-moon">
+        <circle class="wl-celestial-glow" cx="29" cy="23" r="17" fill={`url(#${glowId})`} />
+        <path class="wl-moon-shape" d="M31.5 14.4a9.2 9.2 0 1 0 5.2 15.7 10 10 0 0 1-5.2-15.7Z" />
+      </g>
+    </g>
 
-  <g class="wl-rain" aria-hidden="true">
-    <line x1="77" y1="38" x2="74" y2="47" />
-    <line x1="88" y1="38" x2="85" y2="48" />
-    <line x1="99" y1="38" x2="96" y2="47" />
-    <line x1="110" y1="38" x2="107" y2="48" />
-  </g>
+    <g class="wl-clouds">
+      <path class="wl-cloud wl-cloud-back" d="M-28 30c12-8 27-8 39-2 11-6 25-5 37 3 11-3 22-1 31 6-24 2-55 3-105 0Z" />
+      <path class="wl-cloud wl-cloud-front" d="M28 39c12-9 29-10 42-2 13-7 30-5 42 4 12-3 25 0 34 8-31 2-70 2-116-1Z" />
+    </g>
 
-  <g class="wl-snow" aria-hidden="true">
-    <circle cx="72" cy="39" r="1" />
-    <circle cx="84" cy="45" r=".8" />
-    <circle cx="98" cy="40" r="1" />
-    <circle cx="112" cy="47" r=".9" />
-  </g>
+    <g class="wl-rain">
+      <line x1="48" y1="42" x2="45" y2="51" />
+      <line x1="62" y1="47" x2="59" y2="57" />
+      <line x1="76" y1="41" x2="72" y2="52" />
+      <line x1="91" y1="46" x2="87" y2="57" />
+      <line x1="105" y1="41" x2="102" y2="50" />
+      <line x1="119" y1="48" x2="115" y2="59" />
+      <line x1="133" y1="42" x2="130" y2="52" />
+    </g>
 
-  <g class="wl-horizons" aria-hidden="true">
-    <path class="wl-horizon wl-horizon-back" d="M-12 48c17-5 27-6 41-3 14 4 22 5 36 1 15-4 27-3 41 2 15 5 29 3 66-5v29H-12Z" />
-    <path class="wl-horizon wl-horizon-mid" d="M-12 54c16-4 30-3 44 1 13 4 23 3 36-1 16-5 27-3 42 2 16 5 31 4 62-3v19H-12Z" />
-    <path class="wl-horizon wl-horizon-front" d="M-12 61c17-4 31-3 46 1 13 4 25 4 39 0 16-4 29-2 43 1 16 4 32 3 56-2v17H-12Z" />
-  </g>
+    <g class="wl-snow">
+      <circle cx="47" cy="43" r=".9" />
+      <circle cx="62" cy="49" r=".7" />
+      <circle cx="76" cy="42" r="1" />
+      <circle cx="91" cy="48" r=".8" />
+      <circle cx="106" cy="41" r=".65" />
+      <circle cx="121" cy="50" r=".95" />
+      <circle cx="136" cy="44" r=".75" />
+    </g>
 
-  <g class="wl-fog" aria-hidden="true">
-    <path d="M6 45c18-2 31-2 49 0s31 2 49 0 32-2 50 0" />
-    <path d="M-4 53c19-2 32-2 50 0s32 2 50 0 35-2 68 0" />
-  </g>
+    <ellipse class="wl-storm-flash" cx="94" cy="40" rx="43" ry="25" />
 
-  <path class="wl-lightning" d="m119 24-5 8h4l-3 7 8-10h-4l4-5Z" aria-hidden="true" />
+    <g class="wl-horizons">
+      <path class="wl-horizon wl-horizon-back" d="M-18 61c35-1 43-11 69-11 23 0 30 7 52 5 27-3 34-10 83-10v47H-18Z" />
+      <path class="wl-horizon wl-horizon-mid" d="M-18 69c29 2 42-8 64-9 25-2 37 7 60 6 28-1 47-9 80-6v32H-18Z" />
+      <path class="wl-horizon wl-horizon-front" d="M-18 78c32-6 57-3 78 2 24 6 42 4 64-3 22-6 40-5 62 2v13H-18Z" />
+    </g>
+
+    <g class="wl-fog">
+      <path d="M-12 49c29-4 54 2 82-1 31-4 54-5 90 0" />
+      <path d="M4 58c27-3 48 2 74-1 28-4 50-3 83 1" />
+      <path d="M-16 68c32-3 54 2 82 0 30-3 58-4 105 1" />
+    </g>
+  </g>
 
   <g class="wl-reading" aria-hidden="true">
-    <text class="wl-temperature" id="weatherTemp" x="113" y="13">--°</text>
-    <text class="wl-condition" id="weatherDesc" x="113" y="20">LOADING...</text>
+    <text class="wl-temperature" id="weatherTemp" x="159" y="17" text-anchor="end">{temperatureText}</text>
+    <text class="wl-condition" id="weatherDesc" x="159" y="25" text-anchor="end">{label}</text>
   </g>
 </svg>
+<span class="visually-hidden" id={statusId}>{statusText}</span>

@@ -1,39 +1,44 @@
 export type WeatherScene = 'clear' | 'cloudy' | 'rain' | 'storm' | 'snow' | 'fog';
-export type WeatherTimeOfDay = 'day' | 'dusk' | 'night';
+export type WeatherTimeOfDay = 'dawn' | 'day' | 'dusk' | 'night';
 
-const WEATHER_SCENES: Record<number, WeatherScene> = {
-  0: 'clear',
-  1: 'clear',
-  2: 'cloudy',
-  3: 'cloudy',
-  45: 'fog',
-  48: 'fog',
-  51: 'rain',
-  53: 'rain',
-  55: 'rain',
-  56: 'rain',
-  57: 'rain',
-  61: 'rain',
-  63: 'rain',
-  65: 'rain',
-  66: 'rain',
-  67: 'rain',
-  71: 'snow',
-  73: 'snow',
-  75: 'snow',
-  77: 'snow',
-  80: 'rain',
-  81: 'rain',
-  82: 'rain',
-  85: 'snow',
-  86: 'snow',
-  95: 'storm',
-  96: 'storm',
-  99: 'storm'
+export interface NormalizedWeather {
+  scene: WeatherScene;
+  label: string;
+}
+
+const WEATHER_CODES: Record<number, NormalizedWeather> = {
+  0: { scene: 'clear', label: 'Clear' },
+  1: { scene: 'clear', label: 'Mainly clear' },
+  2: { scene: 'cloudy', label: 'Partly cloudy' },
+  3: { scene: 'cloudy', label: 'Cloudy' },
+  45: { scene: 'fog', label: 'Fog' },
+  48: { scene: 'fog', label: 'Icy fog' },
+  51: { scene: 'rain', label: 'Light drizzle' },
+  53: { scene: 'rain', label: 'Drizzle' },
+  55: { scene: 'rain', label: 'Heavy drizzle' },
+  56: { scene: 'rain', label: 'Freezing drizzle' },
+  57: { scene: 'rain', label: 'Freezing drizzle' },
+  61: { scene: 'rain', label: 'Light rain' },
+  63: { scene: 'rain', label: 'Rain' },
+  65: { scene: 'rain', label: 'Heavy rain' },
+  66: { scene: 'rain', label: 'Freezing rain' },
+  67: { scene: 'rain', label: 'Freezing rain' },
+  71: { scene: 'snow', label: 'Light snow' },
+  73: { scene: 'snow', label: 'Snow' },
+  75: { scene: 'snow', label: 'Heavy snow' },
+  77: { scene: 'snow', label: 'Snow grains' },
+  80: { scene: 'rain', label: 'Light showers' },
+  81: { scene: 'rain', label: 'Showers' },
+  82: { scene: 'rain', label: 'Heavy showers' },
+  85: { scene: 'snow', label: 'Snow showers' },
+  86: { scene: 'snow', label: 'Heavy snow' },
+  95: { scene: 'storm', label: 'Thunderstorm' },
+  96: { scene: 'storm', label: 'Storm + hail' },
+  99: { scene: 'storm', label: 'Heavy storm' }
 };
 
-export function normalizeWeatherCode(code: number): WeatherScene {
-  return WEATHER_SCENES[code] ?? 'cloudy';
+export function normalizeWeather(code: number): NormalizedWeather {
+  return WEATHER_CODES[code] ?? { scene: 'cloudy', label: 'Unknown' };
 }
 
 function getClockMinutes(now: Date, timeZone?: string): number {
@@ -63,6 +68,7 @@ export function getWeatherTimeOfDay(
   sunrise?: string,
   sunset?: string,
   timeZone?: string,
+  providerIsDay?: boolean,
   now = new Date()
 ): WeatherTimeOfDay {
   const current = getClockMinutes(now, timeZone);
@@ -70,11 +76,13 @@ export function getWeatherTimeOfDay(
   const sunsetMinutes = getWeatherTimeMinutes(sunset);
 
   if (sunriseMinutes === null || sunsetMinutes === null) {
-    return current >= 17 * 60 && current < 19 * 60 ? 'dusk' : current >= 7 * 60 && current < 19 * 60 ? 'day' : 'night';
+    if (current >= 6 * 60 && current < 8 * 60) return 'dawn';
+    if (current >= 17 * 60 && current < 19 * 60) return 'dusk';
+    if (providerIsDay !== undefined) return providerIsDay ? 'day' : 'night';
+    return current >= 8 * 60 && current < 19 * 60 ? 'day' : 'night';
   }
 
-  if (Math.abs(current - sunriseMinutes) <= 75 || Math.abs(current - sunsetMinutes) <= 75) {
-    return 'dusk';
-  }
+  if (current >= sunriseMinutes - 75 && current <= sunriseMinutes + 45) return 'dawn';
+  if (current >= sunsetMinutes - 75 && current <= sunsetMinutes + 45) return 'dusk';
   return current > sunriseMinutes && current < sunsetMinutes ? 'day' : 'night';
 }
