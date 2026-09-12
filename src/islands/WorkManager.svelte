@@ -266,31 +266,6 @@
       document.querySelectorAll('.project-card.nda-protected:not(.countdown-card)').forEach(card => unlockProject(card));
     }
 
-    // Particle system
-    function buildParticleHTML(numParticles: number) {
-      let html = '';
-      for (let i = 0; i < numParticles; i++) {
-        const x = Math.random() * 100, y = Math.random() * 100;
-        const size = Math.random() * 3 + 2;
-        const opacity = Math.random() * 0.3 + 0.2;
-        const duration = Math.random() * 3 + 3;
-        const delay = Math.random() * 2;
-        html += `<div class="particle" style="position:absolute;left:${x}%;top:${y}%;width:${size}px;height:${size}px;background:rgba(136,136,136,${opacity});border-radius:50%;animation:particle-drift ${duration}s ease-in-out ${delay}s infinite;"></div>`;
-      }
-      return html;
-    }
-
-    function createParticleSystem(element: HTMLElement, width: number) {
-      const numParticles = Math.floor(width / 5);
-      const container = document.createElement('div');
-      container.className = 'particle-container';
-      container.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;';
-      container.innerHTML = buildParticleHTML(numParticles);
-      element.style.position = 'relative';
-      element.appendChild(container);
-      return container;
-    }
-
     const ndaCards = Array.from(document.querySelectorAll('.project-card.nda-protected:not(.countdown-card)')) as HTMLElement[];
     const ndaItems = Array.from(document.querySelectorAll('.project-list-item.nda-protected-item')) as HTMLElement[];
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -345,6 +320,30 @@
     });
   }
 
+  function buildParticleHTML(numParticles: number) {
+    let html = '';
+    for (let i = 0; i < numParticles; i++) {
+      const x = Math.random() * 100, y = Math.random() * 100;
+      const size = Math.random() * 3 + 2;
+      const opacity = Math.random() * 0.3 + 0.2;
+      const duration = Math.random() * 3 + 3;
+      const delay = Math.random() * 2;
+      html += `<div class="particle" style="position:absolute;left:${x}%;top:${y}%;width:${size}px;height:${size}px;background:rgba(136,136,136,${opacity});border-radius:50%;animation:particle-drift ${duration}s ease-in-out ${delay}s infinite;"></div>`;
+    }
+    return html;
+  }
+
+  function createParticleSystem(element: HTMLElement, width: number) {
+    const numParticles = Math.floor(width / 5);
+    const container = document.createElement('div');
+    container.className = 'particle-container';
+    container.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;';
+    container.innerHTML = buildParticleHTML(numParticles);
+    element.style.position = 'relative';
+    element.appendChild(container);
+    return container;
+  }
+
   const CIPHER_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?';
   function runDecryptReveal(el: HTMLElement) {
     const original = el.textContent ?? '';
@@ -385,6 +384,12 @@
       const release = new Date(y, m - 1, d, 0, 0, 0);
       const timer = card.querySelector('.countdown-timer');
       const badge = card.querySelector('.project-badge');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reducedMotion && !card.classList.contains('unlocked')) {
+        card.querySelectorAll<HTMLElement>('.project-title, .nda-hidden-text').forEach(element => {
+          createParticleSystem(element, element.getBoundingClientRect().width);
+        });
+      }
       let interval: ReturnType<typeof setInterval> | null = null;
 
       const reveal = () => {
