@@ -929,10 +929,6 @@ button.nav-link {
     align-items: center;
 }
 
-.location-pin {
-    font-size: 16px;
-}
-
 .location-city {
     font-size: clamp(16px, 1.4vw, 20px);
     font-weight: 600;
@@ -956,34 +952,333 @@ button.nav-link {
 }
 
 .weather-info {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
+    min-width: 0;
 }
 
-.weather-icon {
-    font-size: 20px;
-    line-height: 1;
-    display: inline-grid;
-    place-items: center;
-    inline-size: 1.4em;
-    block-size: 1.4em;
-    flex: 0 0 1.4em;
-    transition: none;
-}
-
-.weather-temp {
-    font-size: clamp(14px, 1.2vw, 18px);
-    font-weight: 600;
+.weather-landscape {
+    display: block;
+    inline-size: clamp(148px, 12vw, 170px);
+    block-size: auto;
+    aspect-ratio: 160 / 66;
     color: var(--color-text);
-    min-width: 3.5ch;
-    text-align: left;
+    contain: layout style paint;
 }
 
-.weather-desc {
-    font-size: clamp(12px, 1.1vw, 16px);
-    color: var(--color-text-light);
+.weather-landscape .wl-reading {
+    fill: var(--color-text);
+    font-family: var(--font-heading);
+    pointer-events: none;
+}
+
+.weather-landscape .wl-temperature {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+
+.weather-landscape .wl-condition {
+    fill: var(--color-text-light);
+    font-family: var(--font-body);
+    font-size: 3.4px;
+    font-weight: 600;
+    letter-spacing: .12em;
+}
+
+/* ===================================
+   WEATHER MICRO-LANDSCAPE
+   =================================== */
+
+.weather-landscape {
+    --wl-horizon-back: color-mix(in oklab, var(--color-text-light) 28%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-text-light) 42%, transparent);
+    --wl-horizon-front: color-mix(in oklab, var(--color-text-light) 62%, transparent);
+    --wl-celestial: color-mix(in oklab, var(--color-accent) 72%, var(--color-text) 28%);
+    --wl-cloud: color-mix(in oklab, var(--color-text-light) 64%, transparent);
+    --wl-particle: color-mix(in oklab, var(--color-accent) 55%, var(--color-text-light) 45%);
+    --wl-storm: color-mix(in oklab, var(--color-text) 38%, transparent);
+    display: block;
+    overflow: visible;
+    isolation: isolate;
+}
+
+.weather-landscape rect,
+.weather-landscape path,
+.weather-landscape circle,
+.weather-landscape line {
+    vector-effect: non-scaling-stroke;
+}
+
+.weather-landscape .wl-celestial {
+    fill: var(--wl-celestial);
+    transition: opacity 1.2s ease;
+}
+
+.weather-landscape .wl-sun-ring {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.1;
+}
+
+.weather-landscape .wl-sun-core,
+.weather-landscape .wl-moon,
+.weather-landscape .wl-stars {
+    fill: currentColor;
+}
+
+.weather-landscape .wl-moon,
+.weather-landscape .wl-stars,
+.weather-landscape .wl-cloud,
+.weather-landscape .wl-rain,
+.weather-landscape .wl-snow,
+.weather-landscape .wl-fog,
+.weather-landscape .wl-lightning {
+    transition: opacity 1.2s ease;
+}
+
+.weather-landscape .wl-stars,
+.weather-landscape .wl-cloud,
+.weather-landscape .wl-snow,
+.weather-landscape .wl-lightning {
+    fill: var(--wl-cloud);
+}
+
+.weather-landscape .wl-cloud-back,
+.weather-landscape .wl-cloud-front,
+.weather-landscape .wl-rain,
+.weather-landscape .wl-snow,
+.weather-landscape .wl-fog,
+.weather-landscape .wl-lightning {
+    opacity: 0;
+}
+
+.weather-landscape .wl-rain {
+    fill: none;
+    stroke: var(--wl-particle);
+    stroke-linecap: round;
+    stroke-width: .8;
+}
+
+.weather-landscape .wl-fog {
+    fill: none;
+    stroke: var(--wl-cloud);
+    stroke-linecap: round;
+    stroke-width: 2;
+}
+
+.weather-landscape .wl-horizon-back {
+    fill: var(--wl-horizon-back);
+}
+
+.weather-landscape .wl-horizon-mid {
+    fill: var(--wl-horizon-mid);
+}
+
+.weather-landscape .wl-horizon-front {
+    fill: var(--wl-horizon-front);
+}
+
+.weather-landscape .wl-horizon-back,
+.weather-landscape .wl-horizon-mid,
+.weather-landscape .wl-horizon-front {
+    transition: fill 1.2s ease;
+}
+
+.weather-landscape[data-time-of-day="night"] {
+    --wl-horizon-back: color-mix(in oklab, var(--color-text) 32%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-text) 48%, transparent);
+    --wl-horizon-front: color-mix(in oklab, var(--color-text) 72%, transparent);
+    --wl-celestial: color-mix(in oklab, var(--color-text) 84%, var(--color-bg) 16%);
+    --wl-cloud: color-mix(in oklab, var(--color-text) 55%, transparent);
+}
+
+.weather-landscape[data-time-of-day="dusk"] {
+    --wl-horizon-back: color-mix(in oklab, var(--color-accent) 35%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-accent) 22%, var(--color-text-light) 78%);
+    --wl-celestial: color-mix(in oklab, var(--color-accent) 82%, var(--color-text) 18%);
+}
+
+.weather-landscape[data-scene="storm"] {
+    --wl-horizon-back: color-mix(in oklab, var(--color-text) 38%, transparent);
+    --wl-horizon-mid: color-mix(in oklab, var(--color-text) 56%, transparent);
+    --wl-horizon-front: color-mix(in oklab, var(--color-text) 78%, transparent);
+    --wl-cloud: color-mix(in oklab, var(--color-text) 68%, transparent);
+}
+
+.weather-landscape[data-scene="cloudy"] .wl-cloud-back,
+.weather-landscape[data-scene="rain"] .wl-cloud-back,
+.weather-landscape[data-scene="storm"] .wl-cloud-back,
+.weather-landscape[data-scene="snow"] .wl-cloud-back {
+    opacity: .38;
+}
+
+.weather-landscape[data-scene="cloudy"] .wl-cloud-front,
+.weather-landscape[data-scene="rain"] .wl-cloud-front,
+.weather-landscape[data-scene="storm"] .wl-cloud-front,
+.weather-landscape[data-scene="snow"] .wl-cloud-front {
+    opacity: .72;
+}
+
+.weather-landscape[data-scene="rain"] .wl-rain,
+.weather-landscape[data-scene="storm"] .wl-rain {
+    opacity: .72;
+}
+
+.weather-landscape[data-scene="snow"] .wl-snow {
+    opacity: .72;
+}
+
+.weather-landscape[data-scene="fog"] .wl-fog {
+    opacity: .48;
+}
+
+.weather-landscape[data-scene="fog"] .wl-cloud-front {
+    opacity: .2;
+}
+
+.weather-landscape[data-scene="storm"] .wl-lightning {
+    opacity: .01;
+}
+
+.weather-landscape[data-time-of-day="night"] .wl-sun,
+.weather-landscape[data-time-of-day="dusk"] .wl-sun,
+.weather-landscape[data-time-of-day="day"] .wl-moon,
+.weather-landscape[data-time-of-day="day"] .wl-stars,
+.weather-landscape[data-time-of-day="dusk"] .wl-moon,
+.weather-landscape[data-time-of-day="dusk"] .wl-stars {
+    opacity: 0;
+}
+
+.weather-landscape[data-time-of-day="night"] .wl-moon,
+.weather-landscape[data-time-of-day="night"] .wl-stars {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .weather-landscape .wl-horizon-back {
+        animation: wl-horizon-drift 12s ease-in-out infinite alternate;
+        transform-origin: center;
+    }
+
+    .weather-landscape .wl-horizon-mid {
+        animation: wl-horizon-drift 9s ease-in-out -2s infinite alternate-reverse;
+        transform-origin: center;
+    }
+
+    .weather-landscape .wl-horizon-front {
+        animation: wl-horizon-drift 7s ease-in-out -4s infinite alternate;
+        transform-origin: center;
+    }
+
+    .weather-landscape .wl-cloud-back {
+        animation: wl-cloud-drift 11s ease-in-out infinite alternate;
+        transform-origin: center;
+    }
+
+    .weather-landscape .wl-cloud-front {
+        animation: wl-cloud-drift 8s ease-in-out -2s infinite alternate-reverse;
+        transform-origin: center;
+    }
+
+    .weather-landscape .wl-sun,
+    .weather-landscape .wl-moon {
+        animation: wl-celestial-float 7s ease-in-out infinite;
+        transform-box: fill-box;
+        transform-origin: center;
+    }
+
+    .weather-landscape .wl-rain {
+        animation: wl-rain-fall 5s linear infinite;
+    }
+
+    .weather-landscape .wl-snow {
+        animation: wl-snow-fall 9s ease-in-out infinite;
+        transform-box: fill-box;
+        transform-origin: center;
+    }
+
+    .weather-landscape .wl-fog {
+        animation: wl-fog-drift 10s ease-in-out infinite alternate;
+    }
+
+    .weather-landscape .wl-stars circle:nth-child(2n) {
+        animation: wl-star-twinkle 8s ease-in-out -2s infinite;
+    }
+
+    .weather-landscape .wl-stars circle:nth-child(3n) {
+        animation: wl-star-twinkle 6s ease-in-out -4s infinite;
+    }
+
+    .weather-landscape .wl-lightning {
+        animation: wl-lightning-pulse 9s ease-in-out infinite;
+        transform-box: fill-box;
+        transform-origin: center;
+    }
+}
+
+@keyframes wl-horizon-drift {
+    from { transform: translateX(-4px); }
+    to { transform: translateX(4px); }
+}
+
+@keyframes wl-cloud-drift {
+    from { transform: translateX(-5px); }
+    to { transform: translateX(7px); }
+}
+
+@keyframes wl-celestial-float {
+    0%, 100% { transform: translateY(1px); }
+    50% { transform: translateY(-2px); }
+}
+
+@keyframes wl-rain-fall {
+    from { transform: translateY(-3px); opacity: .25; }
+    to { transform: translateY(8px); opacity: .8; }
+}
+
+@keyframes wl-snow-fall {
+    0%, 100% { transform: translate(0, -2px); opacity: .25; }
+    50% { transform: translate(3px, 4px); opacity: .85; }
+}
+
+@keyframes wl-fog-drift {
+    from { transform: translateX(-10px); opacity: .2; }
+    to { transform: translateX(10px); opacity: .58; }
+}
+
+@keyframes wl-star-twinkle {
+    0%, 100% { opacity: .25; }
+    50% { opacity: .9; }
+}
+
+@keyframes wl-lightning-pulse {
+    0%, 42%, 46%, 100% { opacity: 0; }
+    44% { opacity: .6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .weather-landscape * {
+        animation: none !important;
+    }
+}
+
+@media (forced-colors: active) {
+    .weather-landscape .wl-horizon-back,
+    .weather-landscape .wl-horizon-mid,
+    .weather-landscape .wl-horizon-front {
+        fill: Canvas;
+        stroke: CanvasText;
+    }
+
+    .weather-landscape .wl-celestial,
+    .weather-landscape .wl-cloud,
+    .weather-landscape .wl-stars,
+    .weather-landscape .wl-rain,
+    .weather-landscape .wl-snow,
+    .weather-landscape .wl-fog,
+    .weather-landscape .wl-lightning {
+        fill: CanvasText;
+        stroke: CanvasText;
+    }
 }
 
 /* ===================================

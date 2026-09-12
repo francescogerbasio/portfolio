@@ -1,10 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { myLocation } from '../data/location';
+  import { getWeatherTimeOfDay, normalizeWeatherCode } from '../lib/weatherScene';
 
   type WeatherData = {
     temperature: number;
     weathercode: number;
+    sunrise?: string;
+    sunset?: string;
+    timezone?: string;
   };
 
   declare global {
@@ -79,10 +83,16 @@
 
       if (!weatherData) {
         try {
-          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current_weather=true`);
+          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current_weather=true&daily=sunrise,sunset&timezone=auto`);
           if (!res.ok) throw new Error(`Weather request failed with ${res.status}`);
           const json = await res.json();
-          weatherData = json.current_weather as WeatherData;
+          const currentWeather = json.current_weather as WeatherData;
+          weatherData = {
+            ...currentWeather,
+            sunrise: json.daily?.sunrise?.[0],
+            sunset: json.daily?.sunset?.[0],
+            timezone: json.timezone
+          };
           try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: weatherData, ts: Date.now() })); } catch (_) {}
         } catch (_) {
           const descEl = document.getElementById('weatherDesc');
@@ -100,6 +110,8 @@
       const cached = sessionStorage.getItem('weather_cache');
       if (!cached) return null;
       const { data, ts } = JSON.parse(cached);
+      if (!data?.current_weather && typeof data?.temperature !== 'number') return null;
+      if (!data?.sunrise || !data?.sunset) return null;
       return Date.now() - ts < ttl ? data : null;
     } catch (_) {
       return null;
@@ -109,29 +121,30 @@
   function renderWeather(weatherData: WeatherData) {
     const temp = Math.round(weatherData.temperature);
     const weatherInfo = getWeatherInfo(weatherData.weathercode);
+    const timeOfDay = getWeatherTimeOfDay(weatherData.sunrise, weatherData.sunset, weatherData.timezone);
     const tempEl = document.getElementById('weatherTemp');
-    if (tempEl) tempEl.textContent = `${temp}°C`;
-    const iconEl = document.getElementById('weatherIcon');
-    if (iconEl) iconEl.textContent = weatherInfo.icon;
+    if (tempEl) tempEl.textContent = `${temp}°`;
+    const landscapeEl = document.getElementById('weatherLandscape');
+    if (landscapeEl) {
+      landscapeEl.dataset.scene = weatherInfo.scene;
+      landscapeEl.dataset.timeOfDay = timeOfDay;
+    }
     const descEl = document.getElementById('weatherDesc');
     if (descEl) descEl.textContent = weatherInfo.desc;
   }
 
-  function getWeatherInfo(code: number): { icon: string; desc: string } {
-    const weatherMap: Record<number, { icon: string; desc: string }> = {
-      0: { icon: '☀️', desc: 'Clear' }, 1: { icon: '🌤️', desc: 'Mainly clear' },
-      2: { icon: '⛅', desc: 'Partly cloudy' }, 3: { icon: '☁️', desc: 'Cloudy' },
-      45: { icon: '🌫️', desc: 'Foggy' }, 48: { icon: '🌫️', desc: 'Foggy' },
-      51: { icon: '🌦️', desc: 'Light drizzle' }, 53: { icon: '🌦️', desc: 'Drizzle' },
-      55: { icon: '🌧️', desc: 'Heavy drizzle' }, 61: { icon: '🌧️', desc: 'Light rain' },
-      63: { icon: '🌧️', desc: 'Rain' }, 65: { icon: '🌧️', desc: 'Heavy rain' },
-      71: { icon: '🌨️', desc: 'Light snow' }, 73: { icon: '❄️', desc: 'Snow' },
-      75: { icon: '❄️', desc: 'Heavy snow' }, 80: { icon: '🌦️', desc: 'Light showers' },
-      81: { icon: '🌧️', desc: 'Showers' }, 82: { icon: '⛈️', desc: 'Heavy showers' },
-      95: { icon: '⛈️', desc: 'Thunderstorm' }, 96: { icon: '⛈️', desc: 'Thunderstorm with hail' },
-      99: { icon: '⛈️', desc: 'Heavy thunderstorm' }
+  function getWeatherInfo(code: number): { scene: ReturnType<typeof normalizeWeatherCode>; desc: string } {
+    const weatherMap: Record<number, string> = {
+      0: 'Clear', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Cloudy',
+      45: 'Foggy', 48: 'Foggy', 51: 'Light drizzle', 53: 'Drizzle',
+      55: 'Heavy drizzle', 56: 'Freezing drizzle', 57: 'Freezing drizzle',
+      61: 'Light rain', 63: 'Rain', 65: 'Heavy rain', 66: 'Freezing rain',
+      67: 'Freezing rain', 71: 'Light snow', 73: 'Snow', 75: 'Heavy snow',
+      77: 'Snow grains', 80: 'Light showers', 81: 'Showers', 82: 'Heavy showers',
+      85: 'Light snow showers', 86: 'Heavy snow showers', 95: 'Thunderstorm',
+      96: 'Thunderstorm with hail', 99: 'Heavy thunderstorm'
     };
-    return weatherMap[code] || { icon: '🌤️', desc: 'Unknown' };
+    return { scene: normalizeWeatherCode(code), desc: weatherMap[code] || 'Unknown' };
   }
 
   async function hashPassword(password: string): Promise<string> {

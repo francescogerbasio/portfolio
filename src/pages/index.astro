@@ -4,6 +4,7 @@ import '../styles/pages/work.css';
 import '../styles/case-study.css';
 import WorkManager from '../islands/WorkManager.svelte';
 import WorkMotion from '../islands/WorkMotion.svelte';
+import WeatherLandscape from '../components/WeatherLandscape.astro';
 import { travelImagePreloads } from '../data/travel';
 const base = import.meta.env.BASE_URL;
 ---
@@ -48,14 +49,11 @@ const base = import.meta.env.BASE_URL;
           </div>
           <div class="location-widget-compact" role="region" aria-label="Location and weather">
             <div class="location-mini">
-              <span class="location-pin" aria-hidden="true">📍</span>
               <span class="location-city" id="locationCity">Madrid, Spain</span>
               <span class="vacation-badge" id="vacationBadge"><span aria-hidden="true">🏖️</span> On vacation</span>
             </div>
             <div class="weather-info" id="weatherInfo" aria-live="polite">
-              <span class="weather-icon" id="weatherIcon" aria-hidden="true">☀️</span>
-              <span class="weather-temp" id="weatherTemp">--°C</span>
-              <span class="weather-desc" id="weatherDesc">Loading...</span>
+              <WeatherLandscape />
             </div>
           </div>
         </div>
