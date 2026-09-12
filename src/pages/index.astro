@@ -101,6 +101,33 @@ const base = import.meta.env.BASE_URL;
           </div>
         </div>
 
+        <div class="project-card featured-release-card clickable-card nda-protected countdown-card" data-release-date="2027-03-05" data-href="https://www.bandainamcoent.eu" role="button" tabindex="0" aria-label="Unannounced project — revealed 5 March 2027">
+          <div class="project-image-link nda-link countdown-link">
+            <div class="project-image lqa-card-thumb">
+              <img src={`${base}Assets/Images/GundamRogueOrbit.webp`} alt="Unannounced project" width="744" height="418" loading="lazy" decoding="async"
+                   srcset={`${base}Assets/Images/GundamRogueOrbit-400w.webp 400w, ${base}Assets/Images/GundamRogueOrbit.webp 800w`} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw">
+              <div class="lqa-card-overlay red-dead-lqa-overlay" aria-hidden="true">
+                <span class="cs-card-tag">LQA · Italian · 2027</span>
+                <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+              </div>
+              <div class="nda-overlay countdown-overlay" aria-hidden="true">
+                <div class="nda-lock-icon">⏳</div>
+                <div class="nda-text">Unannounced Project</div>
+                <div class="nda-subtext">Revealing in</div>
+                <div class="countdown-timer" id="countdownTimer" aria-live="off">--d --h --m --s</div>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-header">
+              <h3 class="project-title" aria-label="Unannounced project">Unannounced Project</h3>
+              <span class="project-badge">COMING SOON</span>
+            </div>
+            <p class="project-description"><span class="nda-hidden-text">GUNDAM ROGUE ORBIT</span> — contributed to the Italian localization of an upcoming title, with a focus on linguistic accuracy and consistency.</p>
+            <p class="project-meta"><span class="nda-hidden-text">Bandai Namco Studios Inc.</span> - 2027</p>
+          </div>
+        </div>
+
         <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" rel="noopener noreferrer" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Dead Take project page">
           <div class="project-image lqa-card-thumb">
             <img src={`${base}Assets/Images/DeadTake.webp`} alt="Dead Take" width="744" height="418" loading="lazy" decoding="async"

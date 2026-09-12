@@ -21,6 +21,7 @@
     initRotatingPhrases();
     initLocationWidget();
     initNdaProtection();
+    initCountdown();
     initCardGlow();
     initCaseStudies();
   });
@@ -179,7 +180,7 @@
       });
     }
 
-    document.querySelectorAll('.project-card.nda-protected').forEach(card => {
+    document.querySelectorAll('.project-card.nda-protected:not(.countdown-card)').forEach(card => {
       card.addEventListener('click', function(this: Element, e: Event) {
         if ((e.target as Element).closest('.nda-modal')) return;
         const link = this.querySelector('.project-image-link.nda-link');
@@ -258,42 +259,11 @@
       setTimeout(() => projectCard.querySelectorAll('.particle-container').forEach(c => c.remove()), 1000);
     }
 
-    const CIPHER_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?';
-    function runDecryptReveal(el: HTMLElement) {
-      const original = el.textContent ?? '';
-      el.dataset.decryptOriginal = original;
-      if (!original) return;
-      const totalDuration = 1100 + (original.length * 18);
-      const startTime = performance.now();
-      const length = original.length;
-
-      function tick(now: number) {
-        const elapsed = now - startTime;
-        if (elapsed >= totalDuration) {
-          el.textContent = original;
-          el.style.color = '';
-          return;
-        }
-        const progress = Math.min(1, elapsed / totalDuration);
-        let out = '';
-        for (let i = 0; i < length; i++) {
-          const ch = original[i];
-          if (ch === ' ' || ch === '\u00A0') { out += ch; continue; }
-          const charProgress = progress * length * 0.85;
-          if (i < charProgress) out += ch;
-          else out += CIPHER_CHARS[Math.floor(Math.random() * CIPHER_CHARS.length)];
-        }
-        el.textContent = out;
-        requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
-
     ndaSubmitBtn.addEventListener('click', submitPassword);
     ndaPasswordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitPassword(); });
 
     if (sessionStorage.getItem('nda-unlocked') === 'true') {
-      document.querySelectorAll('.project-card.nda-protected').forEach(card => unlockProject(card));
+      document.querySelectorAll('.project-card.nda-protected:not(.countdown-card)').forEach(card => unlockProject(card));
     }
 
     // Particle system
@@ -321,7 +291,7 @@
       return container;
     }
 
-    const ndaCards = Array.from(document.querySelectorAll('.project-card.nda-protected')) as HTMLElement[];
+    const ndaCards = Array.from(document.querySelectorAll('.project-card.nda-protected:not(.countdown-card)')) as HTMLElement[];
     const ndaItems = Array.from(document.querySelectorAll('.project-list-item.nda-protected-item')) as HTMLElement[];
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       ndaCards.forEach(card => unlockProject(card));
@@ -371,6 +341,92 @@
         container.innerHTML = html;
         (text as HTMLElement).style.position = 'relative';
         text.appendChild(container);
+      });
+    });
+  }
+
+  const CIPHER_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?';
+  function runDecryptReveal(el: HTMLElement) {
+    const original = el.textContent ?? '';
+    el.dataset.decryptOriginal = original;
+    if (!original) return;
+    const totalDuration = 1100 + (original.length * 18);
+    const startTime = performance.now();
+    const length = original.length;
+
+    function tick(now: number) {
+      const elapsed = now - startTime;
+      if (elapsed >= totalDuration) {
+        el.textContent = original;
+        el.style.color = '';
+        return;
+      }
+      const progress = Math.min(1, elapsed / totalDuration);
+      let out = '';
+      for (let i = 0; i < length; i++) {
+        const ch = original[i];
+        if (ch === ' ' || ch === '\u00A0') { out += ch; continue; }
+        const charProgress = progress * length * 0.85;
+        if (i < charProgress) out += ch;
+        else out += CIPHER_CHARS[Math.floor(Math.random() * CIPHER_CHARS.length)];
+      }
+      el.textContent = out;
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function initCountdown() {
+    document.querySelectorAll<HTMLElement>('.project-card.countdown-card').forEach(card => {
+      const releaseAttr = card.getAttribute('data-release-date');
+      if (!releaseAttr) return;
+      // Midnight local on release date
+      const [y, m, d] = releaseAttr.split('-').map(Number);
+      const release = new Date(y, m - 1, d, 0, 0, 0);
+      const timer = card.querySelector('.countdown-timer');
+      const badge = card.querySelector('.project-badge');
+      let interval: ReturnType<typeof setInterval> | null = null;
+
+      const reveal = () => {
+        if (interval) clearInterval(interval);
+        interval = null;
+        if (card.classList.contains('unlocked')) return;
+        card.classList.add('unlocked');
+        card.classList.add('countdown-revealed');
+        const overlay = card.querySelector('.nda-overlay');
+        if (overlay) overlay.classList.add('hidden');
+        if (badge) badge.textContent = 'SHIPPED';
+        const targets: HTMLElement[] = [];
+        card.querySelectorAll<HTMLElement>('.nda-hidden-text').forEach(t => targets.push(t));
+        targets.forEach((el, i) => setTimeout(() => runDecryptReveal(el), i * 120));
+      };
+
+      const tick = () => {
+        const remaining = release.getTime() - Date.now();
+        if (remaining <= 0) { reveal(); return; }
+        if (!timer) { return; }
+        const days = Math.floor(remaining / 86400000);
+        const hours = Math.floor(remaining % 86400000 / 3600000);
+        const mins = Math.floor(remaining % 3600000 / 60000);
+        const secs = Math.floor(remaining % 60000 / 1000);
+        timer.textContent = `${days}d ${String(hours).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}s`;
+      };
+
+      tick();
+      if (!card.classList.contains('unlocked')) {
+        interval = setInterval(tick, 1000);
+      }
+
+      card.addEventListener('click', function(this: Element, e: Event) {
+        if ((e.target as Element).closest('.nda-modal')) return;
+        if (!card.classList.contains('unlocked')) return;
+        const href = card.getAttribute('data-href');
+        if (href) window.open(href, '_blank', 'noopener,noreferrer');
+      });
+      card.addEventListener('keydown', function(e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        (this as HTMLElement).click();
       });
     });
   }
