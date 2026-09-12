@@ -1684,6 +1684,11 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
     letter-spacing: -0.03em;
 }
 
+.countdown-card .project-title {
+    font-size: clamp(19px, 1.5vw, 24px);
+    letter-spacing: 0.01em;
+}
+
 @media (min-width: 769px) {
     .cs-card .project-title {
         font-size: clamp(22px, 1.65vw, 32px);
@@ -1833,6 +1838,20 @@ details[open] .accordion-content .project-list-item:nth-child(15) { transition-d
 .nda-subtext {
     font-size: clamp(14px, 1.2vw, 16px);
     color: var(--color-text-light);
+    text-align: center;
+}
+
+/* Countdown card (e.g. GUNDAM ROGUE ORBIT) — reuses .nda-protected blur */
+.countdown-overlay {
+    cursor: default;
+}
+
+.countdown-timer {
+    font-size: clamp(15px, 1.3vw, 18px);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+    letter-spacing: 0.04em;
     text-align: center;
 }
 
