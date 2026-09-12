@@ -31,9 +31,7 @@
     height: auto;
     padding: 12px 16px;
     margin: 0;
-    overflow: hidden;
-    border-end-start-radius: var(--radius-sm);
-    border-end-end-radius: var(--radius-sm);
+    overflow: visible;
     clip: auto;
     white-space: nowrap;
     background: var(--color-bg);
@@ -970,7 +968,9 @@ button.nav-link {
     block-size: auto;
     aspect-ratio: 2 / 1;
     color: var(--wl-celestial);
-    overflow: visible;
+    overflow: hidden;
+    border-end-start-radius: var(--radius-sm);
+    border-end-end-radius: var(--radius-sm);
     isolation: isolate;
     contain: layout style paint;
 }
@@ -1181,44 +1181,48 @@ button.nav-link {
 
 @media (prefers-reduced-motion: no-preference) {
     .weather-landscape .wl-horizon-back {
-        animation: wl-horizon-back-drift 15s ease-in-out infinite alternate;
+        animation: wl-horizon-back-drift 10s ease-in-out infinite alternate;
     }
 
     .weather-landscape .wl-horizon-mid {
-        animation: wl-horizon-mid-drift 11s ease-in-out -3s infinite alternate;
+        animation: wl-horizon-mid-drift 8s ease-in-out -3s infinite alternate;
     }
 
     .weather-landscape .wl-horizon-front {
-        animation: wl-horizon-front-drift 16s ease-in-out -6s infinite alternate;
+        animation: wl-horizon-front-drift 12s ease-in-out -6s infinite alternate;
     }
 
     .weather-landscape .wl-cloud-back {
-        animation: wl-cloud-back-drift 19s linear -7s infinite;
+        animation: wl-cloud-back-drift 16s linear -7s infinite;
     }
 
     .weather-landscape .wl-cloud-front {
-        animation: wl-cloud-front-drift 14s linear -3s infinite;
+        animation: wl-cloud-front-drift 12s linear -3s infinite;
     }
 
     .weather-landscape .wl-sun {
-        animation: wl-celestial-float 8s ease-in-out infinite;
+        animation: wl-celestial-float 6s ease-in-out infinite;
     }
 
     .weather-landscape .wl-moon {
-        animation: wl-celestial-float 11s ease-in-out -4s infinite;
+        animation: wl-celestial-float 7.5s ease-in-out -4s infinite;
+    }
+
+    .weather-landscape .wl-celestial-glow {
+        animation: wl-glow-breathe 4.8s ease-in-out -1s infinite;
     }
 
     .weather-landscape .wl-stars circle {
-        animation: wl-star-breathe 5.2s ease-in-out infinite;
+        animation: wl-star-breathe 4.5s ease-in-out infinite;
     }
 
     .weather-landscape .wl-stars circle:nth-child(2n) {
-        animation-duration: 3.8s;
+        animation-duration: 3.2s;
         animation-delay: -1.7s;
     }
 
     .weather-landscape .wl-stars circle:nth-child(3n) {
-        animation-duration: 6.4s;
+        animation-duration: 5.4s;
         animation-delay: -3.2s;
     }
 
@@ -1251,16 +1255,16 @@ button.nav-link {
     }
 
     .weather-landscape .wl-fog path {
-        animation: wl-fog-drift 13s ease-in-out infinite alternate;
+        animation: wl-fog-drift 11s ease-in-out infinite alternate;
     }
 
     .weather-landscape .wl-fog path:nth-child(2) {
-        animation-duration: 9s;
+        animation-duration: 8s;
         animation-direction: alternate-reverse;
     }
 
     .weather-landscape .wl-fog path:nth-child(3) {
-        animation-duration: 16s;
+        animation-duration: 14s;
         animation-delay: -5s;
     }
 
@@ -1270,18 +1274,18 @@ button.nav-link {
 }
 
 @keyframes wl-horizon-back-drift {
-    from { translate: -3px 0; }
+    from { translate: -4px 0; }
     to { translate: 4px 0; }
 }
 
 @keyframes wl-horizon-mid-drift {
-    from { translate: 3px 0; }
-    to { translate: -3px 0; }
+    from { translate: 3.5px 0; }
+    to { translate: -3.5px 0; }
 }
 
 @keyframes wl-horizon-front-drift {
-    from { translate: -.75px 0; }
-    to { translate: .75px 0; }
+    from { translate: -1px 0; }
+    to { translate: 1px 0; }
 }
 
 @keyframes wl-cloud-back-drift {
@@ -1295,8 +1299,13 @@ button.nav-link {
 }
 
 @keyframes wl-celestial-float {
-    0%, 100% { translate: 0 1px; }
-    50% { translate: 0 -2px; }
+    0%, 100% { translate: 0 1.5px; }
+    50% { translate: 0 -3px; }
+}
+
+@keyframes wl-glow-breathe {
+    0%, 100% { opacity: .4; }
+    50% { opacity: .8; }
 }
 
 @keyframes wl-star-breathe {
