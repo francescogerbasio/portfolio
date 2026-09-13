@@ -19,6 +19,7 @@ const {
 
 const edgeFadeId = `${id}-edge-fade`;
 const edgeMaskId = `${id}-edge-mask`;
+const frameClipId = `${id}-frame-clip`;
 const glowId = `${id}-glow`;
 const statusId = id === 'weatherLandscape' ? 'weatherStatus' : `${id}Status`;
 const temperatureText = typeof temperature === 'number' ? `${Math.round(temperature)}°` : '--°';
@@ -49,9 +50,12 @@ const statusText = typeof temperature === 'number' ? `${Math.round(temperature)}
     <mask id={edgeMaskId} maskUnits="userSpaceOnUse" x="0" y="0" width="168" height="84">
       <rect width="168" height="84" fill={`url(#${edgeFadeId})`} />
     </mask>
+    <clipPath id={frameClipId} clipPathUnits="userSpaceOnUse">
+      <path d="M0 0H168V72Q168 84 156 84H12Q0 84 0 72Z" />
+    </clipPath>
   </defs>
 
-  <g class="wl-atmosphere" mask={`url(#${edgeMaskId})`} aria-hidden="true">
+  <g class="wl-atmosphere" aria-hidden="true">
     <g class="wl-stars">
       <circle cx="12" cy="16" r=".55" />
       <circle cx="35" cy="8" r=".8" />
@@ -62,20 +66,31 @@ const statusText = typeof temperature === 'number' ? `${Math.round(temperature)}
     </g>
 
     <g class="wl-celestial">
-      <g class="wl-sun">
-        <circle class="wl-celestial-glow" cx="29" cy="23" r="17" fill={`url(#${glowId})`} />
-        <circle class="wl-sun-orbit" cx="29" cy="23" r="7.5" />
-        <circle class="wl-sun-core" cx="29" cy="23" r="2.2" />
+      <g class="wl-sun-motion">
+        <g class="wl-sun">
+          <circle class="wl-celestial-glow" cx="29" cy="23" r="17" fill={`url(#${glowId})`} />
+          <path
+            class="wl-sun-rays"
+            d="M29 15.2v-3.8M34.5 17.5l2.9-2.9M36.8 23h3.8M34.5 28.5l2.6 2.6M29 30.8v3.4M23.5 28.5l-2.7 2.7M21.2 23h-3.6M23.5 17.5l-2.9-2.9"
+          />
+          <circle class="wl-sun-core" cx="29" cy="23" r="4.6" />
+        </g>
       </g>
-      <g class="wl-moon">
-        <circle class="wl-celestial-glow" cx="29" cy="23" r="17" fill={`url(#${glowId})`} />
-        <path class="wl-moon-shape" d="M31.5 14.4a9.2 9.2 0 1 0 5.2 15.7 10 10 0 0 1-5.2-15.7Z" />
+      <g class="wl-moon-motion">
+        <g class="wl-moon">
+          <circle class="wl-celestial-glow" cx="29" cy="23" r="17" fill={`url(#${glowId})`} />
+          <path class="wl-moon-shape" d="M31.5 14.4a9.2 9.2 0 1 0 5.2 15.7 10 10 0 0 1-5.2-15.7Z" />
+        </g>
       </g>
     </g>
 
     <g class="wl-clouds">
-      <path class="wl-cloud wl-cloud-back" d="M-28 30c12-8 27-8 39-2 11-6 25-5 37 3 11-3 22-1 31 6-24 2-55 3-105 0Z" />
-      <path class="wl-cloud wl-cloud-front" d="M28 39c12-9 29-10 42-2 13-7 30-5 42 4 12-3 25 0 34 8-31 2-70 2-116-1Z" />
+      <g class="wl-cloud-motion wl-cloud-back-motion">
+        <path class="wl-cloud wl-cloud-back" d="M-28 30c12-8 27-8 39-2 11-6 25-5 37 3 11-3 22-1 31 6-24 2-55 3-105 0Z" />
+      </g>
+      <g class="wl-cloud-motion wl-cloud-front-motion">
+        <path class="wl-cloud wl-cloud-front" d="M28 39c12-9 29-10 42-2 13-7 30-5 42 4 12-3 25 0 34 8-31 2-70 2-116-1Z" />
+      </g>
     </g>
 
     <g class="wl-rain">
@@ -98,15 +113,18 @@ const statusText = typeof temperature === 'number' ? `${Math.round(temperature)}
       <circle cx="136" cy="44" r=".75" />
     </g>
 
-    <ellipse class="wl-storm-flash" cx="94" cy="40" rx="43" ry="25" />
-
-    <g class="wl-horizons">
+    <g class="wl-horizons" mask={`url(#${edgeMaskId})`} clip-path={`url(#${frameClipId})`}>
       <path class="wl-horizon wl-horizon-back" d="M-18 61c35-1 43-11 69-11 23 0 30 7 52 5 27-3 34-10 83-10v47H-18Z" />
       <path class="wl-horizon wl-horizon-mid" d="M-18 69c29 2 42-8 64-9 25-2 37 7 60 6 28-1 47-9 80-6v32H-18Z" />
       <path class="wl-horizon wl-horizon-front" d="M-18 78c32-6 57-3 78 2 24 6 42 4 64-3 22-6 40-5 62 2v13H-18Z" />
     </g>
 
-    <g class="wl-fog">
+    <g class="wl-lightning">
+      <path class="wl-lightning-glow" d="M104 39 97 49h5l-9 13" />
+      <path class="wl-lightning-core" d="M104 39 97 49h5l-9 13" />
+    </g>
+
+    <g class="wl-fog" clip-path={`url(#${frameClipId})`}>
       <path d="M-12 49c29-4 54 2 82-1 31-4 54-5 90 0" />
       <path d="M4 58c27-3 48 2 74-1 28-4 50-3 83 1" />
       <path d="M-16 68c32-3 54 2 82 0 30-3 58-4 105 1" />

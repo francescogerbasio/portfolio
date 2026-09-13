@@ -12,6 +12,9 @@
     is_day?: number;
   };
 
+  let weatherDataForClock: WeatherData | null = null;
+  let weatherClock: ReturnType<typeof setInterval> | undefined;
+
   declare global {
     interface Window {
       lenis?: {
@@ -29,6 +32,11 @@
     initCountdown();
     initCardGlow();
     initCaseStudies();
+    weatherClock = setInterval(() => {
+      if (weatherDataForClock) updateWeatherTimeOfDay(weatherDataForClock);
+    }, 60 * 1000);
+
+    return () => clearInterval(weatherClock);
   });
 
   function initRotatingPhrases() {
@@ -123,25 +131,29 @@
   }
 
   function renderWeather(weatherData: WeatherData) {
+    weatherDataForClock = weatherData;
     const temp = Math.round(weatherData.temperature);
     const weatherInfo = normalizeWeather(weatherData.weathercode);
+    updateWeatherTimeOfDay(weatherData);
+    const landscapeEl = document.getElementById('weatherLandscape');
+    if (landscapeEl) landscapeEl.dataset.scene = weatherInfo.scene;
+    const tempEl = document.getElementById('weatherTemp');
+    if (tempEl) tempEl.textContent = `${temp}°`;
+    const descEl = document.getElementById('weatherDesc');
+    if (descEl) descEl.textContent = weatherInfo.label;
+    const statusEl = document.getElementById('weatherStatus');
+    if (statusEl) statusEl.textContent = `${temp} degrees Celsius, ${weatherInfo.label}`;
+  }
+
+  function updateWeatherTimeOfDay(weatherData: WeatherData) {
     const timeOfDay = getWeatherTimeOfDay(
       weatherData.sunrise,
       weatherData.sunset,
       weatherData.timezone,
       weatherData.is_day === undefined ? undefined : weatherData.is_day === 1
     );
-    const tempEl = document.getElementById('weatherTemp');
-    if (tempEl) tempEl.textContent = `${temp}°`;
     const landscapeEl = document.getElementById('weatherLandscape');
-    if (landscapeEl) {
-      landscapeEl.dataset.scene = weatherInfo.scene;
-      landscapeEl.dataset.timeOfDay = timeOfDay;
-    }
-    const descEl = document.getElementById('weatherDesc');
-    if (descEl) descEl.textContent = weatherInfo.label;
-    const statusEl = document.getElementById('weatherStatus');
-    if (statusEl) statusEl.textContent = `${temp} degrees Celsius, ${weatherInfo.label}`;
+    if (landscapeEl) landscapeEl.dataset.timeOfDay = timeOfDay;
   }
 
   async function hashPassword(password: string): Promise<string> {
