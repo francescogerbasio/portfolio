@@ -87,8 +87,8 @@
     shuffledPhotos = shuffleArray(photos);
   }
 
-  function travelCardAspectRatio(index: number) {
-    const cardNumber = index + 1;
+  function travelCardAspectRatio(photoId: string) {
+    const cardNumber = Math.max(0, photos.findIndex(photo => photo.id === photoId)) + 1;
     if (cardNumber % 7 === 0) return 0.85;
     if (cardNumber % 5 === 0) return 1.333;
     if (cardNumber % 3 === 0) return 1;
@@ -143,8 +143,7 @@
     grid.style.columns = 'unset';
 
     cards.forEach((card, index) => {
-      resetTravelCardLayout(card);
-      const cardHeight = columnWidth / travelCardAspectRatio(index);
+      const cardHeight = columnWidth / travelCardAspectRatio(card.dataset.photoId ?? '');
       const column = columnHeights.indexOf(Math.min(...columnHeights));
 
       card.style.position = 'absolute';
@@ -162,10 +161,8 @@
 
   async function refreshTravelLayout() {
     await tick();
-    requestAnimationFrame(() => {
-      layoutTravelGrid();
-      initGrainReveal();
-    });
+    layoutTravelGrid();
+    requestAnimationFrame(initGrainReveal);
   }
   // Runs at init (server + client) so the travel grid ships in the initial HTML.
   loadTravel();
@@ -180,7 +177,6 @@
     if (currentCategory === category) return;
     currentCategory = category;
     if (category === 'travel') {
-      loadTravel();
       void scheduleMovePill();
       void refreshTravelLayout();
     } else if (category === 'gaming') {
@@ -682,7 +678,7 @@
   <div class="masonry-grid" id="travelGrid">
     {#if currentCountry === 'all'}
       {#each shuffledPhotos as photo, i (photo.id)}
-        <div class="travel-card" data-country={photo.country} data-ar={photo.ar} style="--card-i:{i}; --travel-card-ar:{travelCardAspectRatio(i)}"
+        <div class="travel-card" data-country={photo.country} data-ar={photo.ar} data-photo-id={photo.id} style="--card-i:{i}; --travel-card-ar:{travelCardAspectRatio(photo.id)}"
              role="button" tabindex="0"
              use:makeKeyboardClickable={() => activateCountryFromCard(photo.country)}
              onclick={() => activateCountryFromCard(photo.country)}>
@@ -695,12 +691,12 @@
         </div>
       {/each}
     {:else}
-      {@const filtered = photos.filter(p => p.country === currentCountry)}
+      {@const filtered = shuffledPhotos.filter(p => p.country === currentCountry)}
       {#if filtered.length === 0}
         <div class="loading-state"><p>No photos for this location yet.</p></div>
       {:else}
         {#each filtered as photo, i (photo.id)}
-          <div class="travel-card" data-country={photo.country} data-ar={photo.ar} style="--card-i:{i}; --travel-card-ar:{travelCardAspectRatio(i)}"
+          <div class="travel-card" data-country={photo.country} data-ar={photo.ar} data-photo-id={photo.id} style="--card-i:{i}; --travel-card-ar:{travelCardAspectRatio(photo.id)}"
                role="button" tabindex="0"
                use:makeKeyboardClickable={() => activateCountryFromCard(photo.country)}
                onclick={() => activateCountryFromCard(photo.country)}>
