@@ -74,9 +74,359 @@
 }
 
 .project-badge.cs-badge {
-    font-size: 11px;
-    padding: 3px 10px;
+     font-size: 11px;
+     padding: 3px 10px;
+     background: transparent;
+ }
+
+/* ── Compact game-credit cards ── */
+.lqa-heading {
+    max-width: none;
+    margin-bottom: clamp(24px, 3vw, 36px);
+}
+
+.lqa-heading .section-title {
+    margin-bottom: 0;
+}
+
+.lqa-grid {
+    max-width: none;
+    grid-template-columns: repeat(auto-fit, minmax(172px, 1fr));
+    column-gap: clamp(16px, 2.7vw, 36px);
+    row-gap: clamp(30px, 4vw, 48px);
+    margin-bottom: 0;
+}
+
+.lqa-card {
+    min-width: 0;
+    gap: 14px;
+    padding: 0;
+    cursor: pointer;
+    border: 0;
+    border-radius: 0;
     background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    contain: layout style;
+    transition: transform 220ms ease;
+}
+
+.lqa-card:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 7px;
+    border-radius: 16px;
+}
+
+.lqa-card:hover {
+    transform: translateY(-2px);
+}
+
+.lqa-cover {
+    display: block;
+    position: relative;
+    min-width: 0;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border: 1px solid rgba(15, 15, 15, 0.12);
+    border-radius: 16px;
+    background: rgba(15, 15, 15, 0.08);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.72) inset, 0 14px 26px rgba(15, 15, 15, 0.08);
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.lqa-cover .project-image {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    border-radius: inherit;
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.lqa-card-thumb {
+    position: relative;
+    overflow: hidden;
+}
+
+.lqa-card-thumb img {
+    transition: transform 600ms ease, filter 600ms ease;
+}
+
+.lqa-card:hover .lqa-cover {
+    transform: translateY(-4px);
+    border-color: rgba(15, 15, 15, 0.24);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.78) inset, 0 20px 34px rgba(15, 15, 15, 0.14);
+}
+
+.lqa-card:hover .lqa-card-thumb img {
+    transform: scale(1.035);
+    filter: brightness(0.94) saturate(1.04);
+}
+
+.lqa-external-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.34);
+    color: #fff;
+    opacity: 0.78;
+    backdrop-filter: blur(8px);
+    transition: opacity 220ms ease, transform 220ms ease, background-color 220ms ease;
+}
+
+.lqa-external-indicator svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+}
+
+.lqa-card:hover .lqa-external-indicator {
+    opacity: 1;
+    transform: translate(1px, -1px);
+    background: rgba(10, 10, 10, 0.54);
+}
+
+.lqa-cover-note {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    padding: 4px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(10, 10, 10, 0.42);
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+}
+
+.lqa-card-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 0 2px;
+}
+
+.lqa-title-row {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+}
+
+.lqa-title {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: clamp(22px, 1.35vw, 24px);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.08;
+    text-overflow: ellipsis;
+    text-wrap: balance;
+}
+
+.lqa-card.countdown-card .lqa-title {
+    font-size: clamp(22px, 1.35vw, 24px);
+    letter-spacing: -0.035em;
+}
+
+.lqa-card:hover .lqa-title {
+    color: var(--color-accent);
+}
+
+.lqa-role,
+.lqa-meta {
+    width: 100%;
+    min-width: 0;
+}
+
+.lqa-role {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.45em;
+    color: var(--color-text-light);
+    font-size: clamp(13px, 0.9vw, 14px);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+    text-transform: uppercase;
+}
+
+.lqa-meta {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 2.5em;
+    color: var(--color-text-light);
+    font-size: clamp(14px, 0.95vw, 16px);
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.lqa-meta span:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.lqa-meta span:last-child {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+    font-variant-numeric: tabular-nums;
+}
+
+.lqa-credit,
+.lqa-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    color: var(--color-text-light);
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    text-transform: inherit;
+}
+
+.lqa-role-divider {
+    color: currentColor;
+    opacity: 0.52;
+}
+
+.lqa-status {
+    min-height: 20px;
+    padding: 4px 9px;
+    border: 1px solid color-mix(in srgb, var(--color-text-light) 32%, transparent);
+    border-radius: 999px;
+    color: var(--color-text-light);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.lqa-card .nda-overlay {
+    gap: 6px;
+    padding: 14px;
+    border-radius: inherit;
+    background: rgba(253, 245, 246, 0.94);
+    backdrop-filter: blur(12px);
+}
+
+.lqa-card .nda-lock-icon {
+    font-size: 24px;
+    opacity: 0.62;
+}
+
+.lqa-card .nda-text {
+    font-size: 14px;
+}
+
+.lqa-card .nda-subtext,
+.lqa-card .countdown-timer {
+    font-size: 11px;
+}
+
+[data-theme="dark"] .lqa-cover {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 14px 26px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="dark"] .lqa-card:hover .lqa-cover {
+    border-color: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 20px 34px rgba(0, 0, 0, 0.36);
+}
+
+[data-theme="dark"] .lqa-card .nda-overlay {
+    background: rgba(37, 37, 37, 0.94);
+}
+
+@media (max-width: 720px) {
+    .lqa-heading {
+        display: block;
+        margin-bottom: 24px;
+    }
+
+    .lqa-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 14px;
+        row-gap: 32px;
+    }
+
+    .lqa-card {
+        gap: 10px;
+    }
+
+    .lqa-cover {
+        border-radius: 12px;
+    }
+
+    .lqa-title {
+        font-size: clamp(20px, 5vw, 22px);
+    }
+
+    .lqa-card.countdown-card .lqa-title {
+        font-size: clamp(20px, 5vw, 22px);
+    }
+
+    .lqa-role {
+        font-size: 13px;
+    }
+
+    .lqa-meta {
+        font-size: 14px;
+    }
+
+    .lqa-external-indicator {
+        top: 7px;
+        right: 7px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .lqa-cover-note {
+        left: 7px;
+        bottom: 7px;
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 400px) {
+    .lqa-grid {
+        grid-template-columns: 1fr;
+        max-width: 270px;
+        margin-inline: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lqa-card,
+    .lqa-cover,
+    .lqa-card-thumb img,
+    .lqa-external-indicator {
+        transition: none;
+    }
 }
 
 } /* end @layer components */

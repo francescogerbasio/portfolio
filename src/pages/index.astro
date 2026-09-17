@@ -81,92 +81,84 @@ const profileImagePreload = await getImage({ src: francescoImage, width: 110, he
     </section>
 
     <section id="work" class="work-section" aria-labelledby="lqa-heading">
-      <h2 class="section-title" id="lqa-heading">LQA</h2>
-      <div class="projects-grid">
-        <div class="project-card featured-release-card clickable-card nda-protected" data-project-id="red-dead" role="button" tabindex="0" aria-label="Open protected Red Dead Redemption project">
-          <div data-href="https://www.rockstargames.com/reddeadredemption" class="project-image-link nda-link">
+      <div class="lqa-heading">
+        <h2 class="section-title" id="lqa-heading">LQA</h2>
+      </div>
+      <div class="projects-grid lqa-grid">
+        <div class="project-card lqa-card clickable-card nda-protected" data-project-id="red-dead" role="button" tabindex="0" aria-label="Open protected Red Dead Redemption project">
+          <div data-href="https://www.rockstargames.com/reddeadredemption" class="project-image-link nda-link lqa-cover">
             <div class="project-image lqa-card-thumb">
-              <Image src={redDeadImage} alt="Red Dead Redemption" width={744} height={418} widths={[400, 800]} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw" loading="eager" />
-              <div class="lqa-card-overlay red-dead-lqa-overlay" aria-hidden="true">
-                <span class="cs-card-tag">LQA · Italian · 2025</span>
-                <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
-              </div>
-              <div class="nda-overlay" aria-hidden="true">
-                <div class="nda-lock-icon">🔒</div>
-                <div class="nda-text">NDA Protected Project</div>
-                <div class="nda-subtext">Click to unlock</div>
-              </div>
+              <Image src={redDeadImage} alt="Red Dead Redemption cover art" width={600} height={900} widths={[320, 480, 600]} sizes="(max-width: 360px) 100vw, (max-width: 560px) 50vw, (max-width: 1200px) 20vw, 220px" loading="eager" />
+              <span class="lqa-external-indicator" aria-hidden="true"><svg width="14" height="14"><use href="#icon-arrow-right" /></svg></span>
+              <span class="nda-overlay" aria-hidden="true">
+                <span class="nda-lock-icon" aria-hidden="true">🔒</span>
+                <span class="nda-text">NDA Protected Project</span>
+                <span class="nda-subtext">Click to unlock</span>
+              </span>
             </div>
           </div>
-          <div class="project-info">
-            <div class="project-header">
-              <h3 class="project-title">Red Dead Redemption</h3>
-              <span class="project-badge">SHIPPED</span>
+          <div class="lqa-card-info">
+            <div class="lqa-title-row">
+              <h3 class="lqa-title project-title" aria-label="Red Dead Redemption">Red Dead Redemption</h3>
             </div>
-            <p class="project-description">Contributed to the Italian localization of the latest versions of <span class="nda-hidden-text">Red Dead Redemption</span>, ensuring linguistic accuracy, tonal consistency, and adherence to franchise standards.</p>
-            <p class="project-meta"><span class="nda-hidden-text">Rockstar San Diego, Inc.</span> - 2025</p>
+            <p class="lqa-role"><span>Italian Localization QA</span><span class="lqa-role-divider" aria-hidden="true">·</span><span class="lqa-credit">Credited</span></p>
+            <p class="lqa-meta"><span class="nda-hidden-text">Rockstar San Diego, Inc.</span><span>2025</span></p>
           </div>
         </div>
 
-        <div class="project-card featured-release-card clickable-card nda-protected countdown-card" data-release-date="2027-03-05" data-href="https://www.bandainamcoent.eu" role="button" tabindex="0" aria-label="Unannounced project — revealed 5 March 2027">
-          <div class="project-image-link nda-link countdown-link">
+        <div class="project-card lqa-card clickable-card nda-protected countdown-card" data-release-date="2027-03-05" data-href="https://www.bandainamcoent.eu" role="button" tabindex="0" aria-label="Unannounced project — revealed 5 March 2027">
+          <div class="project-image-link nda-link countdown-link lqa-cover">
             <div class="project-image lqa-card-thumb">
-              <Image src={gundamImage} alt="Unannounced project" width={744} height={418} widths={[400, 800]} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw" loading="eager" />
-              <div class="lqa-card-overlay red-dead-lqa-overlay" aria-hidden="true">
-                <span class="cs-card-tag">LQA · Italian · 2027</span>
-                <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
-              </div>
-              <div class="nda-overlay countdown-overlay" aria-hidden="true">
-                <div class="nda-lock-icon">⏳</div>
-                <div class="nda-text">Unannounced Project</div>
-                <div class="nda-subtext">Revealing in</div>
-                <div class="countdown-timer" id="countdownTimer" aria-live="off">--d --h --m --s</div>
-              </div>
+              <Image src={gundamImage} alt="Unannounced project cover art" width={600} height={900} widths={[320, 480, 600]} sizes="(max-width: 360px) 100vw, (max-width: 560px) 50vw, (max-width: 1200px) 20vw, 220px" loading="lazy" />
+              <span class="lqa-external-indicator" aria-hidden="true"><svg width="14" height="14"><use href="#icon-arrow-right" /></svg></span>
+              <span class="lqa-cover-note">Unannounced</span>
+              <span class="nda-overlay countdown-overlay" aria-hidden="true">
+                <span class="nda-lock-icon" aria-hidden="true">⏳</span>
+                <span class="nda-text">Unannounced project</span>
+                <span class="nda-subtext">Revealing in</span>
+                <span class="countdown-timer" id="countdownTimer" aria-live="off">--d --h --m --s</span>
+              </span>
             </div>
           </div>
-          <div class="project-info">
-            <div class="project-header">
-              <h3 class="project-title nda-hidden-text" aria-label="Unannounced project">GUNDAM ROGUE ORBIT</h3>
-              <span class="project-badge">COMING SOON</span>
+          <div class="lqa-card-info">
+            <div class="lqa-title-row">
+              <h3 class="lqa-title project-title nda-hidden-text" aria-label="Unannounced project">GUNDAM ROGUE ORBIT</h3>
             </div>
-            <p class="project-description"><span class="nda-hidden-text">GUNDAM ROGUE ORBIT</span> — contributed to the Italian localization of an upcoming title, with a focus on linguistic accuracy and consistency.</p>
-            <p class="project-meta"><span class="nda-hidden-text">Bandai Namco Studios Inc.</span> - 2027</p>
+            <p class="lqa-role"><span>Italian Localization QA</span><span class="lqa-role-divider" aria-hidden="true">·</span><span class="lqa-credit">Credited</span></p>
+            <p class="lqa-meta"><span class="nda-hidden-text">Bandai Namco Studios Inc.</span><span>2027</span></p>
+            <span class="project-badge lqa-status">COMING SOON</span>
           </div>
         </div>
 
-        <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" rel="noopener noreferrer" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Dead Take project page">
-          <div class="project-image lqa-card-thumb">
-              <Image src={deadTakeImage} alt="Dead Take" width={744} height={418} widths={[400, 800]} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw" loading="eager" />
-            <div class="lqa-card-overlay">
-              <span class="cs-card-tag">LQA · Italian · 2025</span>
-              <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+        <a href="https://www.surgentstudios.com/projects/dead-take" target="_blank" rel="noopener noreferrer" class="project-card project-card-link lqa-card clickable-card" aria-label="Open Dead Take official website">
+          <div class="lqa-cover">
+            <div class="project-image lqa-card-thumb">
+              <Image src={deadTakeImage} alt="Dead Take cover art" width={600} height={900} widths={[320, 480, 600]} sizes="(max-width: 360px) 100vw, (max-width: 560px) 50vw, (max-width: 1200px) 20vw, 220px" loading="lazy" />
+              <span class="lqa-external-indicator" aria-hidden="true"><svg width="14" height="14"><use href="#icon-arrow-right" /></svg></span>
             </div>
           </div>
-          <div class="project-info">
-            <div class="project-header">
-              <h3 class="project-title">Dead Take</h3>
-              <span class="project-badge">SHIPPED</span>
+          <div class="lqa-card-info">
+            <div class="lqa-title-row">
+              <h3 class="lqa-title">Dead Take</h3>
             </div>
-            <p class="project-description">Worked on the Italian localization of the horror game Dead Take, with a focus on linguistic accuracy, atmosphere, and player immersion.</p>
-            <p class="project-meta">Surgent Studios - 2025</p>
+            <p class="lqa-role"><span>Italian Localization QA</span><span class="lqa-role-divider" aria-hidden="true">·</span><span class="lqa-credit">Credited</span></p>
+            <p class="lqa-meta"><span>Surgent Studios</span><span>2025</span></p>
           </div>
         </a>
 
-        <a href="https://www.doublefine.com/games/kiln" target="_blank" rel="noopener noreferrer" class="project-card project-card-link featured-release-card clickable-card" aria-label="Open Kiln project page">
-          <div class="project-image lqa-card-thumb">
-              <Image src={kilnImage} alt="Kiln" width={744} height={418} widths={[400, 800]} sizes="(max-width: 800px) 92vw, (max-width: 1200px) 46vw, 31vw" loading="eager" />
-            <div class="lqa-card-overlay">
-              <span class="cs-card-tag">LQA · Italian · 2026</span>
-              <span class="cs-card-open">View Project <svg width="13" height="13" aria-hidden="true" style="vertical-align:middle;display:inline-block;margin-left:1px"><use href="#icon-arrow-right"/></svg></span>
+        <a href="https://www.doublefine.com/games/kiln" target="_blank" rel="noopener noreferrer" class="project-card project-card-link lqa-card clickable-card" aria-label="Open Kiln official website">
+          <div class="lqa-cover">
+            <div class="project-image lqa-card-thumb">
+              <Image src={kilnImage} alt="Kiln cover art" width={600} height={900} widths={[320, 480, 600]} sizes="(max-width: 360px) 100vw, (max-width: 560px) 50vw, (max-width: 1200px) 20vw, 220px" loading="lazy" />
+              <span class="lqa-external-indicator" aria-hidden="true"><svg width="14" height="14"><use href="#icon-arrow-right" /></svg></span>
             </div>
           </div>
-          <div class="project-info">
-            <div class="project-header">
-              <h3 class="project-title">Kiln</h3>
-              <span class="project-badge">SHIPPED</span>
+          <div class="lqa-card-info">
+            <div class="lqa-title-row">
+              <h3 class="lqa-title">Kiln</h3>
             </div>
-            <p class="project-description">Worked on the Italian localization of Kiln, with a focus on linguistic accuracy, consistency, and preserving the tone of the experience.</p>
-            <p class="project-meta">Double Fine Productions - 2026</p>
+            <p class="lqa-role"><span>Italian Localization QA</span><span class="lqa-role-divider" aria-hidden="true">·</span><span class="lqa-credit">Credited</span></p>
+            <p class="lqa-meta"><span>Double Fine Productions</span><span>2026</span></p>
           </div>
         </a>
       </div>
